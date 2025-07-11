@@ -1,70 +1,205 @@
-# Getting Started with Create React App
+# 🚀 Système d'Affiliation React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Un système d'affiliation complet développé en React avec gestion des rôles (Admin, Influenceur, Prospect), authentification JWT, et interface responsive.
 
-## Available Scripts
+## 📋 Fonctionnalités
 
-In the project directory, you can run:
+### 🔐 Authentification & Rôles
+- **Authentification JWT** avec stockage sécurisé
+- **Trois rôles utilisateurs** : Admin, Influenceur, Prospect
+- **Redirection automatique** selon le rôle après connexion
+- **Routes protégées** avec vérification des permissions
 
-### `npm start`
+### 👨‍💼 Interface Admin
+- **Dashboard** avec statistiques globales et graphiques
+- **Gestion des influenceurs** (liste, ajout, modification, suppression)
+- **Gestion des prospects** (validation, suivi)
+- **Gestion des remises** (paiements, validation)
+- **Statistiques détaillées** avec graphiques Recharts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 👤 Interface Influenceur
+- **Dashboard personnel** avec statistiques individuelles
+- **Gestion des liens d'affiliation** (création, suivi)
+- **Suivi des prospects** personnels
+- **Historique des remises** et gains
+- **Statistiques personnelles** avec graphiques
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🌐 Interface Publique
+- **Formulaire d'affiliation** accessible via lien unique
+- **Validation des liens** d'affiliation
+- **Inscription simplifiée** pour les prospects
+- **Confirmation d'inscription** avec redirection
 
-### `npm test`
+## 🛠️ Technologies Utilisées
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **React 19** - Framework frontend
+- **React Router DOM** - Gestion des routes
+- **Tailwind CSS** - Framework CSS utilitaire
+- **Recharts** - Bibliothèque de graphiques
+- **Axios** - Client HTTP
+- **Heroicons** - Icônes SVG
 
-### `npm run build`
+## 📁 Structure du Projet
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+src/
+├── components/          # Composants réutilisables
+│   ├── Button.jsx
+│   ├── Input.jsx
+│   └── PrivateRoute.jsx
+├── context/            # Contextes React
+│   └── AuthContext.jsx
+├── layouts/            # Layouts par rôle
+│   ├── AdminLayout.jsx
+│   ├── InfluenceurLayout.jsx
+│   └── PublicLayout.jsx
+├── pages/              # Pages de l'application
+│   ├── admin/          # Pages Admin
+│   ├── influenceur/    # Pages Influenceur
+│   └── public/         # Pages Publiques
+├── services/           # Services API
+│   ├── authService.js
+│   ├── influenceurService.js
+│   ├── prospectService.js
+│   └── remiseService.js
+└── App.jsx            # Point d'entrée principal
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 Installation & Démarrage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prérequis
+- Node.js (version 16 ou supérieure)
+- npm ou yarn
 
-### `npm run eject`
+### Installation
+```bash
+# Cloner le projet
+git clone <repository-url>
+cd front
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Installer les dépendances
+npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Démarrer le serveur de développement
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+L'application sera accessible à l'adresse : `http://localhost:3000`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🔧 Configuration
 
-## Learn More
+### Variables d'environnement
+Créez un fichier `.env` à la racine du projet :
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```env
+REACT_APP_API_URL=http://localhost:8000
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### API Backend
+Le système est conçu pour fonctionner avec une API backend qui expose les endpoints suivants :
 
-### Code Splitting
+#### Authentification
+- `POST /api/influenceurs/auth/login/` - Connexion
+- `GET /api/influenceurs/auth/profile/` - Profil utilisateur
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### Influenceurs
+- `GET /api/influenceurs/` - Liste des influenceurs
+- `POST /api/influenceurs/` - Créer un influenceur
+- `PUT /api/influenceurs/:id/` - Modifier un influenceur
+- `DELETE /api/influenceurs/:id/` - Supprimer un influenceur
 
-### Analyzing the Bundle Size
+#### Prospects
+- `GET /api/prospects/` - Liste des prospects
+- `POST /api/prospects/` - Créer un prospect
+- `POST /api/prospects/:id/valider/` - Valider un prospect
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### Affiliation
+- `GET /api/affiliation/:code/` - Informations d'affiliation
+- `POST /api/affiliation/:code/` - Soumettre une affiliation
 
-### Making a Progressive Web App
+#### Remises
+- `GET /api/remises/` - Liste des remises
+- `POST /api/remises/:id/payer/` - Payer une remise
+- `GET /api/remises/statistiques/` - Statistiques des remises
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🎨 Interface Utilisateur
 
-### Advanced Configuration
+### Design Responsive
+- **Mobile-first** avec Tailwind CSS
+- **Sidebar rétractable** sur mobile
+- **Tableaux scrollables** horizontalement
+- **Formulaires adaptatifs** avec champs empilés
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Composants Réutilisables
+- **Button** - Boutons avec variantes et états de chargement
+- **Input** - Champs de saisie avec validation
+- **PrivateRoute** - Protection des routes par rôle
 
-### Deployment
+## 🔒 Sécurité
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Authentification
+- **JWT Token** stocké dans localStorage
+- **Intercepteurs Axios** pour ajouter automatiquement le token
+- **Gestion des erreurs 401** avec redirection automatique
+- **Validation des rôles** à chaque changement de route
 
-### `npm run build` fails to minify
+### Protection des Routes
+- **PrivateRoute** vérifie l'authentification et le rôle
+- **Redirection automatique** vers la page appropriée
+- **Écran de chargement** pendant la vérification du token
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📊 Fonctionnalités Avancées
+
+### Graphiques et Statistiques
+- **Recharts** pour les visualisations
+- **Graphiques en ligne** pour l'évolution des données
+- **Cartes de statistiques** avec indicateurs de changement
+- **Données en temps réel** (simulées pour l'exemple)
+
+### Gestion des États
+- **Context API** pour l'état global d'authentification
+- **Hooks personnalisés** pour la logique métier
+- **Gestion d'erreurs** centralisée
+- **États de chargement** pour une meilleure UX
+
+## 🧪 Tests
+
+```bash
+# Lancer les tests
+npm test
+
+# Lancer les tests en mode watch
+npm test -- --watch
+```
+
+## 📦 Build de Production
+
+```bash
+# Créer le build de production
+npm run build
+
+# Tester le build localement
+npx serve -s build
+```
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📝 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 🆘 Support
+
+Pour toute question ou problème :
+- Ouvrir une issue sur GitHub
+- Contacter l'équipe de développement
+
+---
+
+**Développé avec ❤️ en React**
