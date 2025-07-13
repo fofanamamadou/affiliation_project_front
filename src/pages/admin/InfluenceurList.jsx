@@ -23,6 +23,7 @@ import {
   UserOutlined
 } from '@ant-design/icons';
 import { influenceurService } from '../../services/influenceurService';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -33,6 +34,8 @@ const InfluenceurList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingInfluenceur, setEditingInfluenceur] = useState(null);
   const [form] = Form.useForm();
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadInfluenceurs();
@@ -81,6 +84,7 @@ const InfluenceurList = () => {
   };
 
   const handleSubmit = async (values) => {
+    setSubmitLoading(true);
     try {
       let result;
       if (editingInfluenceur) {
@@ -90,6 +94,7 @@ const InfluenceurList = () => {
         const data = {
           nom: values.nom,
           email: values.email,
+          telephone: values.telephone,
           password: values.password
         };
         result = await influenceurService.createInfluenceur(data);
@@ -104,6 +109,8 @@ const InfluenceurList = () => {
       }
     } catch (error) {
       message.error('Erreur lors de la sauvegarde');
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -124,6 +131,12 @@ const InfluenceurList = () => {
           {text}
         </Space>
       ),
+    },
+    {
+      title: 'Téléphone',
+      dataIndex: 'telephone',
+      key: 'telephone',
+      render: (text) => text || '-',
     },
     {
       title: 'Email',
@@ -199,8 +212,7 @@ const InfluenceurList = () => {
   ];
 
   const handleViewDetails = (record) => {
-    // TODO: Implémenter la vue détaillée
-    message.info('Fonctionnalité à implémenter');
+    navigate(`/admin/influenceurs/${record.id}`);
   };
 
   return (
@@ -257,6 +269,17 @@ const InfluenceurList = () => {
             </Form.Item>
 
             <Form.Item
+              name="telephone"
+              label="Téléphone"
+              rules={[
+                { required: true, message: 'Le téléphone est requis' },
+                { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
+              ]}
+            >
+              <Input placeholder="Numéro de téléphone" maxLength={15} />
+            </Form.Item>
+
+            <Form.Item
               name="email"
               label="Email"
               rules={[
@@ -285,7 +308,7 @@ const InfluenceurList = () => {
                 <Button onClick={() => setModalVisible(false)}>
                   Annuler
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" loading={submitLoading}>
                   {editingInfluenceur ? 'Modifier' : 'Créer'}
                 </Button>
               </Space>

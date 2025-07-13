@@ -64,7 +64,7 @@ const RemiseStats = () => {
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Montant total (€)"
+                title="Montant total (F CFA)"
                 value={stats?.montant_total || 0}
                 prefix={<EuroOutlined />}
                 precision={2}
@@ -75,7 +75,7 @@ const RemiseStats = () => {
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Montant payé (€)"
+                title="Montant payé (F CFA)"
                 value={stats?.montant_paye || 0}
                 prefix={<EuroOutlined style={{ color: '#52c41a' }} />}
                 precision={2}
@@ -86,7 +86,7 @@ const RemiseStats = () => {
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Montant en attente (€)"
+                title="Montant en attente (F CFA)"
                 value={stats?.montant_en_attente || 0}
                 prefix={<EuroOutlined style={{ color: '#faad14' }} />}
                 precision={2}

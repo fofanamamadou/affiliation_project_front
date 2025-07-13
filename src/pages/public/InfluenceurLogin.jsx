@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Form, 
   Input, 
   Button, 
   Card, 
   Typography, 
-  message
+  message,
+  Divider
 } from 'antd';
 import { 
-  UserOutlined, 
-  MailOutlined, 
-  LockOutlined,
-  UserAddOutlined,
-  PhoneOutlined
+  LockOutlined, 
+  MailOutlined,
+  LoginOutlined,
+  UserOutlined,
+  StarOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -20,31 +21,30 @@ import ErrorAlert from '../../components/ErrorAlert';
 
 const { Title, Text } = Typography;
 
-const Register = () => {
+const InfluenceurLogin = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { register } = useAuth();
+  const { influenceurLogin, isAuthenticated, userType } = useAuth();
   const navigate = useNavigate();
+
+  // Redirection automatique si déjà connecté
+  useEffect(() => {
+    if (isAuthenticated && userType === 'influenceur') {
+      navigate('/influenceur', { replace: true });
+    }
+  }, [isAuthenticated, userType, navigate]);
 
   const onFinish = async (values) => {
     setLoading(true);
     setError('');
 
     try {
-      // Préparer les données selon le format attendu par le backend
-      const userData = {
-        nom: values.nom,
-        email: values.email,
-        password: values.password,
-        telephone: values.telephone
-      };
-
-      const result = await register(userData);
+      const result = await influenceurLogin(values);
       
       if (result.success) {
-        message.success('Inscription réussie !');
+        message.success('Connexion influenceur réussie');
         navigate('/influenceur');
       } else {
         setError(result.error);
@@ -52,7 +52,7 @@ const Register = () => {
       }
       
     } catch (error) {
-      console.error('Register error:', error);
+      console.error('Influenceur login error:', error);
       setError('Une erreur est survenue. Veuillez réessayer.');
       // Ne pas réinitialiser le formulaire en cas d'erreur
     } finally {
@@ -97,46 +97,31 @@ const Register = () => {
             margin: '0 auto 20px',
             boxShadow: '0 4px 16px rgba(24, 144, 255, 0.3)'
           }}>
-            <UserAddOutlined style={{ fontSize: '28px', color: 'white' }} />
+            <StarOutlined style={{ fontSize: '28px', color: 'white' }} />
           </div>
           <Title level={2} style={{ margin: 0, color: '#2c3e50', fontWeight: '600' }}>
-            Inscription Influenceur
+            Espace Influenceur
           </Title>
           <Text type="secondary" style={{ fontSize: '16px' }}>
-            Rejoignez notre plateforme d'affiliation
+            Accédez à votre espace personnel
           </Text>
         </div>
 
         <ErrorAlert 
           error={error}
           onClose={() => setError('')}
-          title="Erreur d'inscription"
+          title="Erreur de connexion"
         />
 
         <Form
           form={form}
-          name="register"
+          name="influenceurLogin"
           onFinish={onFinish}
           onValuesChange={handleFormChange}
           layout="vertical"
           size="large"
           preserve={true}
         >
-          <Form.Item
-            name="nom"
-            label="Nom complet"
-            rules={[
-              { required: true, message: 'Veuillez saisir votre nom' },
-              { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
-            ]}
-          >
-            <Input 
-              prefix={<UserOutlined style={{ color: '#1890ff' }} />} 
-              placeholder="Votre nom complet"
-              style={{ height: '48px' }}
-            />
-          </Form.Item>
-
           <Form.Item
             name="email"
             label="Email"
@@ -154,57 +139,16 @@ const Register = () => {
           </Form.Item>
 
           <Form.Item
-            name="telephone"
-            label="Téléphone"
-            rules={[
-              { required: true, message: 'Veuillez saisir votre téléphone' },
-              { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
-            ]}
-          >
-            <Input 
-              prefix={<PhoneOutlined style={{ color: '#1890ff' }} />} 
-              placeholder="Numéro de téléphone"
-              maxLength={15}
-              style={{ height: '48px' }}
-            />
-          </Form.Item>
-
-          <Form.Item
             name="password"
             label="Mot de passe"
             rules={[
-              { required: true, message: 'Veuillez saisir votre mot de passe' },
-              { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
+              { required: true, message: 'Veuillez saisir votre mot de passe' }
             ]}
           >
             <Input.Password 
               prefix={<LockOutlined style={{ color: '#1890ff' }} />} 
               placeholder="Votre mot de passe"
-              autoComplete="new-password"
-              style={{ height: '48px' }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="confirmPassword"
-            label="Confirmer le mot de passe"
-            dependencies={['password']}
-            rules={[
-              { required: true, message: 'Veuillez confirmer votre mot de passe' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
-                },
-              }),
-            ]}
-          >
-            <Input.Password 
-              prefix={<LockOutlined style={{ color: '#1890ff' }} />} 
-              placeholder="Confirmez votre mot de passe"
-              autoComplete="new-password"
+              autoComplete="current-password"
               style={{ height: '48px' }}
             />
           </Form.Item>
@@ -223,18 +167,31 @@ const Register = () => {
                 fontSize: '16px',
                 fontWeight: '500'
               }}
-              icon={<UserAddOutlined />}
+              icon={<LoginOutlined />}
             >
-              S'inscrire
+              Se connecter
             </Button>
           </Form.Item>
         </Form>
 
-        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+        <Divider style={{ margin: '24px 0' }}>
+          <Text type="secondary">ou</Text>
+        </Divider>
+
+        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
           <Text type="secondary" style={{ fontSize: '14px' }}>
-            Déjà inscrit ?{' '}
-            <a href="/influenceur/login" style={{ color: '#1890ff', fontWeight: '500' }}>
-              Se connecter
+            Pas encore de compte ?{' '}
+            <a href="/register" style={{ color: '#1890ff', fontWeight: '500' }}>
+              S'inscrire
+            </a>
+          </Text>
+        </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <Text type="secondary" style={{ fontSize: '14px' }}>
+            Vous êtes un administrateur ?{' '}
+            <a href="/admin/login" style={{ color: '#ff6b6b', fontWeight: '500' }}>
+              Connectez-vous ici
             </a>
           </Text>
         </div>
@@ -243,4 +200,4 @@ const Register = () => {
   );
 };
 
-export default Register; 
+export default InfluenceurLogin; 

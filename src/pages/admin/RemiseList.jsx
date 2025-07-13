@@ -140,10 +140,10 @@ const RemiseList = () => {
       ),
     },
     {
-      title: 'Montant (€)',
+      title: 'Montant (F CFA)',
       dataIndex: 'montant',
       key: 'montant',
-      render: (val) => <b>{val} €</b>,
+      render: (val) => <b>{val} F CFA</b>,
     },
     {
       title: 'Statut',
@@ -234,7 +234,7 @@ const RemiseList = () => {
           confirmLoading={calcLoading}
         >
           <p>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> €
+          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> F CFA
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (
@@ -253,10 +253,26 @@ const RemiseList = () => {
           onOk={handleCalcInflu}
           confirmLoading={calcLoading}
         >
-          <p>ID Influenceur :</p>
-          <InputNumber min={1} value={calcInfluId} onChange={setCalcInfluId} style={{ width: 120, marginRight: 16 }} />
+          <p>Choisir un influenceur :</p>
+          <Select
+            showSearch
+            placeholder="Sélectionner un influenceur"
+            optionFilterProp="children"
+            value={calcInfluId}
+            onChange={setCalcInfluId}
+            style={{ width: '100%', marginBottom: 16 }}
+            filterOption={(input, option) =>
+              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          >
+            {influenceurs.map(inf => (
+              <Option key={inf.id} value={inf.id}>
+                {inf.nom} (ID: {inf.id})
+              </Option>
+            ))}
+          </Select>
           <p style={{ marginTop: 16 }}>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> €
+          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> F CFA
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (

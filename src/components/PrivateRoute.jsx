@@ -20,19 +20,26 @@ const PrivateRoute = ({ userType }) => {
     );
   }
 
-  // Rediriger vers la page de connexion si non authentifié
+  // Rediriger vers la page de sélection de connexion si non authentifié
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login-choice" replace />;
   }
 
   // Vérifier le type d'utilisateur si spécifié
-  if (userType && currentUserType !== userType) {
-    if (currentUserType === 'superuser') {
-      return <Navigate to="/admin" replace />;
-    } else if (currentUserType === 'influenceur') {
-      return <Navigate to="/influenceur" replace />;
+  if (userType) {
+    if (userType === 'admin' && (currentUserType === 'admin' || currentUserType === 'superuser')) {
+      return <Outlet />;
+    } else if (userType === 'influenceur' && currentUserType === 'influenceur') {
+      return <Outlet />;
     } else {
-      return <Navigate to="/" replace />;
+      // Rediriger vers l'espace approprié selon le type d'utilisateur
+      if (currentUserType === 'admin' || currentUserType === 'superuser') {
+        return <Navigate to="/admin" replace />;
+      } else if (currentUserType === 'influenceur') {
+        return <Navigate to="/influenceur" replace />;
+      } else {
+        return <Navigate to="/login-choice" replace />;
+      }
     }
   }
 

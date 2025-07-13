@@ -9,15 +9,15 @@ const RootRedirect = () => {
   useEffect(() => {
     if (loading) return; // attendre la vérification du contexte
     if (isAuthenticated) {
-      if (userType === 'superuser') {
+      if (userType === 'admin' || userType === 'superuser') {
         navigate('/admin', { replace: true });
       } else if (userType === 'influenceur') {
         navigate('/influenceur', { replace: true });
       } else {
-        navigate('/login', { replace: true });
+        navigate('/login-choice', { replace: true });
       }
     } else {
-      navigate('/login', { replace: true });
+      navigate('/login-choice', { replace: true });
     }
   }, [isAuthenticated, userType, loading, navigate]);
 

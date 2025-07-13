@@ -27,6 +27,7 @@ import {
 import { prospectService } from '../../services/prospectService';
 import { influenceurService } from '../../services/influenceurService';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -40,6 +41,7 @@ const ProspectList = () => {
   const [filterInfluenceur, setFilterInfluenceur] = useState('all');
   const [influenceurs, setInfluenceurs] = useState([]);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadProspects();
@@ -248,8 +250,8 @@ const ProspectList = () => {
   ];
 
   const handleViewDetails = (record) => {
-    // TODO: Implémenter la vue détaillée
-    message.info('Fonctionnalité à implémenter');
+    // TODO: Créer une page de détails pour les prospects
+    message.info('Page de détails du prospect à implémenter');
   };
 
   return (

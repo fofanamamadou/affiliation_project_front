@@ -1,4 +1,5 @@
 import axiosInstance from '../utils/axiosInstance';
+import { handleApiError } from '../utils/errorHandler';
 
 // Service d'administration
 export const adminService = {
@@ -11,127 +12,69 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer les statistiques';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer les statistiques');
     }
   },
 
   // Récupérer la liste des influenceurs
   async getInfluenceurs(params = {}) {
     try {
-      const response = await axiosInstance.get('/admin/influenceurs/', { params });
+      const response = await axiosInstance.get('/influenceurs/', { params });
       return {
         success: true,
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer la liste des influenceurs';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer la liste des influenceurs');
     }
   },
 
   // Récupérer un influenceur par ID
   async getInfluenceur(influenceurId) {
     try {
-      const response = await axiosInstance.get(`/admin/influenceurs/${influenceurId}/`);
+      const response = await axiosInstance.get(`/influenceurs/${influenceurId}/`);
       return {
         success: true,
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer l\'influenceur';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer l\'influenceur');
     }
   },
 
   // Créer un influenceur
   async createInfluenceur(influenceurData) {
     try {
-      const response = await axiosInstance.post('/admin/influenceurs/', influenceurData);
+      const response = await axiosInstance.post('/influenceurs/', influenceurData);
       return {
         success: true,
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la création de l\'influenceur';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.errors) {
-        const errors = error.response.data.errors;
-        const errorMessages = Object.values(errors).flat();
-        errorMessage = errorMessages.join(', ');
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la création de l\'influenceur');
     }
   },
 
   // Mettre à jour un influenceur
   async updateInfluenceur(influenceurId, influenceurData) {
     try {
-      const response = await axiosInstance.put(`/admin/influenceurs/${influenceurId}/`, influenceurData);
+      const response = await axiosInstance.put(`/influenceurs/${influenceurId}/`, influenceurData);
       return {
         success: true,
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la mise à jour de l\'influenceur';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la mise à jour de l\'influenceur');
     }
   },
 
   // Supprimer un influenceur
   async deleteInfluenceur(influenceurId) {
     try {
-      await axiosInstance.delete(`/admin/influenceurs/${influenceurId}/`);
+      await axiosInstance.delete(`/influenceurs/${influenceurId}/`);
       return { success: true };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la suppression de l\'influenceur';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la suppression de l\'influenceur');
     }
   },
 
@@ -144,16 +87,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer la liste des prospects';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer la liste des prospects');
     }
   },
 
@@ -166,16 +100,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer le prospect';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer le prospect');
     }
   },
 
@@ -188,16 +113,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la validation du prospect';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la validation du prospect');
     }
   },
 
@@ -210,16 +126,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors du rejet du prospect';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors du rejet du prospect');
     }
   },
 
@@ -232,16 +139,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer les rapports';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer les rapports');
     }
   },
 
@@ -254,16 +152,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la génération du rapport';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la génération du rapport');
     }
   },
 
@@ -276,16 +165,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Impossible de récupérer les paramètres';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Impossible de récupérer les paramètres système');
     }
   },
 
@@ -298,16 +178,7 @@ export const adminService = {
         data: response.data
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de la mise à jour des paramètres';
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de la mise à jour des paramètres');
     }
   }
 }; 

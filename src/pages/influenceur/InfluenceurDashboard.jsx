@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Progress, List, Avatar, Tag, Button } from 'antd';
+import { Card, Row, Col, Statistic, Progress, List, Avatar, Tag, Button, message } from 'antd';
 import { 
   UserOutlined, 
   TeamOutlined, 
@@ -9,8 +9,13 @@ import {
   TrophyOutlined
 } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useAuth } from '../../context/AuthContext';
+import { influenceurService } from '../../services/influenceurService';
+import { useNavigate } from 'react-router-dom';
 
 const InfluenceurDashboard = () => {
+  const { user, isAuthenticated, userType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalProspects: 0,
     totalRemises: 0,
@@ -19,31 +24,85 @@ const InfluenceurDashboard = () => {
   });
   const [chartData, setChartData] = useState([]);
   const [pieData, setPieData] = useState([]);
+  const [recentProspects, setRecentProspects] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Vérification de sécurité
   useEffect(() => {
-    // Simuler le chargement des données
-    setTimeout(() => {
-      setStats({
-        totalProspects: 45,
-        totalRemises: 18,
-        totalGains: 3600,
-        tauxConversion: 40
-      });
-      setChartData([
-        { name: 'Jan', prospects: 8, remises: 3 },
-        { name: 'Fév', prospects: 12, remises: 5 },
-        { name: 'Mar', prospects: 10, remises: 4 },
-        { name: 'Avr', prospects: 15, remises: 6 },
-      ]);
-      setPieData([
-        { name: 'Remises validées', value: 18, color: '#52c41a' },
-        { name: 'En attente', value: 5, color: '#faad14' },
-        { name: 'Refusées', value: 2, color: '#ff4d4f' },
-      ]);
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        message.error('Vous devez être connecté pour accéder à cette page');
+        navigate('/login-choice');
+        return;
+      }
+      
+      if (userType !== 'influenceur') {
+        message.error('Accès non autorisé');
+        navigate('/login-choice');
+        return;
+      }
+    }
+  }, [isAuthenticated, userType, authLoading, navigate]);
+
+  // Fonction utilitaire pour la couleur du camembert
+  const getPieColor = (statut) => {
+    switch (statut) {
+      case 'payee':
+      case 'valide':
+        return '#52c41a';
+      case 'en_attente':
+        return '#faad14';
+      case 'refuse':
+      case 'refusee':
+        return '#ff4d4f';
+      default:
+        return '#d9d9d9';
+    }
+  };
+
+  useEffect(() => {
+    if (!user || authLoading || !isAuthenticated || userType !== 'influenceur') return;
+    
+    setLoading(true);
+    influenceurService.getInfluenceurDashboard(user.id).then(result => {
+      if (result.success) {
+        const data = result.data;
+        setStats({
+          totalProspects: data.total_prospects || 0,
+          totalRemises: data.total_remises || 0,
+          totalGains: data.total_gains || 0,
+          tauxConversion: data.taux_conversion || 0
+        });
+        setChartData(
+          (data.evolution || []).map(item => ({
+            name: item.mois,
+            prospects: item.prospects,
+            remises: item.remises
+          }))
+        );
+        setPieData(
+          (data.repartition_remises || []).map(item => ({
+            name: item.statut,
+            value: item.count,
+            color: getPieColor(item.statut)
+          }))
+        );
+        setRecentProspects(data.prospects_recents || []);
+      } else {
+        console.error('Erreur lors du chargement du dashboard:', result.error);
+        message.error('Erreur lors du chargement des données');
+        setStats({ totalProspects: 0, totalRemises: 0, totalGains: 0, tauxConversion: 0 });
+        setChartData([]);
+        setPieData([]);
+        setRecentProspects([]);
+      }
       setLoading(false);
-    }, 1000);
-  }, []);
+    }).catch(error => {
+      console.error('Erreur lors du chargement du dashboard:', error);
+      message.error('Erreur lors du chargement des données');
+      setLoading(false);
+    });
+  }, [user, authLoading, isAuthenticated, userType]);
 
   const statsCards = [
     {
@@ -64,7 +123,7 @@ const InfluenceurDashboard = () => {
     },
     {
       title: 'Gains Totaux',
-      value: `${stats.totalGains.toLocaleString()}€`,
+      value: `${stats.totalGains.toLocaleString()} F CFA`,
       icon: <BarChartOutlined />,
       color: '#722ed1',
       change: '+12%',
@@ -80,49 +139,50 @@ const InfluenceurDashboard = () => {
     }
   ];
 
-  const recentProspects = [
-    {
-      name: 'Jean Dupont',
-      email: 'jean.dupont@email.com',
-      status: 'validé',
-      montant: 150,
-      date: '2024-01-15'
-    },
-    {
-      name: 'Marie Martin',
-      email: 'marie.martin@email.com',
-      status: 'en_attente',
-      montant: 200,
-      date: '2024-01-14'
-    },
-    {
-      name: 'Pierre Durand',
-      email: 'pierre.durand@email.com',
-      status: 'validé',
-      montant: 100,
-      date: '2024-01-13'
-    }
-  ];
-
   const getStatusColor = (status) => {
     switch (status) {
-      case 'validé': return 'green';
-      case 'en_attente': return 'orange';
-      case 'refusé': return 'red';
-      default: return 'default';
+      case 'confirme':
+      case 'valide':
+        return 'green';
+      case 'en_attente':
+        return 'orange';
+      case 'rejete':
+      case 'refuse':
+        return 'red';
+      default:
+        return 'default';
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'validé': return 'Validé';
-      case 'en_attente': return 'En attente';
-      case 'refusé': return 'Refusé';
-      default: return status;
+      case 'confirme':
+      case 'valide':
+        return 'Validé';
+      case 'en_attente':
+        return 'En attente';
+      case 'rejete':
+      case 'refuse':
+        return 'Refusé';
+      default:
+        return status;
     }
   };
 
-  if (loading) {
+  const handleShareLink = () => {
+    if (user && user.code_affiliation) {
+      const link = `${window.location.origin}/affiliation/${user.code_affiliation}`;
+      navigator.clipboard.writeText(link).then(() => {
+        message.success('Lien copié dans le presse-papiers !');
+      }).catch(() => {
+        message.error('Erreur lors de la copie du lien');
+      });
+    } else {
+      message.error('Code d\'affiliation non disponible');
+    }
+  };
+
+  if (authLoading || loading) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <div className="ant-spin-dot">
@@ -130,6 +190,10 @@ const InfluenceurDashboard = () => {
         </div>
       </div>
     );
+  }
+
+  if (!isAuthenticated || userType !== 'influenceur') {
+    return null; // Redirection gérée par useEffect
   }
 
   return (
@@ -165,40 +229,64 @@ const InfluenceurDashboard = () => {
         <Col xs={24} lg={16}>
           <Card title="Évolution des prospects et remises">
             <div style={{ height: '300px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="prospects" stroke="#1890ff" strokeWidth={2} />
-                  <Line type="monotone" dataKey="remises" stroke="#52c41a" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
+              {chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="prospects" stroke="#1890ff" strokeWidth={2} />
+                    <Line type="monotone" dataKey="remises" stroke="#52c41a" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: '#8c8c8c'
+                }}>
+                  Aucune donnée disponible
+                </div>
+              )}
             </div>
           </Card>
         </Col>
         <Col xs={24} lg={8}>
           <Card title="Répartition des remises">
             <div style={{ height: '300px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              {pieData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: '#8c8c8c'
+                }}>
+                  Aucune donnée disponible
+                </div>
+              )}
             </div>
           </Card>
         </Col>
@@ -208,35 +296,45 @@ const InfluenceurDashboard = () => {
       <Card 
         title="Prospects récents" 
         extra={
-          <Button type="primary" icon={<ShareAltOutlined />}>
+          <Button type="primary" icon={<ShareAltOutlined />} onClick={handleShareLink}>
             Partager mon lien
           </Button>
         }
       >
-        <List
-          itemLayout="horizontal"
-          dataSource={recentProspects}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={<Avatar icon={<UserOutlined />} />}
-                title={item.name}
-                description={item.email}
-              />
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                  {item.montant}€
+        {recentProspects.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            dataSource={recentProspects}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<Avatar icon={<UserOutlined />} />}
+                  title={item.nom}
+                  description={item.email}
+                />
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    {item.montant || 0} F CFA
+                  </div>
+                  <Tag color={getStatusColor(item.statut)}>
+                    {getStatusText(item.statut)}
+                  </Tag>
+                  <div style={{ fontSize: '12px', color: '#8c8c8c', marginTop: '4px' }}>
+                    {item.date_creation ? new Date(item.date_creation).toLocaleDateString('fr-FR') : '-'}
+                  </div>
                 </div>
-                <Tag color={getStatusColor(item.status)}>
-                  {getStatusText(item.status)}
-                </Tag>
-                <div style={{ fontSize: '12px', color: '#8c8c8c', marginTop: '4px' }}>
-                  {new Date(item.date).toLocaleDateString('fr-FR')}
-                </div>
-              </div>
-            </List.Item>
-          )}
-        />
+              </List.Item>
+            )}
+          />
+        ) : (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '40px',
+            color: '#8c8c8c'
+          }}>
+            Aucun prospect récent
+          </div>
+        )}
       </Card>
     </div>
   );

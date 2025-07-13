@@ -17,7 +17,7 @@ const { Text } = Typography;
 const InfluenceurLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const menuItems = [
     {
@@ -47,11 +47,18 @@ const InfluenceurLayout = () => {
       key: 'profile',
       icon: <UserOutlined />,
       label: 'Mon Profil',
+      onClick: () => {
+        navigate('/influenceur/parametres');
+      }
     },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Déconnexion',
+      onClick: async () => {
+        await logout();
+        navigate('/login-choice');
+      }
     },
   ];
 
@@ -59,11 +66,35 @@ const InfluenceurLayout = () => {
     navigate(key);
   };
 
-  const handleUserMenuClick = async ({ key }) => {
-    if (key === 'logout') {
-      await logout();
-      navigate('/login');
+  // Fonction pour obtenir le nom d'affichage
+  const getDisplayName = () => {
+    if (!user) return 'Influenceur';
+    
+    // Si l'utilisateur a un nom, l'utiliser
+    if (user.nom) return user.nom;
+    
+    // Sinon utiliser l'email ou un nom par défaut
+    if (user.email) {
+      const emailName = user.email.split('@')[0];
+      return emailName.charAt(0).toUpperCase() + emailName.slice(1);
     }
+    
+    return 'Influenceur';
+  };
+
+  // Fonction pour obtenir les initiales
+  const getInitials = () => {
+    if (!user) return 'I';
+    
+    if (user.nom) {
+      return user.nom.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
+    }
+    
+    if (user.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    
+    return 'I';
   };
 
   return (
@@ -102,13 +133,28 @@ const InfluenceurLayout = () => {
           <Dropdown
             menu={{
               items: userMenuItems,
-              onClick: handleUserMenuClick,
             }}
             placement="bottomRight"
+            arrow
           >
-            <Space style={{ cursor: 'pointer' }}>
-              <Avatar icon={<UserOutlined />} />
-              <Text>Marie Martin</Text>
+            <Space style={{ cursor: 'pointer', padding: '8px' }}>
+              <Avatar 
+                style={{ 
+                  backgroundColor: '#52c41a',
+                  color: '#fff',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getInitials()}
+              </Avatar>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
+                  {getDisplayName()}
+                </Text>
+                <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+                  Influenceur
+                </Text>
+              </div>
             </Space>
           </Dropdown>
         </Header>

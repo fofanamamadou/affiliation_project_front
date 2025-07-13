@@ -24,6 +24,28 @@ export const prospectService = {
     }
   },
 
+  // Récupérer les prospects d'un influenceur spécifique
+  async getInfluenceurProspects(influenceurId) {
+    try {
+      const response = await axiosInstance.get(`/influenceurs/${influenceurId}/prospects/`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      let errorMessage = 'Impossible de récupérer les prospects de l\'influenceur';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+  },
+
   // Créer un prospect
   async createProspect(prospectData) {
     try {

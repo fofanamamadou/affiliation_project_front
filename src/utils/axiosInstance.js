@@ -37,12 +37,9 @@ axiosInstance.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Token expiré ou invalide
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('user');
-          localStorage.removeItem('user_type');
-          window.location.href = '/login';
+          // Token expiré ou invalide - ne pas rediriger automatiquement
+          // Laisser les composants gérer la redirection
+          console.warn('Token expiré ou invalide');
           break;
         case 403:
           // Accès interdit

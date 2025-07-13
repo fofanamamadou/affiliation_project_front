@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Button, Avatar, Badge } from 'antd';
+import { Layout, Menu, Button, Avatar, Badge, Dropdown, Space, Typography } from 'antd';
 import { 
   HomeOutlined, 
   UserOutlined, 
@@ -10,16 +10,19 @@ import {
   SettingOutlined,
   BellOutlined,
   MenuFoldOutlined,
-  MenuUnfoldOutlined
+  MenuUnfoldOutlined,
+  LogoutOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const navigation = [
@@ -29,6 +32,51 @@ const AdminLayout = () => {
     { key: '/admin/remises', icon: <DollarOutlined />, label: 'Remises' },
     { key: '/admin/statistiques', icon: <BarChartOutlined />, label: 'Statistiques' }
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login-choice');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Déconnexion',
+      onClick: handleLogout
+    }
+  ];
+
+  // Fonction pour obtenir le nom d'affichage
+  const getDisplayName = () => {
+    if (!user) return 'Admin';
+    
+    // Si l'utilisateur a un nom, l'utiliser
+    if (user.nom) return user.nom;
+    
+    // Sinon utiliser l'email ou un nom par défaut
+    if (user.email) {
+      const emailName = user.email.split('@')[0];
+      return emailName.charAt(0).toUpperCase() + emailName.slice(1);
+    }
+    
+    return 'Admin';
+  };
+
+  // Fonction pour obtenir les initiales
+  const getInitials = () => {
+    if (!user) return 'A';
+    
+    if (user.nom) {
+      return user.nom.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
+    }
+    
+    if (user.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    
+    return 'A';
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -79,11 +127,32 @@ const AdminLayout = () => {
             <Badge count={5}>
               <Button type="text" icon={<BellOutlined />} size="large" />
             </Badge>
-            <Avatar icon={<UserOutlined />} />
-            <span style={{ fontWeight: '500' }}>Admin</span>
-            <Button type="primary" danger onClick={async () => { await logout(); navigate('/login'); }}>
-              Déconnexion
-            </Button>
+            
+            <Dropdown
+              menu={{ items: userMenuItems }}
+              placement="bottomRight"
+              arrow
+            >
+              <Space style={{ cursor: 'pointer', padding: '8px' }}>
+                <Avatar 
+                  style={{ 
+                    backgroundColor: '#1890ff',
+                    color: '#fff',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {getInitials()}
+                </Avatar>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
+                    {getDisplayName()}
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+                    Administrateur
+                  </Text>
+                </div>
+              </Space>
+            </Dropdown>
           </div>
         </Header>
         <Content style={{ 

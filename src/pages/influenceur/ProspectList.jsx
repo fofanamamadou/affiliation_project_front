@@ -22,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import { prospectService } from '../../services/prospectService';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -30,23 +31,46 @@ const ProspectList = () => {
   const [prospects, setProspects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
-  const { user } = useAuth();
+  const { user, isAuthenticated, userType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Vérification de sécurité
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        message.error('Vous devez être connecté pour accéder à cette page');
+        navigate('/login-choice');
+        return;
+      }
+      
+      if (userType !== 'influenceur') {
+        message.error('Accès non autorisé');
+        navigate('/login-choice');
+        return;
+      }
+    }
+  }, [isAuthenticated, userType, authLoading, navigate]);
 
   useEffect(() => {
+    if (!user || authLoading || !isAuthenticated || userType !== 'influenceur') return;
     loadProspects();
-  }, []);
+  }, [user, authLoading, isAuthenticated, userType]);
 
   const loadProspects = async () => {
     setLoading(true);
     try {
-      const result = await prospectService.getAllProspects();
+      // Utiliser le service influenceur pour récupérer les prospects de l'influenceur connecté
+      const result = await prospectService.getInfluenceurProspects(user.id);
       if (result.success) {
         setProspects(result.data);
       } else {
         message.error(result.error);
+        setProspects([]);
       }
     } catch (error) {
+      console.error('Erreur lors du chargement des prospects:', error);
       message.error('Erreur lors du chargement des prospects');
+      setProspects([]);
     } finally {
       setLoading(false);
     }
@@ -62,6 +86,7 @@ const ProspectList = () => {
         message.error(result.error);
       }
     } catch (error) {
+      console.error('Erreur lors de la validation:', error);
       message.error('Erreur lors de la validation');
     }
   };
@@ -136,8 +161,8 @@ const ProspectList = () => {
     },
     {
       title: 'Date d\'inscription',
-      dataIndex: 'date_inscription',
-      key: 'date_inscription',
+      dataIndex: 'date_creation',
+      key: 'date_creation',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
     },
     {
@@ -168,9 +193,23 @@ const ProspectList = () => {
   ];
 
   const handleViewDetails = (record) => {
-    // TODO: Implémenter la vue détaillée
-    message.info('Fonctionnalité à implémenter');
+    // TODO: Créer une page de détails pour les prospects (influenceur)
+    message.info('Page de détails du prospect à implémenter');
   };
+
+  if (authLoading || loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <div className="ant-spin-dot">
+          <i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || userType !== 'influenceur') {
+    return null; // Redirection gérée par useEffect
+  }
 
   return (
     <div style={{ padding: '24px' }}>

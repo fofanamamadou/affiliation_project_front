@@ -13,6 +13,18 @@ export const remiseService = {
     }
   },
 
+  // Récupérer les remises d'un influenceur spécifique
+  async getInfluenceurRemises(influenceurId) {
+    try {
+      const response = await axiosInstance.get(`/influenceurs/${influenceurId}/remises/`);
+      return { success: true, data: response.data };
+    } catch (error) {
+      let errorMessage = "Impossible de récupérer les remises de l'influenceur";
+      if (error.response?.data?.error) errorMessage = error.response.data.error;
+      return { success: false, error: errorMessage };
+    }
+  },
+
   // Marquer une remise comme payée (avec justificatif)
   async payerRemise(remiseId, justificatifFile) {
     try {

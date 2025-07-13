@@ -1,8 +1,9 @@
 import axiosInstance from '../utils/axiosInstance';
+import { handleApiError } from '../utils/errorHandler';
 
 // Service d'authentification
 export const authService = {
-  // Connexion
+  // Connexion générique (pour compatibilité)
   async login(credentials) {
     try {
       const response = await axiosInstance.post('/auth/login/', credentials);
@@ -30,22 +31,59 @@ export const authService = {
         refresh_token
       };
     } catch (error) {
-      let errorMessage = 'Erreur de connexion';
+      return handleApiError(error, 'Erreur de connexion');
+    }
+  },
+
+  // Connexion administrateur
+  async adminLogin(credentials) {
+    try {
+      const response = await axiosInstance.post('/auth/admin/login/', credentials);
+      const { access_token, refresh_token, user_type, user, permissions } = response.data;
       
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.code === 'ECONNABORTED') {
-        errorMessage = 'Délai d\'attente dépassé. Vérifiez votre connexion.';
-      } else if (!error.response) {
-        errorMessage = 'Impossible de se connecter au serveur.';
-      }
+      // Stockage des données
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
+      localStorage.setItem('user_type', user_type);
+      localStorage.setItem('permissions', JSON.stringify(permissions));
+      localStorage.setItem('user', JSON.stringify(user));
       
       return {
-        success: false,
-        error: errorMessage
+        success: true,
+        user,
+        user_type,
+        permissions,
+        access_token,
+        refresh_token
       };
+    } catch (error) {
+      return handleApiError(error, 'Erreur de connexion administrateur');
+    }
+  },
+
+  // Connexion influenceur
+  async influenceurLogin(credentials) {
+    try {
+      const response = await axiosInstance.post('/auth/influenceur/login/', credentials);
+      const { access_token, refresh_token, user_type, influenceur, permissions } = response.data;
+      
+      // Stockage des données
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
+      localStorage.setItem('user_type', user_type);
+      localStorage.setItem('permissions', JSON.stringify(permissions));
+      localStorage.setItem('user', JSON.stringify(influenceur));
+      
+      return {
+        success: true,
+        user: influenceur,
+        user_type,
+        permissions,
+        access_token,
+        refresh_token
+      };
+    } catch (error) {
+      return handleApiError(error, 'Erreur de connexion influenceur');
     }
   },
 
@@ -103,10 +141,7 @@ export const authService = {
         data: response.data
       };
     } catch (error) {
-      return {
-        success: false,
-        error: 'Impossible de récupérer le profil'
-      };
+      return handleApiError(error, 'Impossible de récupérer le profil');
     }
   },
 
@@ -132,18 +167,7 @@ export const authService = {
         refresh_token
       };
     } catch (error) {
-      let errorMessage = 'Erreur lors de l\'inscription';
-      
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors de l\'inscription');
     }
   },
 
@@ -153,16 +177,7 @@ export const authService = {
       await axiosInstance.post('/auth/change-password/', passwords);
       return { success: true };
     } catch (error) {
-      let errorMessage = 'Erreur lors du changement de mot de passe';
-      
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      }
-      
-      return {
-        success: false,
-        error: errorMessage
-      };
+      return handleApiError(error, 'Erreur lors du changement de mot de passe');
     }
   }
 }; 

@@ -69,12 +69,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Connexion
+  // Connexion générique (pour compatibilité)
   const login = async (credentials) => {
     try {
       setLoading(true);
       const result = await authService.login(credentials);
       
+      // Log complet des infos utilisateur reçues à la connexion
+      console.log('Infos utilisateur connecté (login):', result);
       if (result.success) {
         setUser(result.user);
         setUserType(result.user_type);
@@ -90,6 +92,54 @@ export const AuthProvider = ({ children }) => {
       console.error('Erreur de connexion:', error);
       message.error('Erreur lors de la connexion');
       return { success: false, error: 'Erreur lors de la connexion' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Connexion administrateur
+  const adminLogin = async (credentials) => {
+    try {
+      setLoading(true);
+      const result = await authService.adminLogin(credentials);
+      
+      console.log('Infos administrateur connecté:', result);
+      if (result.success) {
+        setUser(result.user);
+        setUserType(result.user_type);
+        setPermissions(result.permissions || []);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      console.error('Erreur de connexion administrateur:', error);
+      return { success: false, error: 'Erreur lors de la connexion administrateur' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Connexion influenceur
+  const influenceurLogin = async (credentials) => {
+    try {
+      setLoading(true);
+      const result = await authService.influenceurLogin(credentials);
+      
+      console.log('Infos influenceur connecté:', result);
+      if (result.success) {
+        setUser(result.user);
+        setUserType(result.user_type);
+        setPermissions(result.permissions || []);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      console.error('Erreur de connexion influenceur:', error);
+      return { success: false, error: 'Erreur lors de la connexion influenceur' };
     } finally {
       setLoading(false);
     }
@@ -170,7 +220,7 @@ export const AuthProvider = ({ children }) => {
 
   // Vérifier si l'utilisateur est admin
   const isAdmin = () => {
-    return userType === 'superuser';
+    return userType === 'admin' || userType === 'superuser';
   };
 
   // Vérifier si l'utilisateur est influenceur
@@ -185,6 +235,8 @@ export const AuthProvider = ({ children }) => {
     userType,
     permissions,
     login,
+    adminLogin,
+    influenceurLogin,
     register,
     logout,
     changePassword,
