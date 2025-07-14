@@ -6,7 +6,8 @@ import {
   TeamOutlined, 
   DollarOutlined, 
   SettingOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  BarChartOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -29,6 +30,11 @@ const InfluenceurLayout = () => {
       key: '/influenceur/prospects',
       icon: <TeamOutlined />,
       label: 'Mes Prospects',
+    },
+    {
+      key: '/influenceur/prospects-stats',
+      icon: <BarChartOutlined />,
+      label: 'Stats Prospects',
     },
     {
       key: '/influenceur/remises',

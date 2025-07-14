@@ -22,8 +22,12 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import InfluenceurList from './pages/admin/InfluenceurList';
 import InfluenceurDetail from './pages/admin/InfluenceurDetail';
 import ProspectList from './pages/admin/ProspectList';
+import ProspectDetail from './pages/admin/ProspectDetail';
+import ProspectStats from './pages/admin/ProspectStats';
 import InfluenceurDashboard from './pages/influenceur/InfluenceurDashboard';
 import InfluenceurProspectList from './pages/influenceur/ProspectList';
+import InfluenceurProspectDetail from './pages/influenceur/ProspectDetail';
+import InfluenceurProspectStats from './pages/influenceur/ProspectStats';
 import RemiseList from './pages/admin/RemiseList';
 import RemiseStats from './pages/admin/RemiseStats';
 import InfluenceurRemiseList from './pages/influenceur/RemiseList';
@@ -56,8 +60,10 @@ function App() {
               <Route path="influenceurs" element={<InfluenceurList />} />
               <Route path="influenceurs/:id" element={<InfluenceurDetail />} />
               <Route path="prospects" element={<ProspectList />} />
+              <Route path="prospects/:id" element={<ProspectDetail />} />
+              <Route path="prospects-stats" element={<ProspectStats />} />
               <Route path="remises" element={<RemiseList />} />
-              <Route path="statistiques" element={<RemiseStats />} />
+              <Route path="remises-stats" element={<RemiseStats />} />
             </Route>
           </Route>
 
@@ -66,6 +72,8 @@ function App() {
             <Route element={<InfluenceurLayout />}>
               <Route index element={<InfluenceurDashboard />} />
               <Route path="prospects" element={<InfluenceurProspectList />} />
+              <Route path="prospects/:id" element={<InfluenceurProspectDetail />} />
+              <Route path="prospects-stats" element={<InfluenceurProspectStats />} />
               <Route path="remises" element={<InfluenceurRemiseList />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>

@@ -46,6 +46,28 @@ export const prospectService = {
     }
   },
 
+  // Récupérer un prospect par ID
+  async getProspectById(prospectId) {
+    try {
+      const response = await axiosInstance.get(`/prospects/${prospectId}/`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      let errorMessage = 'Impossible de récupérer les détails du prospect';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+  },
+
   // Créer un prospect
   async createProspect(prospectData) {
     try {
@@ -83,6 +105,52 @@ export const prospectService = {
         errorMessage = error.response.data.error;
       } else if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
+      }
+      
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+  },
+
+  // Rejeter un prospect
+  async rejectProspect(prospectId) {
+    try {
+      const response = await axiosInstance.post(`/prospects/${prospectId}/rejeter/`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      let errorMessage = 'Erreur lors du rejet du prospect';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
+      
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+  },
+
+  // Récupérer les statistiques des prospects
+  async getProspectsStats() {
+    try {
+      const response = await axiosInstance.get('/prospects/statistiques/');
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      let errorMessage = 'Impossible de récupérer les statistiques des prospects';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
       }
       
       return {

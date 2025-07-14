@@ -224,8 +224,8 @@ const InfluenceurDetail = () => {
     },
     {
       title: 'Date d\'inscription',
-      dataIndex: 'date_creation',
-      key: 'date_creation',
+      dataIndex: 'date_inscription',
+      key: 'date_inscription',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
     },
   ];

@@ -18,7 +18,8 @@ import {
   CheckCircleOutlined,
   UserOutlined,
   FilterOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons';
 import { prospectService } from '../../services/prospectService';
 import { useAuth } from '../../context/AuthContext';
@@ -91,13 +92,28 @@ const ProspectList = () => {
     }
   };
 
+  const handleReject = async (prospectId) => {
+    try {
+      const result = await prospectService.rejectProspect(prospectId);
+      if (result.success) {
+        message.success('Prospect rejeté avec succès');
+        loadProspects();
+      } else {
+        message.error(result.error);
+      }
+    } catch (error) {
+      console.error('Erreur lors du rejet:', error);
+      message.error('Erreur lors du rejet');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirme':
         return 'green';
       case 'en_attente':
         return 'orange';
-      case 'rejete':
+      case 'rejeter':
         return 'red';
       default:
         return 'default';
@@ -110,7 +126,7 @@ const ProspectList = () => {
         return 'Confirmé';
       case 'en_attente':
         return 'En attente';
-      case 'rejete':
+      case 'rejeter':
         return 'Rejeté';
       default:
         return status;
@@ -177,7 +193,7 @@ const ProspectList = () => {
               onClick={() => handleViewDetails(record)}
             />
           </Tooltip>
-          {record.statut !== 'confirme' && (
+          {record.statut !== 'confirme' && record.statut !== 'rejeter' && (
             <Tooltip title="Valider">
               <Button 
                 type="text" 
@@ -187,14 +203,23 @@ const ProspectList = () => {
               />
             </Tooltip>
           )}
+          {record.statut !== 'rejeter' && record.statut !== 'confirme' && (
+            <Tooltip title="Rejeter">
+              <Button 
+                type="text" 
+                icon={<CloseCircleOutlined />} 
+                onClick={() => handleReject(record.id)}
+                style={{ color: '#ff4d4f' }}
+              />
+            </Tooltip>
+          )}
         </Space>
       ),
     },
   ];
 
   const handleViewDetails = (record) => {
-    // TODO: Créer une page de détails pour les prospects (influenceur)
-    message.info('Page de détails du prospect à implémenter');
+    navigate(`/influenceur/prospects/${record.id}`);
   };
 
   if (authLoading || loading) {
@@ -258,13 +283,13 @@ const ProspectList = () => {
             <Select
               value={filterStatus}
               onChange={setFilterStatus}
-              style={{ width: 200 }}
+              style={{ width: 150 }}
               placeholder="Filtrer par statut"
             >
               <Option value="all">Tous les statuts</Option>
               <Option value="en_attente">En attente</Option>
               <Option value="confirme">Confirmés</Option>
-              <Option value="rejete">Rejetés</Option>
+              <Option value="rejeter">Rejetés</Option>
             </Select>
           </div>
         </div>

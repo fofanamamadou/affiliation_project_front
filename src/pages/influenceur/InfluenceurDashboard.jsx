@@ -6,7 +6,10 @@ import {
   DollarOutlined, 
   BarChartOutlined,
   ShareAltOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ClockCircleOutlined
 } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
@@ -71,7 +74,10 @@ const InfluenceurDashboard = () => {
           totalProspects: data.total_prospects || 0,
           totalRemises: data.total_remises || 0,
           totalGains: data.total_gains || 0,
-          tauxConversion: data.taux_conversion || 0
+          tauxConversion: data.taux_conversion || 0,
+          prospectsConfirmes: data.prospects_confirme || 0,
+          prospectsRejetes: data.prospects_rejeter || 0,
+          prospectsEnAttente: data.prospects_en_attente || 0
         });
         setChartData(
           (data.evolution || []).map(item => ({
@@ -114,6 +120,30 @@ const InfluenceurDashboard = () => {
       changeType: 'positive'
     },
     {
+      title: 'Confirmés',
+      value: stats.prospectsConfirmes || 0,
+      icon: <CheckCircleOutlined />,
+      color: '#52c41a',
+      change: '+8%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Rejetés',
+      value: stats.prospectsRejetes || 0,
+      icon: <CloseCircleOutlined />,
+      color: '#ff4d4f',
+      change: '-5%',
+      changeType: 'negative'
+    },
+    {
+      title: 'En Attente',
+      value: stats.prospectsEnAttente || 0,
+      icon: <ClockCircleOutlined />,
+      color: '#faad14',
+      change: '+12%',
+      changeType: 'positive'
+    },
+    {
       title: 'Remises',
       value: stats.totalRemises,
       icon: <DollarOutlined />,
@@ -146,8 +176,9 @@ const InfluenceurDashboard = () => {
         return 'green';
       case 'en_attente':
         return 'orange';
-      case 'rejete':
+      case 'rejeter':
       case 'refuse':
+      case 'rejete':
         return 'red';
       default:
         return 'default';
@@ -161,9 +192,10 @@ const InfluenceurDashboard = () => {
         return 'Validé';
       case 'en_attente':
         return 'En attente';
-      case 'rejete':
+      case 'rejeter':
       case 'refuse':
-        return 'Refusé';
+      case 'rejete':
+        return 'Rejeté';
       default:
         return status;
     }

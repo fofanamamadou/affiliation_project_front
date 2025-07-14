@@ -43,7 +43,7 @@ const RemiseList = () => {
   const [calcLoading, setCalcLoading] = useState(false);
   const [calcResult, setCalcResult] = useState(null);
   const [calcInfluId, setCalcInfluId] = useState();
-  const [calcMontant, setCalcMontant] = useState(10);
+  const [calcMontant, setCalcMontant] = useState(25000);
   const [influenceurs, setInfluenceurs] = useState([]);
 
 

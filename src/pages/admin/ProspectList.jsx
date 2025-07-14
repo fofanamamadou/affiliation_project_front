@@ -3,26 +3,22 @@ import {
   Table, 
   Button, 
   Space, 
-  Modal, 
-  Form, 
-  Input, 
   message, 
   Popconfirm,
   Card,
   Typography,
   Tag,
   Tooltip,
-  Select,
-  DatePicker
+  Select
 } from 'antd';
 import { 
   PlusOutlined, 
-  EditOutlined, 
   DeleteOutlined,
   EyeOutlined,
   CheckCircleOutlined,
   UserOutlined,
-  FilterOutlined
+  FilterOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons';
 import { prospectService } from '../../services/prospectService';
 import { influenceurService } from '../../services/influenceurService';
@@ -35,12 +31,9 @@ const { Option } = Select;
 const ProspectList = () => {
   const [prospects, setProspects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editingProspect, setEditingProspect] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterInfluenceur, setFilterInfluenceur] = useState('all');
   const [influenceurs, setInfluenceurs] = useState([]);
-  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,21 +64,6 @@ const ProspectList = () => {
     }
   };
 
-  const handleCreate = () => {
-    setEditingProspect(null);
-    form.resetFields();
-    setModalVisible(true);
-  };
-
-  const handleEdit = (record) => {
-    setEditingProspect(record);
-    form.setFieldsValue({
-      ...record,
-      date_inscription: record.date_inscription ? dayjs(record.date_inscription) : null
-    });
-    setModalVisible(true);
-  };
-
   const handleValidate = async (prospectId) => {
     try {
       const result = await prospectService.validateProspect(prospectId);
@@ -100,30 +78,17 @@ const ProspectList = () => {
     }
   };
 
-  const handleSubmit = async (values) => {
+  const handleReject = async (prospectId) => {
     try {
-      const formData = {
-        ...values,
-        date_inscription: values.date_inscription ? values.date_inscription.toISOString() : null
-      };
-
-      let result;
-      if (editingProspect) {
-        // Pour l'instant, on ne peut que valider les prospects
-        result = await prospectService.validateProspect(editingProspect.id);
-      } else {
-        result = await prospectService.createProspect(formData);
-      }
-
+      const result = await prospectService.rejectProspect(prospectId);
       if (result.success) {
-        message.success(editingProspect ? 'Prospect mis à jour' : 'Prospect créé');
-        setModalVisible(false);
+        message.success('Prospect rejeté avec succès');
         loadProspects();
       } else {
         message.error(result.error);
       }
     } catch (error) {
-      message.error('Erreur lors de la sauvegarde');
+      message.error('Erreur lors du rejet');
     }
   };
 
@@ -133,7 +98,7 @@ const ProspectList = () => {
         return 'green';
       case 'en_attente':
         return 'orange';
-      case 'rejete':
+      case 'rejeter':
         return 'red';
       default:
         return 'default';
@@ -146,7 +111,7 @@ const ProspectList = () => {
         return 'Confirmé';
       case 'en_attente':
         return 'En attente';
-      case 'rejete':
+      case 'rejeter':
         return 'Rejeté';
       default:
         return status;
@@ -227,7 +192,7 @@ const ProspectList = () => {
               onClick={() => handleViewDetails(record)}
             />
           </Tooltip>
-          {record.statut !== 'confirme' && (
+          {record.statut !== 'confirme' && record.statut !== 'rejeter' && (
             <Tooltip title="Valider">
               <Button 
                 type="text" 
@@ -237,21 +202,23 @@ const ProspectList = () => {
               />
             </Tooltip>
           )}
-          <Tooltip title="Modifier">
-            <Button 
-              type="text" 
-              icon={<EditOutlined />} 
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
+          {record.statut !== 'rejeter' && record.statut !== 'confirme' && (
+            <Tooltip title="Rejeter">
+              <Button 
+                type="text" 
+                icon={<CloseCircleOutlined />} 
+                onClick={() => handleReject(record.id)}
+                style={{ color: '#ff4d4f' }}
+              />
+            </Tooltip>
+          )}
         </Space>
       ),
     },
   ];
 
   const handleViewDetails = (record) => {
-    // TODO: Créer une page de détails pour les prospects
-    message.info('Page de détails du prospect à implémenter');
+    navigate(`/admin/prospects/${record.id}`);
   };
 
   return (
@@ -271,6 +238,7 @@ const ProspectList = () => {
               <Option value="all">Tous les statuts</Option>
               <Option value="en_attente">En attente</Option>
               <Option value="confirme">Confirmés</Option>
+              <Option value="rejeter">Rejetés</Option>
             </Select>
             <Select
               value={filterInfluenceur}
@@ -299,9 +267,6 @@ const ProspectList = () => {
               `${range[0]}-${range[1]} sur ${total} prospects`,
           }}
         />
-
-        {/* Modal création */}
-        {/* (Supprimé : pas de modal de création de prospect pour l'admin) */}
       </Card>
     </div>
   );
