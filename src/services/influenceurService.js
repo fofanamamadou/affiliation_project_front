@@ -103,5 +103,31 @@ export const influenceurService = {
     } catch (error) {
       return handleApiError(error, 'Impossible de récupérer les remises');
     }
+  },
+
+  // Valider un influenceur (admin)
+  async validateInfluenceur(influenceurId) {
+    try {
+      const response = await axiosInstance.patch(`/influenceurs/${influenceurId}/valider/`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return handleApiError(error, "Erreur lors de la validation de l'influenceur");
+    }
+  },
+
+  // Désactiver un influenceur (admin)
+  async deactivateInfluenceur(influenceurId) {
+    try {
+      const response = await axiosInstance.patch(`/influenceurs/${influenceurId}/desactiver/`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return handleApiError(error, "Erreur lors de la désactivation de l'influenceur");
+    }
   }
 }; 

@@ -151,7 +151,7 @@ const AffiliationForm = () => {
             </Paragraph>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 32 }}>
               <a
-                href="https://www.linkedin.com/"
+                href="https://www.linkedin.com/company/isatec-universit%C3%A9-bilingue/"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="LinkedIn"
@@ -165,7 +165,7 @@ const AffiliationForm = () => {
                 </svg>
               </a>
               <a
-                href="https://www.facebook.com/"
+                href="https://www.facebook.com/ispatec.mali"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Facebook"
@@ -179,7 +179,7 @@ const AffiliationForm = () => {
                 </svg>
               </a>
               <a
-                href="https://www.tiktok.com/"
+                href="https://www.tiktok.com/@ispatec"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="TikTok"
@@ -292,7 +292,7 @@ const AffiliationForm = () => {
                 ]}
               >
                 <Input 
-                  placeholder="Ex: Jean Dupont" 
+                  placeholder="Ex: Ousmane KANE" 
                   style={{ height: '48px', borderRadius: '8px' }}
                 />
               </Form.Item>
@@ -329,12 +329,11 @@ const AffiliationForm = () => {
               </span>
             }
             rules={[
-              { required: true, message: 'Veuillez saisir votre email' },
               { type: 'email', message: 'Format d\'email invalide' }
             ]}
           >
             <Input 
-              placeholder="votre.email@exemple.com" 
+              placeholder="votre.email@exemple.com (optionnel)" 
               autoComplete="email"
               style={{ height: '48px', borderRadius: '8px' }}
             />
@@ -355,6 +354,11 @@ const AffiliationForm = () => {
                 ]}
               >
                 <Select
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
                   placeholder="Sélectionnez votre niveau"
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setNiveauEtude(value)}
@@ -396,6 +400,11 @@ const AffiliationForm = () => {
                   ]}
                 >
                   <Select
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                    }
                     placeholder="Sélectionnez votre série"
                     style={{ height: '48px', borderRadius: '8px' }}
                     onChange={(value) => setSerieBac(value)}
@@ -442,6 +451,11 @@ const AffiliationForm = () => {
                 ]}
               >
                 <Select
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
                   placeholder="Sélectionnez votre filière"
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setFiliereSouhaitee(value)}

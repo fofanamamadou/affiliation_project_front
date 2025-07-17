@@ -15,6 +15,7 @@ import {
   UserSwitchOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
+import logoUniversite from '../logo_universite.ico';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -27,7 +28,7 @@ const AdminLayout = () => {
 
   const navigation = [
     { key: '/admin', icon: <HomeOutlined />, label: 'Dashboard' },
-    { key: '/admin/influenceurs', icon: <UserOutlined />, label: 'Influenceurs' },
+    { key: '/admin/influenceurs', icon: <UserOutlined />, label: 'Partenaires' },
     { key: '/admin/prospects', icon: <TeamOutlined />, label: 'Prospects' },
     { key: '/admin/prospects-stats', icon: <BarChartOutlined />, label: 'Stats Prospects' },
     { key: '/admin/remises', icon: <DollarOutlined />, label: 'Remises' },
@@ -125,9 +126,6 @@ const AdminLayout = () => {
             style={{ fontSize: '16px', width: 64, height: 64 }}
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <Badge count={5}>
-              <Button type="text" icon={<BellOutlined />} size="large" />
-            </Badge>
             
             <Dropdown
               menu={{ items: userMenuItems }}

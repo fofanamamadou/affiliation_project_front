@@ -20,7 +20,7 @@ export const useFormWithError = (formName) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error(`${formName} error:`, error);
+      // console.error(`${formName} error:`, error);
       const errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
       setError(errorMessage);
       return { success: false, error: errorMessage };

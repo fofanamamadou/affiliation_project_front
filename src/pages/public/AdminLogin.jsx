@@ -52,7 +52,7 @@ const AdminLogin = () => {
       }
       
     } catch (error) {
-      console.error('Admin login error:', error);
+      // console.error('Admin login error:', error);
       setError('Une erreur est survenue. Veuillez réessayer.');
       // Ne pas réinitialiser le formulaire en cas d'erreur
     } finally {
@@ -180,7 +180,7 @@ const AdminLogin = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Text type="secondary" style={{ fontSize: '14px' }}>
-            Vous êtes un influenceur ?{' '}
+            Vous êtes un partenaire ?{' '}
             <a href="/influenceur/login" style={{ color: '#1890ff', fontWeight: '500' }}>
               Connectez-vous ici
             </a>

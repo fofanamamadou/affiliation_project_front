@@ -33,7 +33,8 @@ import {
   DeleteOutlined,
   ArrowLeftOutlined,
   EyeOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined,
+  StopOutlined
 } from '@ant-design/icons';
 import { adminService } from '../../services/adminService';
 import { influenceurService } from '../../services/influenceurService';
@@ -85,7 +86,7 @@ const InfluenceurDetail = () => {
       }
 
     } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
+      // console.error('Erreur lors du chargement des données:', error);
       setError('Erreur lors du chargement des données');
     } finally {
       setLoading(false);
@@ -130,6 +131,30 @@ const InfluenceurDetail = () => {
       }
     } catch (error) {
       message.error('Erreur lors de la suppression');
+    }
+  };
+
+  const handleToggleActive = async () => {
+    try {
+      let result;
+      if (influenceur.is_active) {
+        result = await influenceurService.deactivateInfluenceur(influenceur.id);
+        if (result.success) {
+          message.success(`Partenaire désactivé avec succès !`);
+        } else {
+          message.error(result.error);
+        }
+      } else {
+        result = await influenceurService.validateInfluenceur(influenceur.id);
+        if (result.success) {
+          message.success('Compte validé avec succès !');
+        } else {
+          message.error(result.error);
+        }
+      }
+      loadInfluenceurData();
+    } catch (error) {
+      message.error('Erreur lors du changement de statut');
     }
   };
 
@@ -235,7 +260,7 @@ const InfluenceurDetail = () => {
       title: 'Montant',
       dataIndex: 'montant',
       key: 'montant',
-      render: (montant) => `${montant}€`,
+      render: (montant) => `${montant} F CFA`,
     },
     {
       title: 'Statut',
@@ -289,92 +314,66 @@ const InfluenceurDetail = () => {
     .reduce((sum, r) => sum + (r.montant || 0), 0);
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <Space>
-            <Button 
-              icon={<ArrowLeftOutlined />} 
-              onClick={() => navigate('/admin/influenceurs')}
-            >
-              Retour
-            </Button>
-            <Title level={2} style={{ margin: 0 }}>
-              Détails de l'Influenceur
-            </Title>
-          </Space>
-          <Space>
-            <Button 
-              type="primary" 
-              icon={<EditOutlined />}
-              onClick={handleEdit}
-            >
-              Modifier
-            </Button>
+    <div className="admin-influenceurdetail-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(16px, 4vw, 24px)', gap: 'clamp(8px, 2vw, 12px)' }}>
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={() => navigate('/admin/influenceurs')}
+            style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+          >
+            Retour à la liste
+          </Button>
+          <Space wrap size={[8, 8]}>
+            <Tooltip title={influenceur.is_active ? "Désactiver le partenaire" : "Valider le partenaire"}>
+              <Button
+                type="text"
+                icon={influenceur.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
+                onClick={handleToggleActive}
+              />
+            </Tooltip>
+            <Button icon={<EditOutlined />} onClick={handleEdit} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Modifier</Button>
             <Popconfirm
-              title="Êtes-vous sûr de vouloir supprimer cet influenceur ?"
-              description="Cette action est irréversible."
+              title="Êtes-vous sûr de vouloir supprimer ce partenaire ?"
               onConfirm={handleDelete}
               okText="Oui"
               cancelText="Non"
             >
-              <Button 
-                danger 
-                icon={<DeleteOutlined />}
-              >
-                Supprimer
-              </Button>
+              <Button danger icon={<DeleteOutlined />} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Supprimer</Button>
             </Popconfirm>
           </Space>
         </div>
-
         <ErrorAlert 
           error={error}
           onClose={() => setError('')}
         />
-
         {/* Informations principales */}
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]}>
           <Col xs={24} lg={16}>
-            <Card title="Informations personnelles">
-              <Descriptions column={1} bordered>
-                <Descriptions.Item label="Nom complet">
-                  {influenceur.nom}
-                </Descriptions.Item>
-                <Descriptions.Item label="Email">
-                  {influenceur.email}
-                </Descriptions.Item>
-                <Descriptions.Item label="Téléphone">
-                  {influenceur.telephone || 'Non renseigné'}
-                </Descriptions.Item>
-                <Descriptions.Item label="Code d'affiliation">
-                  <Tag color="blue">{influenceur.code_affiliation}</Tag>
-                </Descriptions.Item>
-                <Descriptions.Item label="Date d'inscription">
-                  {influenceur.date_creation ? new Date(influenceur.date_creation).toLocaleDateString('fr-FR') : 'Non disponible'}
-                </Descriptions.Item>
-                <Descriptions.Item label="Statut">
-                  <Tag color={influenceur.is_active ? 'green' : 'red'}>
-                    {influenceur.is_active ? 'Actif' : 'Inactif'}
-                  </Tag>
-                </Descriptions.Item>
+            <Card title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Informations personnelles</span>} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+              <Descriptions column={1} bordered size="small">
+                <Descriptions.Item label="Nom complet">{influenceur.nom}</Descriptions.Item>
+                <Descriptions.Item label="Email">{influenceur.email}</Descriptions.Item>
+                <Descriptions.Item label="Téléphone">{influenceur.telephone || 'Non renseigné'}</Descriptions.Item>
+                <Descriptions.Item label="Code d'affiliation"><Tag color="blue" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.code_affiliation}</Tag></Descriptions.Item>
+                <Descriptions.Item label="Date d'inscription">{influenceur.date_creation ? new Date(influenceur.date_creation).toLocaleDateString('fr-FR') : 'Non disponible'}</Descriptions.Item>
+                <Descriptions.Item label="Statut"><Tag color={influenceur.is_active ? 'green' : 'red'} style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.is_active ? 'Actif' : 'Inactif'}</Tag></Descriptions.Item>
               </Descriptions>
             </Card>
           </Col>
-
           <Col xs={24} lg={8}>
-            <Card title="Statistiques">
+            <Card title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Statistiques</span>}>
               <Row gutter={[16, 16]}>
                 <Col span={12}>
                   <Statistic
-                    title="Prospects"
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Prospects</span>}
                     value={totalProspects}
                     prefix={<TeamOutlined />}
                   />
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title="Confirmés"
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Confirmés</span>}
                     value={confirmedProspects}
                     prefix={<CheckCircleOutlined />}
                     valueStyle={{ color: '#52c41a' }}
@@ -382,17 +381,17 @@ const InfluenceurDetail = () => {
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title="Remises"
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Remises</span>}
                     value={totalRemises}
                     prefix={<TrophyOutlined />}
                   />
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title="Gains totaux"
-                    value={totalGains}
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Gains totaux</span>}
+                    value={Number(totalGains).toLocaleString()}
                     prefix={<DollarOutlined />}
-                    suffix="€"
+                    suffix="F CFA"
                     valueStyle={{ color: '#52c41a' }}
                   />
                 </Col>
@@ -400,61 +399,71 @@ const InfluenceurDetail = () => {
             </Card>
           </Col>
         </Row>
-
         <Divider />
-
         {/* Prospects */}
-        <Card title="Prospects de l'influenceur" style={{ marginBottom: '24px' }}>
+        <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Prospects de l'influenceur</span>} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
           {prospects.length > 0 ? (
-            <Table
-              columns={prospectsColumns}
-              dataSource={prospects}
-              rowKey="id"
-              pagination={{
-                pageSize: 5,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) => 
-                  `${range[0]}-${range[1]} sur ${total} prospects`,
-              }}
-            />
+            <div style={{ overflowX: 'auto' }}>
+              <Table
+                columns={prospectsColumns}
+                dataSource={prospects}
+                rowKey="id"
+                pagination={{
+                  pageSize: 5,
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                  showTotal: (total, range) => 
+                    `${range[0]}-${range[1]} sur ${total} prospects`,
+                  size: 'default',
+                  responsive: true
+                }}
+                scroll={{ x: 'max-content' }}
+                style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
+              />
+            </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#8c8c8c' }}>
-              Aucun prospect pour cet influenceur
+            <div style={{ textAlign: 'center', padding: 'clamp(30px, 8vw, 40px)', color: '#8c8c8c', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>
+              Aucun prospect pour ce partenaire
             </div>
           )}
         </Card>
-
         {/* Remises */}
-        <Card title="Remises de l'influenceur">
+        <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Primes du partenaire</span>}>
           {remises.length > 0 ? (
-            <Table
-              columns={remisesColumns}
-              dataSource={remises}
-              rowKey="id"
-              pagination={{
-                pageSize: 5,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) => 
-                  `${range[0]}-${range[1]} sur ${total} remises`,
-              }}
-            />
+            <div style={{ overflowX: 'auto' }}>
+              <Table
+                columns={remisesColumns}
+                dataSource={remises}
+                rowKey="id"
+                pagination={{
+                  pageSize: 5,
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                  showTotal: (total, range) => 
+                    `${range[0]}-${range[1]} sur ${total} primes`,
+                  size: 'default',
+                  responsive: true
+                }}
+                scroll={{ x: 'max-content' }}
+                style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
+              />
+            </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#8c8c8c' }}>
-              Aucune remise pour cet influenceur
+            <div style={{ textAlign: 'center', padding: 'clamp(30px, 8vw, 40px)', color: '#8c8c8c', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>
+              Aucune prime pour ce partenaire
             </div>
           )}
         </Card>
       </Card>
-
       {/* Modal de modification */}
       <Modal
-        title="Modifier l'influenceur"
+        title="Modifier le partenaire"
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         footer={null}
-        width={600}
+        width={window.innerWidth < 700 ? '95vw' : 600}
+        style={{ top: 24 }}
+        bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
       >
         <Form
           form={form}
@@ -469,9 +478,8 @@ const InfluenceurDetail = () => {
               { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
             ]}
           >
-            <Input placeholder="Nom de l'influenceur" />
+            <Input placeholder="Nom du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
           </Form.Item>
-
           <Form.Item
             name="email"
             label="Email"
@@ -480,9 +488,8 @@ const InfluenceurDetail = () => {
               { type: 'email', message: 'Email invalide' }
             ]}
           >
-            <Input placeholder="email@exemple.com" />
+            <Input placeholder="email@exemple.com" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
           </Form.Item>
-
           <Form.Item
             name="telephone"
             label="Téléphone"
@@ -491,19 +498,19 @@ const InfluenceurDetail = () => {
               { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
             ]}
           >
-            <Input placeholder="Numéro de téléphone" maxLength={15} />
+            <Input placeholder="Numéro de téléphone" maxLength={15} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
           </Form.Item>
-
           <Form.Item>
             <Space>
               <Button 
                 type="primary" 
                 htmlType="submit" 
                 loading={submitLoading}
+                style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               >
                 Sauvegarder
               </Button>
-              <Button onClick={() => setEditModalVisible(false)}>
+              <Button onClick={() => setEditModalVisible(false)} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
                 Annuler
               </Button>
             </Space>

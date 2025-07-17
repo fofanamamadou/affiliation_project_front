@@ -59,7 +59,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     {
-      title: 'Influenceurs',
+      title: 'Partenaires',
       value: stats.total_influenceurs || 0,
       icon: <UserOutlined />, 
       color: '#1890ff'
@@ -174,20 +174,22 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={2} style={{ marginBottom: 24 }}>Dashboard Administrateur</Title>
+    <div className="admin-dashboard-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Title level={2} style={{ marginBottom: 'clamp(16px, 4vw, 24px)', fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', fontWeight: 'bold' }}>
+        Dashboard Administrateur
+      </Title>
       
       {/* Statistiques globales */}
-      <Row gutter={[24, 24]}>
+      <Row gutter={[16, 16]}>
         {statCards.map((card, idx) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={card.title}>
-            <Card>
+          <Col xs={24} sm={12} md={8} lg={6} key={card.title} style={{ minWidth: 0 }}>
+            <Card style={{ height: '100%', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
               <Statistic
-                title={card.title}
+                title={<span style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>{card.title}</span>}
                 value={card.value}
                 prefix={card.icon}
                 suffix={card.suffix}
-                valueStyle={{ color: card.color, fontWeight: 600 }}
+                valueStyle={{ color: card.color, fontWeight: 600, fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)' }}
               />
             </Card>
           </Col>
@@ -195,9 +197,9 @@ const AdminDashboard = () => {
       </Row>
 
       {/* Métriques des prospects */}
-      <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
+      <Row gutter={[16, 16]} style={{ marginTop: 'clamp(16px, 4vw, 24px)' }}>
         <Col xs={24} lg={12}>
-          <Card title="Répartition des Prospects">
+          <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Répartition des Prospects</span>} style={{ borderRadius: '12px' }}>
             <div style={{ height: 300 }}>
               {prospectPieData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
@@ -305,13 +307,16 @@ const AdminDashboard = () => {
       {/* Top influenceurs */}
       {stats.top_influenceurs && (
         <Card style={{ marginTop: 32 }}>
-          <Title level={4} style={{ marginBottom: 16 }}>Top Influenceurs</Title>
-          <Table
-            columns={columns}
-            dataSource={stats.top_influenceurs}
-            rowKey={(row) => row.id}
-            pagination={false}
-          />
+          <Title level={4} style={{ marginBottom: 16 }}>Top Partenaires</Title>
+          <div style={{ overflowX: 'auto' }}>
+            <Table
+              columns={columns}
+              dataSource={stats.top_influenceurs}
+              rowKey={(row) => row.id}
+              pagination={false}
+              scroll={{ x: 'max-content' }} // Ajout scroll horizontal mobile
+            />
+          </div>
         </Card>
       )}
 
@@ -325,6 +330,7 @@ const AdminDashboard = () => {
               icon={<BarChartOutlined />}
               onClick={() => navigate('/admin/prospects-stats')}
               block
+              style={{ marginBottom: 8 }}
             >
               Statistiques Prospects
             </Button>
@@ -334,6 +340,7 @@ const AdminDashboard = () => {
               icon={<TeamOutlined />}
               onClick={() => navigate('/admin/prospects')}
               block
+              style={{ marginBottom: 8 }}
             >
               Gérer Prospects
             </Button>
@@ -343,8 +350,9 @@ const AdminDashboard = () => {
               icon={<UserOutlined />}
               onClick={() => navigate('/admin/influenceurs')}
               block
+              style={{ marginBottom: 8 }}
             >
-              Gérer Influenceurs
+              Gérer Partenaires
             </Button>
           </Col>
           <Col xs={24} sm={12} md={6}>
@@ -352,6 +360,7 @@ const AdminDashboard = () => {
               icon={<DollarOutlined />}
               onClick={() => navigate('/admin/remises')}
               block
+              style={{ marginBottom: 8 }}
             >
               Gérer Remises
             </Button>

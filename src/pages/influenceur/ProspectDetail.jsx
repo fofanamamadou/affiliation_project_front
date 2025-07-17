@@ -207,59 +207,64 @@ const ProspectDetail = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Card>
-        <div style={{ marginBottom: '24px' }}>
+    <div className="partenaire-prospectdetail-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <div style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={() => navigate('/influenceur/prospects')}
-            style={{ marginBottom: '16px' }}
+            style={{ 
+              marginBottom: 'clamp(12px, 3vw, 16px)',
+              fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+            }}
           >
             Retour à la liste
           </Button>
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div>
-                <Title level={2} style={{ margin: 0 }}>{prospect.nom}</Title>
-                <Tag 
-                  color={getStatusColor(prospect.statut)} 
-                  icon={getStatusIcon(prospect.statut)}
-                  style={{ fontSize: '14px', padding: '4px 12px' }}
-                >
-                  {getStatusText(prospect.statut)}
-                </Tag>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: 'clamp(12px, 3vw, 16px)'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 'clamp(8px, 2vw, 12px)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 2vw, 12px)' }}>
+                <Avatar size={64} icon={<UserOutlined />} />
+                <div>
+                  <Title level={2} style={{ 
+                    margin: 0, 
+                    fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+                    fontWeight: 'bold'
+                  }}>
+                    {prospect.nom}
+                  </Title>
+                  <Tag 
+                    color={getStatusColor(prospect.statut)} 
+                    icon={getStatusIcon(prospect.statut)}
+                    style={{ 
+                      fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', 
+                      padding: 'clamp(2px, 1vw, 4px) clamp(8px, 2vw, 12px)'
+                    }}
+                  >
+                    {getStatusText(prospect.statut)}
+                  </Tag>
+                </div>
               </div>
             </div>
-            
-            {prospect.statut !== 'confirme' && prospect.statut !== 'rejeter' && (
-              <Button 
-                type="primary" 
-                icon={<CheckCircleOutlined />}
-                onClick={handleValidate}
-                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-              >
-                Valider le prospect
-              </Button>
-            )}
-            {prospect.statut !== 'rejeter' && prospect.statut !== 'confirme' && (
-              <Button 
-                danger
-                icon={<CloseCircleOutlined />}
-                onClick={handleReject}
-                style={{ marginLeft: '8px' }}
-              >
-                Rejeter le prospect
-              </Button>
-            )}
           </div>
         </div>
 
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]}>
           <Col xs={24} lg={16}>
-            <Card title="Informations personnelles" style={{ marginBottom: '24px' }}>
-              <Descriptions column={2} bordered>
+            <Card 
+              title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Informations personnelles</span>} 
+              style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}
+            >
+              <Descriptions column={{ xs: 1, sm: 2 }} bordered size="small">
                 <Descriptions.Item label="Nom complet" span={2}>
                   <Space>
                     <UserOutlined />
@@ -293,8 +298,11 @@ const ProspectDetail = () => {
               </Descriptions>
             </Card>
 
-            <Card title="Informations éducatives" style={{ marginBottom: '24px' }}>
-              <Descriptions column={2} bordered>
+            <Card 
+              title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Informations éducatives</span>} 
+              style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}
+            >
+              <Descriptions column={{ xs: 1, sm: 2 }} bordered size="small">
                 <Descriptions.Item label="Niveau d'étude">
                   <Space>
                     <BookOutlined />
@@ -322,11 +330,13 @@ const ProspectDetail = () => {
           </Col>
 
           <Col xs={24} lg={8}>
-            <Card title="Informations d'affiliation">
-              <Descriptions column={1} bordered>
+            <Card title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Informations d'affiliation</span>}>
+              <Descriptions column={1} bordered size="small">
                 <Descriptions.Item label="Code d'affiliation">
                   {prospect.influenceur_details ? (
-                    <Text code>{prospect.influenceur_details.code_affiliation}</Text>
+                    <Text code style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
+                      {prospect.influenceur_details.code_affiliation}
+                    </Text>
                   ) : (
                     '-'
                   )}
@@ -334,7 +344,7 @@ const ProspectDetail = () => {
                 
                 <Descriptions.Item label="Remise associée">
                   {prospect.remise_details ? (
-                    <Tag color="green">
+                    <Tag color="green" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
                       {prospect.remise_details.nom}
                     </Tag>
                   ) : (
@@ -344,21 +354,24 @@ const ProspectDetail = () => {
               </Descriptions>
             </Card>
 
-            <Card title="Statistiques" style={{ marginTop: '16px' }}>
+            <Card title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Statistiques</span>} style={{ marginTop: 'clamp(12px, 3vw, 16px)' }}>
               <Row gutter={[16, 16]}>
                 <Col span={12}>
                   <Statistic
-                    title="ID Prospect"
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>ID Prospect</span>}
                     value={prospect.id}
-                    valueStyle={{ fontSize: '16px' }}
+                    valueStyle={{ 
+                      fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+                      fontWeight: 'bold'
+                    }}
                   />
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title="Statut"
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Statut</span>}
                     value={getStatusText(prospect.statut)}
                     valueStyle={{ 
-                      fontSize: '14px',
+                      fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
                       color: getStatusColor(prospect.statut) === 'green' ? '#52c41a' : 
                              getStatusColor(prospect.statut) === 'orange' ? '#faad14' : '#ff4d4f'
                     }}

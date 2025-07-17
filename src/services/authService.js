@@ -95,7 +95,7 @@ export const authService = {
         await axiosInstance.post('/auth/logout/', { refresh_token });
       }
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      // console.error('Erreur lors de la déconnexion:', error);
     } finally {
       // Nettoyage local
       localStorage.removeItem('access_token');

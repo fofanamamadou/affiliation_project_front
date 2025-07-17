@@ -78,5 +78,17 @@ export const remiseService = {
       if (error.response?.data?.error) errorMessage = error.response.data.error;
       return { success: false, error: errorMessage };
     }
+  },
+
+  // Statistiques sur les remises d'un influenceur (influenceur ou admin)
+  async getStatistiquesRemisesInfluenceur(influenceurId) {
+    try {
+      const response = await axiosInstance.get(`/influenceurs/${influenceurId}/statistiques-remises/`);
+      return { success: true, data: response.data };
+    } catch (error) {
+      let errorMessage = "Impossible de récupérer les statistiques des remises de l'influenceur";
+      if (error.response?.data?.error) errorMessage = error.response.data.error;
+      return { success: false, error: errorMessage };
+    }
   }
 }; 

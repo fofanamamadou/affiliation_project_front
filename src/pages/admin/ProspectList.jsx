@@ -9,7 +9,8 @@ import {
   Typography,
   Tag,
   Tooltip,
-  Select
+  Select,
+  Input
 } from 'antd';
 import { 
   PlusOutlined, 
@@ -34,6 +35,7 @@ const ProspectList = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterInfluenceur, setFilterInfluenceur] = useState('all');
   const [influenceurs, setInfluenceurs] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,9 +121,14 @@ const ProspectList = () => {
   };
 
   const filteredProspects = prospects.filter(prospect => {
+    const search = searchText.toLowerCase();
+    const match =
+      prospect.nom?.toLowerCase().includes(search) ||
+      prospect.email?.toLowerCase().includes(search) ||
+      prospect.telephone?.toLowerCase().includes(search);
     const statusOk = filterStatus === 'all' ? true : prospect.statut === filterStatus;
     const influenceurOk = filterInfluenceur === 'all' ? true : (prospect.influenceur_details && prospect.influenceur_details.id === filterInfluenceur);
-    return statusOk && influenceurOk;
+    return statusOk && influenceurOk && match;
   });
 
   const columns = [
@@ -222,17 +229,36 @@ const ProspectList = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <Title level={3} style={{ margin: 0 }}>
+    <div className="admin-prospectlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap',
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(12px, 3vw, 16px)',
+          gap: 'clamp(8px, 2vw, 12px)'
+        }}>
+          <Title level={3} style={{ margin: 0, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 'bold' }}>
             Gestion des Prospects
           </Title>
-          <Space>
+          <Space wrap size={[8, 8]}>
+            <Input.Search
+              allowClear
+              placeholder="Rechercher par nom, email ou téléphone"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              style={{ minWidth: 'clamp(140px, 30vw, 300px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+            />
             <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+              }
               value={filterStatus}
               onChange={setFilterStatus}
-              style={{ width: 150 }}
+              style={{ minWidth: 'clamp(120px, 20vw, 150px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par statut"
             >
               <Option value="all">Tous les statuts</Option>
@@ -241,9 +267,14 @@ const ProspectList = () => {
               <Option value="rejeter">Rejetés</Option>
             </Select>
             <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+              }
               value={filterInfluenceur}
               onChange={setFilterInfluenceur}
-              style={{ width: 200 }}
+              style={{ minWidth: 'clamp(140px, 25vw, 200px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par influenceur"
             >
               <Option value="all">Tous les influenceurs</Option>
@@ -253,20 +284,24 @@ const ProspectList = () => {
             </Select>
           </Space>
         </div>
-
-        <Table
-          columns={columns}
-          dataSource={filteredProspects}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) => 
-              `${range[0]}-${range[1]} sur ${total} prospects`,
-          }}
-        />
+        <div style={{ overflowX: 'auto' }}>
+          <Table
+            columns={columns}
+            dataSource={filteredProspects}
+            loading={loading}
+            rowKey="id"
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => 
+                `${range[0]}-${range[1]} sur ${total} prospects`,
+              size: 'default',
+              responsive: true
+            }}
+            style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
+          />
+        </div>
       </Card>
     </div>
   );

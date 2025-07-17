@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('permissions');
       }
     } catch (error) {
-      console.error('Erreur lors de la vérification du statut:', error);
+      // console.error('Erreur lors de la vérification du statut:', error);
     } finally {
       setLoading(false);
     }
@@ -75,8 +75,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const result = await authService.login(credentials);
       
-      // Log complet des infos utilisateur reçues à la connexion
-      console.log('Infos utilisateur connecté (login):', result);
       if (result.success) {
         setUser(result.user);
         setUserType(result.user_type);
@@ -89,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('Erreur de connexion:', error);
+      // console.error('Erreur de connexion:', error);
       message.error('Erreur lors de la connexion');
       return { success: false, error: 'Erreur lors de la connexion' };
     } finally {
@@ -103,7 +101,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const result = await authService.adminLogin(credentials);
       
-      console.log('Infos administrateur connecté:', result);
       if (result.success) {
         setUser(result.user);
         setUserType(result.user_type);
@@ -114,7 +111,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('Erreur de connexion administrateur:', error);
+      // console.error('Erreur de connexion administrateur:', error);
       return { success: false, error: 'Erreur lors de la connexion administrateur' };
     } finally {
       setLoading(false);
@@ -127,7 +124,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const result = await authService.influenceurLogin(credentials);
       
-      console.log('Infos influenceur connecté:', result);
       if (result.success) {
         setUser(result.user);
         setUserType(result.user_type);
@@ -138,7 +134,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('Erreur de connexion influenceur:', error);
+      // console.error('Erreur de connexion influenceur:', error);
       return { success: false, error: 'Erreur lors de la connexion influenceur' };
     } finally {
       setLoading(false);
@@ -163,7 +159,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
+      // console.error('Erreur lors de l\'inscription:', error);
       message.error('Erreur lors de l\'inscription');
       return { success: false, error: 'Erreur lors de l\'inscription' };
     } finally {
@@ -176,7 +172,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      // console.error('Erreur lors de la déconnexion:', error);
     } finally {
       setUser(null);
       setUserType(null);
@@ -200,7 +196,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('Erreur lors du changement de mot de passe:', error);
+      // console.error('Erreur lors du changement de mot de passe:', error);
       message.error('Erreur lors du changement de mot de passe');
       return { success: false, error: 'Erreur lors du changement de mot de passe' };
     } finally {

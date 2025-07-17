@@ -1,0 +1,127 @@
+====================================================================
+GUIDE D'UTILISATION DE L'APPLICATION D'AFFILIATION
+====================================================================
+
+1. INTRODUCTION GENERALE
+------------------------
+Cette application est un système d'affiliation permettant à une organisation de gérer des partenaires (influenceurs), des prospects (futurs étudiants) et des administrateurs. Elle propose une interface web moderne, sécurisée, et adaptée à chaque type d'utilisateur.
+
+2. TYPOLOGIE DES UTILISATEURS
+-----------------------------
+
+A. ADMINISTRATEUR
+- Accès via : /admin/login
+- Rôle : Gestion complète du système
+- Actions principales :
+  * Accéder à un tableau de bord global (statistiques, graphiques)
+  * Gérer les influenceurs (créer, modifier, supprimer, activer/désactiver)
+  * Gérer les prospects (valider, rejeter, consulter)
+  * Gérer les remises/primes (calculer, marquer comme payées, consulter justificatifs)
+  * Accéder à toutes les statistiques détaillées
+- Restrictions :
+  * Seul l’admin peut accéder à ces fonctionnalités
+  * Toute tentative d’accès par un autre rôle est redirigée
+
+B. INFLUENCEUR (PARTENAIRE)
+- Accès via : /influenceur/login (ou inscription via /register)
+- Rôle : Générer et suivre des prospects via un lien d’affiliation
+- Actions principales :
+  * Accéder à un dashboard personnel (statistiques, évolution, gains)
+  * Partager son lien d’affiliation
+  * Suivre la liste de ses prospects (statut, détails)
+  * Suivre l’historique de ses primes
+  * Visualiser ses statistiques personnelles
+- Restrictions :
+  * Ne peut voir/modifier que ses propres données
+  * Ne peut pas accéder à l’espace admin ni aux données des autres influenceurs
+  * Si le compte est inactif, accès bloqué
+
+C. PROSPECT (PUBLIC)
+- Accès via :
+  * Lien d’affiliation unique fourni par un influenceur
+  * Formulaire public d’inscription
+- Rôle : S’inscrire et être suivi par un influenceur
+- Actions principales :
+  * Remplir un formulaire d’inscription
+  * Recevoir une confirmation de pré-inscription
+- Restrictions :
+  * Aucun accès à un espace privé
+  * Ne peut pas consulter/modifier ses données après inscription
+
+3. PARCOURS ET FONCTIONNALITES PAR UTILISATEUR
+-----------------------------------------------
+
+A. ADMINISTRATEUR
+- Connexion sécurisée via /admin/login
+- Navigation via un menu latéral :
+  * Dashboard (vue d’ensemble)
+  * Gestion des influenceurs (liste, ajout, modification, suppression, activation)
+  * Gestion des prospects (liste, validation, rejet, consultation)
+  * Gestion des remises (calcul automatique, paiement, justificatifs)
+  * Statistiques détaillées (prospects, remises)
+- Actions sur chaque entité :
+  * Influenceur : voir détails, modifier, activer/désactiver, supprimer
+  * Prospect : voir détails, valider, rejeter
+  * Remise : marquer comme payée, télécharger justificatif
+- Accès à toutes les données du système
+
+B. INFLUENCEUR
+- Connexion via /influenceur/login ou inscription via /register
+- Dashboard personnel :
+  * Statistiques (prospects, remises, gains, taux de conversion)
+  * Graphiques d’évolution
+  * Liste de ses prospects (statut, détails)
+  * Liste de ses remises/primes (statut, montant, justificatif)
+  * Partage de son lien d’affiliation
+- Actions :
+  * Consulter et suivre ses prospects
+  * Consulter ses remises/primes
+  * Copier/partager son lien d’affiliation
+- Restrictions :
+  * Ne peut pas accéder à l’espace admin
+  * Ne peut pas voir les données d’autres influenceurs
+  * Si le compte est inactif, accès bloqué
+
+C. PROSPECT
+- Accès via un lien d’affiliation 
+- Remplit un formulaire d’inscription (nom, email, téléphone, niveau d’étude, etc.)
+- Reçoit une confirmation de pré-inscription
+- N’a pas d’espace personnel ni d’action supplémentaire
+
+4. SECURITE, RESTRICTIONS ET GESTION DES ACCES
+----------------------------------------------
+- Authentification par JWT, stockage sécurisé des tokens
+- Vérification du rôle à chaque route (PrivateRoute)
+- Redirections automatiques selon le rôle
+- Gestion des permissions côté frontend et backend
+- Gestion centralisée des erreurs (401, 403, 404)
+- Si un utilisateur tente d’accéder à une page non autorisée, il est redirigé vers la page appropriée ou la page de choix de connexion
+
+5. FLUX D’UTILISATION (EXEMPLES)
+---------------------------------
+
+A. Connexion
+- L’utilisateur arrive sur /login-choice et choisit son type de compte (admin ou influenceur)
+- Il est redirigé vers l’espace correspondant après authentification
+
+B. Inscription
+- Un influenceur peut s’inscrire via /register   et l’administrateur doit activer son compte pour qu’il puisse se connecter
+- Un prospect s’inscrit via un lien d’affiliation 
+
+C. Gestion
+- L’admin gère tous les utilisateurs et données
+- L’influenceur gère uniquement ses prospects et remises
+- Le prospect n’a pas d’accès après inscription
+
+6. ANNEXES : CAS PARTICULIERS
+------------------------------------------
+- Compte inactif : accès bloqué, message d’erreur
+- Accès refusé : redirection automatique
+- Route non trouvée : page 404 personnalisée
+- Gestion des statuts :
+  * Prospect : confirmé, en attente, rejeté
+  * Remise : payée, en attente, refusée
+
+====================================================================
+FIN DU DOCUMENT
+====================================================================

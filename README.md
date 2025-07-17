@@ -32,12 +32,17 @@ Un système d'affiliation complet développé en React avec gestion des rôles (
 
 ## 🛠️ Technologies Utilisées
 
-- **React 19** - Framework frontend
+- **React 18** - Framework frontend
 - **React Router DOM** - Gestion des routes
-- **Tailwind CSS** - Framework CSS utilitaire
+- **Ant Design** - Framework UI principal
 - **Recharts** - Bibliothèque de graphiques
 - **Axios** - Client HTTP
-- **Heroicons** - Icônes SVG
+
+## 🎨 Gestion des styles
+
+- **Ant Design** : Composants UI principaux et thèmes personnalisés
+- **CSS personnalisé** : Fichiers CSS (`App.css`, `index.css`) et styles inline pour l'adaptation visuelle
+- **Responsive** : Utilisation des composants Ant Design et de styles CSS pour l'adaptation mobile/tablette/desktop
 
 ## 📁 Structure du Projet
 
@@ -80,6 +85,10 @@ cd front
 # Installer les dépendances
 npm install
 
+# Créer le fichier .env à la racine
+cp .env.example .env # (ou créez-le manuellement)
+# Modifiez la variable REACT_APP_API_URL selon votre environnement
+
 # Démarrer le serveur de développement
 npm start
 ```
@@ -94,6 +103,8 @@ Créez un fichier `.env` à la racine du projet :
 ```env
 REACT_APP_API_URL=http://localhost:8000
 ```
+
+- **REACT_APP_API_URL** : URL de base de l'API backend (à adapter pour la production)
 
 ### API Backend
 Le système est conçu pour fonctionner avec une API backend qui expose les endpoints suivants :
@@ -125,14 +136,13 @@ Le système est conçu pour fonctionner avec une API backend qui expose les endp
 ## 🎨 Interface Utilisateur
 
 ### Design Responsive
-- **Mobile-first** avec Tailwind CSS
-- **Sidebar rétractable** sur mobile
-- **Tableaux scrollables** horizontalement
-- **Formulaires adaptatifs** avec champs empilés
+- **Basé sur Ant Design** : composants responsives, grilles, formulaires, tableaux, etc.
+- **Styles CSS personnalisés** : pour ajuster l'apparence et les couleurs (voir `App.css`, `index.css`)
+- **Styles inline** : pour des ajustements rapides et des backgrounds dynamiques
 
 ### Composants Réutilisables
-- **Button** - Boutons avec variantes et états de chargement
-- **Input** - Champs de saisie avec validation
+- **Button** - Boutons avec variantes et états de chargement (Ant Design + custom)
+- **Input** - Champs de saisie avec validation (Ant Design + custom)
 - **PrivateRoute** - Protection des routes par rôle
 
 ## 🔒 Sécurité
@@ -182,6 +192,18 @@ npm run build
 npx serve -s build
 ```
 
+## 🏗️ Déploiement
+
+1. **Créer un fichier `.env`** à la racine avec la bonne URL d'API :
+   ```env
+   REACT_APP_API_URL=https://votre-api-production.com/api/v1
+   ```
+2. **Lancer la commande de build** :
+   ```bash
+   npm run build
+   ```
+3. **Déployer le dossier `build/`** sur votre hébergeur (Netlify, Vercel, Nginx, etc.)
+
 ## 🤝 Contribution
 
 1. Fork le projet
@@ -202,4 +224,4 @@ Pour toute question ou problème :
 
 ---
 
-**Développé avec ❤️ en React**
+**Développé avec ❤️ en React et Ant Design**

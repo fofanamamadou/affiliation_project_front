@@ -69,7 +69,7 @@ const ProspectList = () => {
         setProspects([]);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des prospects:', error);
+      // console.error('Erreur lors du chargement des prospects:', error);
       message.error('Erreur lors du chargement des prospects');
       setProspects([]);
     } finally {
@@ -87,7 +87,7 @@ const ProspectList = () => {
         message.error(result.error);
       }
     } catch (error) {
-      console.error('Erreur lors de la validation:', error);
+      // console.error('Erreur lors de la validation:', error);
       message.error('Erreur lors de la validation');
     }
   };
@@ -102,7 +102,7 @@ const ProspectList = () => {
         message.error(result.error);
       }
     } catch (error) {
-      console.error('Erreur lors du rejet:', error);
+      // console.error('Erreur lors du rejet:', error);
       message.error('Erreur lors du rejet');
     }
   };
@@ -177,45 +177,10 @@ const ProspectList = () => {
     },
     {
       title: 'Date d\'inscription',
-      dataIndex: 'date_creation',
-      key: 'date_creation',
+      dataIndex: 'date_inscription',
+      key: 'date_inscription',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
-          <Tooltip title="Voir les détails">
-            <Button 
-              type="text" 
-              icon={<EyeOutlined />} 
-              onClick={() => handleViewDetails(record)}
-            />
-          </Tooltip>
-          {record.statut !== 'confirme' && record.statut !== 'rejeter' && (
-            <Tooltip title="Valider">
-              <Button 
-                type="text" 
-                icon={<CheckCircleOutlined />} 
-                onClick={() => handleValidate(record.id)}
-                style={{ color: '#52c41a' }}
-              />
-            </Tooltip>
-          )}
-          {record.statut !== 'rejeter' && record.statut !== 'confirme' && (
-            <Tooltip title="Rejeter">
-              <Button 
-                type="text" 
-                icon={<CloseCircleOutlined />} 
-                onClick={() => handleReject(record.id)}
-                style={{ color: '#ff4d4f' }}
-              />
-            </Tooltip>
-          )}
-        </Space>
-      ),
-    },
+    }
   ];
 
   const handleViewDetails = (record) => {
@@ -237,53 +202,84 @@ const ProspectList = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Card>
-        <div style={{ marginBottom: '24px' }}>
-          <Title level={3} style={{ margin: 0, marginBottom: '16px' }}>
+    <div className="partenaire-prospectlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <div style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+          <Title level={3} style={{ 
+            margin: 0, 
+            marginBottom: 'clamp(12px, 3vw, 16px)', 
+            fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+            fontWeight: 'bold'
+          }}>
             Mes Prospects
           </Title>
-          
           {/* Statistiques */}
-          <Row gutter={16} style={{ marginBottom: '24px' }}>
+          <Row gutter={[16, 16]} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
             <Col xs={24} sm={8}>
-              <Card>
+              <Card style={{ height: '100%', borderRadius: '8px' }}>
                 <Statistic
-                  title="Total Prospects"
+                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Total Prospects</span>}
                   value={totalProspects}
                   prefix={<UserOutlined />}
-                  valueStyle={{ color: '#1890ff' }}
+                  valueStyle={{ 
+                    color: '#1890ff', 
+                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                    fontWeight: 'bold'
+                  }}
                 />
               </Card>
             </Col>
             <Col xs={24} sm={8}>
-              <Card>
+              <Card style={{ height: '100%', borderRadius: '8px' }}>
                 <Statistic
-                  title="Confirmés"
+                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Confirmés</span>}
                   value={confirmedProspects}
                   prefix={<CheckCircleOutlined />}
-                  valueStyle={{ color: '#52c41a' }}
+                  valueStyle={{ 
+                    color: '#52c41a', 
+                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                    fontWeight: 'bold'
+                  }}
                 />
               </Card>
             </Col>
             <Col xs={24} sm={8}>
-              <Card>
+              <Card style={{ height: '100%', borderRadius: '8px' }}>
                 <Statistic
-                  title="En attente"
+                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>En attente</span>}
                   value={pendingProspects}
                   prefix={<TrophyOutlined />}
-                  valueStyle={{ color: '#faad14' }}
+                  valueStyle={{ 
+                    color: '#faad14', 
+                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                    fontWeight: 'bold'
+                  }}
                 />
               </Card>
             </Col>
           </Row>
-
           {/* Filtres */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: 'clamp(12px, 3vw, 16px)', 
+            gap: 'clamp(8px, 2vw, 12px)'
+          }}>
             <Select
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+              }
               value={filterStatus}
               onChange={setFilterStatus}
-              style={{ width: 150 }}
+              style={{ 
+                minWidth: 'clamp(140px, 20vw, 200px)', 
+                marginBottom: 8,
+                fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+              }}
               placeholder="Filtrer par statut"
             >
               <Option value="all">Tous les statuts</Option>
@@ -293,20 +289,27 @@ const ProspectList = () => {
             </Select>
           </div>
         </div>
-
-        <Table
-          columns={columns}
-          dataSource={filteredProspects}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) => 
-              `${range[0]}-${range[1]} sur ${total} prospects`,
-          }}
-        />
+        <div style={{ overflowX: 'auto' }}>
+          <Table
+            columns={columns}
+            dataSource={filteredProspects}
+            loading={loading}
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => 
+                `${range[0]}-${range[1]} sur ${total} prospects`,
+              size: 'default',
+              responsive: true
+            }}
+            style={{
+              fontSize: 'clamp(0.85rem, 2vw, 1rem)'
+            }}
+          />
+        </div>
       </Card>
     </div>
   );

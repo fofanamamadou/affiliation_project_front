@@ -36,3 +36,203 @@
     transform: rotate(360deg);
   }
 }
+
+/* Responsive pour le dashboard admin */
+@media (max-width: 600px) {
+  .admin-dashboard-responsive {
+    padding: 8px !important;
+  }
+  .admin-dashboard-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .admin-dashboard-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .admin-dashboard-responsive .ant-typography {
+    font-size: 1.1em;
+  }
+  .admin-dashboard-responsive .ant-statistic-title {
+    font-size: 1em;
+  }
+}
+
+/* Responsive pour le dashboard partenaire */
+@media (max-width: 600px) {
+  .partenaire-dashboard-responsive {
+    padding: 8px !important;
+  }
+  .partenaire-dashboard-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .partenaire-dashboard-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .partenaire-dashboard-responsive .ant-typography,
+  .partenaire-dashboard-responsive h1 {
+    font-size: 1.1em;
+  }
+  .partenaire-dashboard-responsive .ant-statistic-title {
+    font-size: 1em;
+  }
+}
+
+/* Responsive pour la liste des prospects partenaire */
+@media (max-width: 600px) {
+  .partenaire-prospectlist-responsive {
+    padding: 8px !important;
+  }
+  .partenaire-prospectlist-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .partenaire-prospectlist-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .partenaire-prospectlist-responsive .ant-typography,
+  .partenaire-prospectlist-responsive h1 {
+    font-size: 1.1em;
+  }
+  .partenaire-prospectlist-responsive .ant-statistic-title {
+    font-size: 1em;
+  }
+  .partenaire-prospectlist-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la liste des partenaires admin */
+@media (max-width: 600px) {
+  .admin-influenceurlist-responsive {
+    padding: 8px !important;
+  }
+  .admin-influenceurlist-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .admin-influenceurlist-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .admin-influenceurlist-responsive .ant-typography,
+  .admin-influenceurlist-responsive h1 {
+    font-size: 1.1em;
+  }
+  .admin-influenceurlist-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la liste des primes partenaire */
+@media (max-width: 600px) {
+  .partenaire-remiselist-responsive {
+    padding: 8px !important;
+  }
+  .partenaire-remiselist-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .partenaire-remiselist-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .partenaire-remiselist-responsive .ant-typography,
+  .partenaire-remiselist-responsive h1 {
+    font-size: 1.1em;
+  }
+  .partenaire-remiselist-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la liste des primes admin */
+@media (max-width: 600px) {
+  .admin-remiselist-responsive {
+    padding: 8px !important;
+  }
+  .admin-remiselist-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .admin-remiselist-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .admin-remiselist-responsive .ant-typography,
+  .admin-remiselist-responsive h1 {
+    font-size: 1.1em;
+  }
+  .admin-remiselist-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la page de détail prospect admin */
+@media (max-width: 600px) {
+  .admin-prospectdetail-responsive {
+    padding: 8px !important;
+  }
+  .admin-prospectdetail-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .admin-prospectdetail-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .admin-prospectdetail-responsive .ant-typography,
+  .admin-prospectdetail-responsive h1 {
+    font-size: 1.1em;
+  }
+  .admin-prospectdetail-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la page de détail prospect partenaire */
+@media (max-width: 600px) {
+  .partenaire-prospectdetail-responsive {
+    padding: 8px !important;
+  }
+  .partenaire-prospectdetail-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .partenaire-prospectdetail-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .partenaire-prospectdetail-responsive .ant-typography,
+  .partenaire-prospectdetail-responsive h1 {
+    font-size: 1.1em;
+  }
+  .partenaire-prospectdetail-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}
+
+/* Responsive pour la page de détail partenaire admin */
+@media (max-width: 600px) {
+  .admin-influenceurdetail-responsive {
+    padding: 8px !important;
+  }
+  .admin-influenceurdetail-responsive .ant-card {
+    margin-bottom: 12px;
+  }
+  .admin-influenceurdetail-responsive .ant-btn {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .admin-influenceurdetail-responsive .ant-typography,
+  .admin-influenceurdetail-responsive h1 {
+    font-size: 1.1em;
+  }
+  .admin-influenceurdetail-responsive .ant-table {
+    font-size: 0.95em;
+  }
+}

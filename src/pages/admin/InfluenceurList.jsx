@@ -20,7 +20,9 @@ import {
   EditOutlined, 
   DeleteOutlined,
   EyeOutlined,
-  UserOutlined
+  UserOutlined,
+  CheckCircleOutlined,
+  StopOutlined
 } from '@ant-design/icons';
 import { influenceurService } from '../../services/influenceurService';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +38,7 @@ const InfluenceurList = () => {
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     loadInfluenceurs();
@@ -193,7 +196,7 @@ const InfluenceurList = () => {
             />
           </Tooltip>
           <Popconfirm
-            title="Êtes-vous sûr de vouloir supprimer cet influenceur ?"
+            title="Êtes-vous sûr de vouloir supprimer ce partenaire ?"
             onConfirm={() => handleDelete(record.id)}
             okText="Oui"
             cancelText="Non"
@@ -206,6 +209,13 @@ const InfluenceurList = () => {
               />
             </Tooltip>
           </Popconfirm>
+          <Tooltip title={record.is_active ? "Désactiver le partenaire" : "Valider le partenaire"}>
+            <Button
+              type="text"
+              icon={record.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
+              onClick={() => handleToggleActive(record)}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -215,42 +225,123 @@ const InfluenceurList = () => {
     navigate(`/admin/influenceurs/${record.id}`);
   };
 
+  const handleValidateInfluenceur = async (id) => {
+    try {
+      const result = await influenceurService.validateInfluenceur(id);
+      if (result.success) {
+        message.success('Compte validé avec succès !');
+        loadInfluenceurs();
+      } else {
+        message.error(result.error);
+      }
+    } catch (error) {
+      message.error('Erreur lors de la validation');
+    }
+  };
+
+  const handleToggleActive = async (record) => {
+    try {
+      let result;
+      if (record.is_active) {
+        result = await influenceurService.deactivateInfluenceur(record.id);
+        if (result.success) {
+          message.success(`Partenaire désactivé avec succès !`);
+        } else {
+          message.error(result.error);
+        }
+      } else {
+        result = await influenceurService.validateInfluenceur(record.id);
+        if (result.success) {
+          message.success('Compte validé avec succès !');
+        } else {
+          message.error(result.error);
+        }
+      }
+      loadInfluenceurs();
+    } catch (error) {
+      message.error('Erreur lors du changement de statut');
+    }
+  };
+
+  const filteredInfluenceurs = influenceurs.filter((influ) => {
+    const search = searchText.toLowerCase();
+    return (
+      influ.nom?.toLowerCase().includes(search) ||
+      influ.email?.toLowerCase().includes(search) ||
+      influ.telephone?.toLowerCase().includes(search)
+    );
+  });
+
   return (
-    <div style={{ padding: '24px' }}>
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <Title level={3} style={{ margin: 0 }}>
-            Gestion des Influenceurs
+    <div className="admin-influenceurlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap',
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(12px, 3vw, 16px)',
+          gap: 'clamp(8px, 2vw, 12px)'
+        }}>
+          <Title level={3} style={{ margin: 0, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 'bold' }}>
+            Gestion des Partenaires
           </Title>
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />}
-            onClick={handleCreate}
-          >
-            Nouvel Influenceur
-          </Button>
+          <div style={{
+            display: 'flex',
+            flex: 1,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 'clamp(8px, 2vw, 12px)'
+          }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <Input.Search
+                allowClear
+                placeholder="Rechercher par nom, email ou téléphone"
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+                style={{ minWidth: 'clamp(140px, 30vw, 300px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)', width: '100%' }}
+              />
+            </div>
+            <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end' }}>
+              <Button 
+                type="primary" 
+                icon={<PlusOutlined />}
+                onClick={handleCreate}
+                style={{ width: '100%', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+              >
+                Nouvel Partenaire
+              </Button>
+            </div>
+          </div>
         </div>
-
-        <Table
-          columns={columns}
-          dataSource={influenceurs}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) => 
-              `${range[0]}-${range[1]} sur ${total} influenceurs`,
-          }}
-        />
-
+        <div style={{ overflowX: 'auto' }}>
+          <Table
+            columns={columns}
+            dataSource={filteredInfluenceurs}
+            loading={loading}
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => 
+                `${range[0]}-${range[1]} sur ${total} partenaires`,
+              size: 'default',
+              responsive: true
+            }}
+            style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
+          />
+        </div>
         <Modal
-          title={editingInfluenceur ? 'Modifier l\'influenceur' : 'Nouvel influenceur'}
+          title={editingInfluenceur ? 'Modifier le partenaire' : 'Nouvel partenaire'}
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={null}
-          width={600}
+          width={window.innerWidth < 700 ? '95vw' : 600}
+          style={{ top: 24 }}
+          bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
           <Form
             form={form}
@@ -265,9 +356,8 @@ const InfluenceurList = () => {
                 { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
               ]}
             >
-              <Input placeholder="Nom de l'influenceur" />
+              <Input placeholder="Nom du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
             </Form.Item>
-
             <Form.Item
               name="telephone"
               label="Téléphone"
@@ -276,9 +366,8 @@ const InfluenceurList = () => {
                 { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
               ]}
             >
-              <Input placeholder="Numéro de téléphone" maxLength={15} />
+              <Input placeholder="Numéro de téléphone" maxLength={15} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
             </Form.Item>
-
             <Form.Item
               name="email"
               label="Email"
@@ -287,9 +376,8 @@ const InfluenceurList = () => {
                 { type: 'email', message: 'Email invalide' }
               ]}
             >
-              <Input placeholder="email@exemple.com" />
+              <Input placeholder="email@exemple.com" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
             </Form.Item>
-
             {!editingInfluenceur && (
               <Form.Item
                 name="password"
@@ -299,10 +387,9 @@ const InfluenceurList = () => {
                   { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
                 ]}
               >
-                <Input.Password placeholder="Mot de passe" />
+                <Input.Password placeholder="Mot de passe" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
               </Form.Item>
             )}
-
             <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
               <Space>
                 <Button onClick={() => setModalVisible(false)}>

@@ -1,6 +1,6 @@
 // Utilitaire pour gérer les erreurs de manière centralisée
 export const handleApiError = (error, defaultMessage = 'Une erreur est survenue') => {
-  console.error('API Error:', error);
+  // console.error('API Error:', error);
   
   // Erreur de réseau (pas de connexion au serveur)
   if (!error.response) {

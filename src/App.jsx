@@ -11,6 +11,8 @@ import InfluenceurLayout from './layouts/InfluenceurLayout';
 import PrivateRoute from './components/PrivateRoute';
 import RootRedirect from './components/RootRedirect';
 import ErrorBoundary from './components/ErrorBoundary';
+import DynamicTitle from './components/DynamicTitle';
+import NotFound from './pages/public/NotFound';
 
 // Pages
 import LoginChoice from './pages/public/LoginChoice';
@@ -31,7 +33,7 @@ import InfluenceurProspectStats from './pages/influenceur/ProspectStats';
 import RemiseList from './pages/admin/RemiseList';
 import RemiseStats from './pages/admin/RemiseStats';
 import InfluenceurRemiseList from './pages/influenceur/RemiseList';
-import Parametres from './pages/influenceur/Parametres';
+import InfluenceurRemiseStats from './pages/influenceur/RemiseStats';
 
 function App() {
   return (
@@ -44,6 +46,7 @@ function App() {
           },
         }}
       >
+        <DynamicTitle />
         <Routes>
           {/* Routes publiques - pages autonomes */}
           <Route path="/" element={<RootRedirect />} />
@@ -75,12 +78,12 @@ function App() {
               <Route path="prospects/:id" element={<InfluenceurProspectDetail />} />
               <Route path="prospects-stats" element={<InfluenceurProspectStats />} />
               <Route path="remises" element={<InfluenceurRemiseList />} />
-              <Route path="parametres" element={<Parametres />} />
+              <Route path="remises/statistiques" element={<InfluenceurRemiseStats />} />
             </Route>
           </Route>
 
           {/* Redirection par défaut */}
-          <Route path="*" element={<Navigate to="/login-choice" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </ConfigProvider>
     </ErrorBoundary>

@@ -7,14 +7,17 @@ import {
   Space,
   Button,
   Tooltip,
-  message
+  message,
+  Modal,
+  Spin
 } from 'antd';
 import {
   EuroOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   DownloadOutlined,
-  EyeOutlined
+  EyeOutlined,
+  BarChartOutlined
 } from '@ant-design/icons';
 import { remiseService } from '../../services/remiseService';
 import { useAuth } from '../../context/AuthContext';
@@ -27,7 +30,7 @@ const RemiseList = () => {
   const [loading, setLoading] = useState(false);
   const { user, isAuthenticated, userType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-
+  
   // Vérification de sécurité
   useEffect(() => {
     if (!authLoading) {
@@ -42,8 +45,14 @@ const RemiseList = () => {
         navigate('/login-choice');
         return;
       }
+      // Redirection si le compte est inactif
+      if (user && userType === 'influenceur' && user.is_active === false) {
+        message.error('Votre compte est inactif. Veuillez contacter un administrateur pour accéder à votre espace.');
+        navigate('/login-choice');
+        return;
+      }
     }
-  }, [isAuthenticated, userType, authLoading, navigate]);
+  }, [isAuthenticated, userType, authLoading, user, navigate]);
 
   useEffect(() => {
     if (!user || authLoading || !isAuthenticated || userType !== 'influenceur') return;
@@ -62,13 +71,15 @@ const RemiseList = () => {
         setRemises([]);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des remises:', error);
+      // console.error('Erreur lors du chargement des remises:', error);
       message.error('Erreur lors du chargement des remises');
       setRemises([]);
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const getStatusColor = (statut) => {
     switch (statut) {
@@ -131,47 +142,10 @@ const RemiseList = () => {
       key: 'description',
       render: (desc) => desc || '-',
     },
-    {
-      title: 'Justificatif',
-      dataIndex: 'justificatif',
-      key: 'justificatif',
-      render: (justificatif) => justificatif ? (
-        <Tooltip title="Télécharger le justificatif">
-          <Button
-            type="link"
-            icon={<DownloadOutlined />}
-            href={justificatif}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Télécharger
-          </Button>
-        </Tooltip>
-      ) : (
-        <Tag color="default">Non disponible</Tag>
-      ),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
-          <Tooltip title="Voir les détails">
-            <Button 
-              type="text" 
-              icon={<EyeOutlined />} 
-              onClick={() => handleViewDetails(record)}
-            />
-          </Tooltip>
-        </Space>
-      ),
-    },
+    // Suppression de la colonne justificatif
   ];
 
-  const handleViewDetails = (record) => {
-    // TODO: Créer une page de détails pour les remises (influenceur)
-    message.info('Page de détails de la remise à implémenter');
-  };
+ 
 
   if (authLoading || loading) {
     return (
@@ -188,27 +162,45 @@ const RemiseList = () => {
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card>
-        <Title level={3} style={{ marginBottom: 24 }}>Mes Primes</Title>
+    <div className="partenaire-remiselist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <Title level={3} style={{ 
+            marginBottom: 0,
+            fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+            fontWeight: 'bold'
+          }}>
+            Mes Primes
+          </Title>
+          <Button type="default" onClick={() => navigate('/influenceur/remises/statistiques')} icon={<BarChartOutlined />}>Voir les statistiques</Button>
+        </div>
         {remises.length > 0 ? (
-          <Table
-            columns={columns}
-            dataSource={remises}
-            loading={loading}
-            rowKey="id"
-            pagination={{
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
-            }}
-          />
+          <div style={{ overflowX: 'auto' }}>
+            <Table
+              columns={columns.map(col => col.title === 'Remise' || col.title === 'Remises' ? { ...col, title: 'Prime' } : col)}
+              dataSource={remises}
+              loading={loading}
+              rowKey="id"
+              scroll={{ x: 'max-content' }}
+              pagination={{
+                pageSize: 10,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
+                size: 'default',
+                responsive: true
+              }}
+              style={{
+                fontSize: 'clamp(0.85rem, 2vw, 1rem)'
+              }}
+            />
+          </div>
         ) : (
           <div style={{ 
             textAlign: 'center', 
-            padding: '40px',
-            color: '#8c8c8c'
+            padding: 'clamp(30px, 8vw, 40px)',
+            color: '#8c8c8c',
+            fontSize: 'clamp(1rem, 2.5vw, 1.2rem)'
           }}>
             Aucune prime disponible
           </div>

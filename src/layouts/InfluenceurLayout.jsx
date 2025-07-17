@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logoUniversite from '../logo_universite.ico';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -39,24 +40,11 @@ const InfluenceurLayout = () => {
     {
       key: '/influenceur/remises',
       icon: <DollarOutlined />,
-      label: 'Mes Remises',
-    },
-    {
-      key: '/influenceur/parametres',
-      icon: <SettingOutlined />,
-      label: 'Paramètres',
+      label: 'Mes Primes',
     },
   ];
 
   const userMenuItems = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Mon Profil',
-      onClick: () => {
-        navigate('/influenceur/parametres');
-      }
-    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
@@ -74,7 +62,7 @@ const InfluenceurLayout = () => {
 
   // Fonction pour obtenir le nom d'affichage
   const getDisplayName = () => {
-    if (!user) return 'Influenceur';
+    if (!user) return 'Partenaire';
     
     // Si l'utilisateur a un nom, l'utiliser
     if (user.nom) return user.nom;
@@ -85,7 +73,7 @@ const InfluenceurLayout = () => {
       return emailName.charAt(0).toUpperCase() + emailName.slice(1);
     }
     
-    return 'Influenceur';
+    return 'Partenaire';
   };
 
   // Fonction pour obtenir les initiales
@@ -114,7 +102,8 @@ const InfluenceurLayout = () => {
         }}
       >
         <div style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
-          <h2 style={{ margin: 0, color: '#1890ff' }}>Affiliation</h2>
+          <img src={logoUniversite} alt="Logo ISPATEC" style={{ width: 40, height: 40, marginRight: 8, borderRadius: 8 }} />
+          <h2 style={{ margin: 0, color: '#1890ff', display: 'inline-block', verticalAlign: 'middle' }}>Affiliation</h2>
         </div>
         <Menu
           mode="inline"
@@ -134,7 +123,7 @@ const InfluenceurLayout = () => {
           borderBottom: '1px solid #f0f0f0'
         }}>
           <div>
-            <Text strong>Espace Influenceur</Text>
+            <Text strong>Espace Partenaire</Text>
           </div>
           <Dropdown
             menu={{
@@ -158,7 +147,7 @@ const InfluenceurLayout = () => {
                   {getDisplayName()}
                 </Text>
                 <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
-                  Influenceur
+                  Partenaire
                 </Text>
               </div>
             </Space>

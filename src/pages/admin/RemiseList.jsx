@@ -22,7 +22,8 @@ import {
   EuroOutlined,
   UserOutlined,
   EyeOutlined,
-  CalculatorOutlined
+  CalculatorOutlined,
+  DownloadOutlined
 } from '@ant-design/icons';
 import { remiseService } from '../../services/remiseService';
 import { influenceurService } from '../../services/influenceurService';
@@ -161,14 +162,12 @@ const RemiseList = () => {
       key: 'date_creation',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
     },
+    // Suppression de la colonne justificatif
     {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Tooltip title="Voir les détails">
-            <Button type="text" icon={<EyeOutlined />} onClick={() => message.info('À venir')} />
-          </Tooltip>
           {record.statut !== 'payee' && (
             <Tooltip title="Marquer comme payée">
               <Button type="primary" icon={<CheckCircleOutlined />} onClick={() => handlePay(record)} />
@@ -180,48 +179,65 @@ const RemiseList = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <Title level={3} style={{ margin: 0 }}>Gestion des Primes</Title>
-          <Space>
-            <Button icon={<CalculatorOutlined />} onClick={() => setCalcModal(true)}>
+    <div className="admin-remiselist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
+      <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap',
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(12px, 3vw, 16px)',
+          gap: 'clamp(8px, 2vw, 12px)'
+        }}>
+          <Title level={3} style={{ margin: 0, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 'bold' }}>
+            Gestion des Primes
+          </Title>
+          <Space style={{ flexWrap: 'wrap', gap: 'clamp(8px, 2vw, 12px)' }}>
+            <Button icon={<CalculatorOutlined />} onClick={() => setCalcModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
               Calculer automatiquement
             </Button>
-            <Button icon={<CalculatorOutlined />} onClick={() => setCalcInfluModal(true)}>
-              Calculer pour un influenceur
+            <Button icon={<CalculatorOutlined />} onClick={() => setCalcInfluModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
+              Calculer pour un partenaire
             </Button>
-            {/* Bouton Nouvelle Prime supprimé */}
           </Space>
         </div>
-        <Table
-          columns={columns}
-          dataSource={remises}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
-          }}
-        />
+        <div style={{ overflowX: 'auto' }}>
+          <Table
+            columns={columns}
+            dataSource={remises}
+            loading={loading}
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
+              size: 'default',
+              responsive: true
+            }}
+            style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
+          />
+        </div>
         {/* Modal paiement */}
         <Modal
           title="Paiement de la Prime"
           open={payModal}
           onCancel={() => setPayModal(false)}
           footer={null}
+          width={window.innerWidth < 700 ? '95vw' : 600}
+          style={{ top: 24 }}
+          bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
           <Form form={payForm} layout="vertical" onFinish={handlePaySubmit}>
-            <Form.Item name="justificatif" label="Justificatif de paiement" valuePropName="fileList" getValueFromEvent={e => e && e.fileList} rules={[{ required: true, message: 'Justificatif requis' }]}> 
-              <Upload beforeUpload={() => false} maxCount={1} accept=".pdf,.jpg,.jpeg,.png">
-                <Button icon={<UploadOutlined />}>Uploader un justificatif</Button>
-              </Upload>
-            </Form.Item>
+            {/* Suppression du champ justificatif */}
             <Form.Item style={{ textAlign: 'right' }}>
-              <Button onClick={() => setPayModal(false)} style={{ marginRight: 8 }}>Annuler</Button>
-              <Button type="primary" htmlType="submit">Valider le paiement</Button>
+              <Button onClick={() => setPayModal(false)} style={{ marginRight: 8 }}>
+                Annuler
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Valider le paiement
+              </Button>
             </Form.Item>
           </Form>
         </Modal>
@@ -232,9 +248,12 @@ const RemiseList = () => {
           onCancel={() => { setCalcModal(false); setCalcResult(null); }}
           onOk={handleCalcAuto}
           confirmLoading={calcLoading}
+          width={window.innerWidth < 700 ? '95vw' : 600}
+          style={{ top: 24 }}
+          bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
           <p>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> F CFA
+          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (
@@ -252,6 +271,9 @@ const RemiseList = () => {
           onCancel={() => { setCalcInfluModal(false); setCalcResult(null); }}
           onOk={handleCalcInflu}
           confirmLoading={calcLoading}
+          width={window.innerWidth < 700 ? '95vw' : 600}
+          style={{ top: 24 }}
+          bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
           <p>Choisir un influenceur :</p>
           <Select
@@ -260,7 +282,7 @@ const RemiseList = () => {
             optionFilterProp="children"
             value={calcInfluId}
             onChange={setCalcInfluId}
-            style={{ width: '100%', marginBottom: 16 }}
+            style={{ width: '100%', marginBottom: 16, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
             filterOption={(input, option) =>
               (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
             }
@@ -272,7 +294,7 @@ const RemiseList = () => {
             ))}
           </Select>
           <p style={{ marginTop: 16 }}>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120 }} /> F CFA
+          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (
