@@ -42,6 +42,11 @@ const InfluenceurLayout = () => {
       icon: <DollarOutlined />,
       label: 'Mes Primes',
     },
+    {
+      key: '/influenceur/remises/statistiques',
+      icon: <BarChartOutlined />,
+      label: 'Stats Primes',
+    },
   ];
 
   const userMenuItems = [

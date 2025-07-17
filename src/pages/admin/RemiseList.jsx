@@ -27,6 +27,7 @@ import {
 } from '@ant-design/icons';
 import { remiseService } from '../../services/remiseService';
 import { influenceurService } from '../../services/influenceurService';
+import { exportToCsv } from '../../utils/exportCsv';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -83,7 +84,7 @@ const RemiseList = () => {
     const file = values.justificatif?.file?.originFileObj;
     const result = await remiseService.payerRemise(selectedRemise.id, file);
     if (result.success) {
-      message.success('Remise marquée comme payée');
+      message.success('Prime marquée comme payée');
       setPayModal(false);
       loadRemises();
     } else {
@@ -99,7 +100,7 @@ const RemiseList = () => {
     setCalcLoading(false);
     setCalcResult(result);
     if (result.success) {
-      message.success(result.data.detail || 'Remises calculées');
+      message.success(result.data.detail || 'Primes calculées');
       loadRemises();
     } else {
       message.error(result.error);
@@ -115,7 +116,7 @@ const RemiseList = () => {
     setCalcLoading(false);
     setCalcResult(result);
     if (result.success) {
-      message.success(result.data.detail || 'Remise calculée');
+      message.success(result.data.detail || 'Prime calculée');
       loadRemises();
     } else {
       message.error(result.error);
@@ -193,6 +194,14 @@ const RemiseList = () => {
             Gestion des Primes
           </Title>
           <Space style={{ flexWrap: 'wrap', gap: 'clamp(8px, 2vw, 12px)' }}>
+            <Button
+              icon={<DownloadOutlined />} 
+              onClick={() => exportToCsv('remises.csv', remises)}
+              disabled={remises.length === 0}
+              style={{ minWidth: 44 }}
+            >
+              Exporter CSV
+            </Button>
             <Button icon={<CalculatorOutlined />} onClick={() => setCalcModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
               Calculer automatiquement
             </Button>

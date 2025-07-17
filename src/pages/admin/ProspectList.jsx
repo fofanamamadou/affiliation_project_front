@@ -19,12 +19,14 @@ import {
   CheckCircleOutlined,
   UserOutlined,
   FilterOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  DownloadOutlined
 } from '@ant-design/icons';
 import { prospectService } from '../../services/prospectService';
 import { influenceurService } from '../../services/influenceurService';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { exportToCsv } from '../../utils/exportCsv';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -243,6 +245,14 @@ const ProspectList = () => {
             Gestion des Prospects
           </Title>
           <Space wrap size={[8, 8]}>
+            <Button
+              icon={<DownloadOutlined />} 
+              onClick={() => exportToCsv('prospects.csv', filteredProspects)}
+              disabled={filteredProspects.length === 0}
+              style={{ minWidth: 44 }}
+            >
+              Exporter CSV
+            </Button>
             <Input.Search
               allowClear
               placeholder="Rechercher par nom, email ou téléphone"

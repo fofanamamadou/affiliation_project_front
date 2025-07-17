@@ -381,7 +381,7 @@ const InfluenceurDetail = () => {
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Remises</span>}
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Primes</span>}
                     value={totalRemises}
                     prefix={<TrophyOutlined />}
                   />

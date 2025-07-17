@@ -342,13 +342,13 @@ const ProspectDetail = () => {
                   )}
                 </Descriptions.Item>
                 
-                <Descriptions.Item label="Remise associée">
+                <Descriptions.Item label="Prime associée">
                   {prospect.remise_details ? (
                     <Tag color="green" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
                       {prospect.remise_details.nom}
                     </Tag>
                   ) : (
-                    <Text type="secondary">Aucune remise</Text>
+                    <Text type="secondary">Aucune prime</Text>
                   )}
                 </Descriptions.Item>
               </Descriptions>

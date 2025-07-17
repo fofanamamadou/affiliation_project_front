@@ -22,10 +22,12 @@ import {
   EyeOutlined,
   UserOutlined,
   CheckCircleOutlined,
-  StopOutlined
+  StopOutlined,
+  DownloadOutlined
 } from '@ant-design/icons';
 import { influenceurService } from '../../services/influenceurService';
 import { useNavigate } from 'react-router-dom';
+import { exportToCsv } from '../../utils/exportCsv';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -303,7 +305,15 @@ const InfluenceurList = () => {
                 style={{ minWidth: 'clamp(140px, 30vw, 300px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)', width: '100%' }}
               />
             </div>
-            <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <Button
+                icon={<DownloadOutlined />} 
+                onClick={() => exportToCsv('influenceurs.csv', filteredInfluenceurs)}
+                disabled={filteredInfluenceurs.length === 0}
+                style={{ minWidth: 44 }}
+              >
+                Exporter CSV
+              </Button>
               <Button 
                 type="primary" 
                 icon={<PlusOutlined />}

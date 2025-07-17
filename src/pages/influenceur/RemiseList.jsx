@@ -22,6 +22,7 @@ import {
 import { remiseService } from '../../services/remiseService';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { exportToCsv } from '../../utils/exportCsv';
 
 const { Title } = Typography;
 
@@ -72,7 +73,7 @@ const RemiseList = () => {
       }
     } catch (error) {
       // console.error('Erreur lors du chargement des remises:', error);
-      message.error('Erreur lors du chargement des remises');
+      message.error('Erreur lors du chargement des primes');
       setRemises([]);
     } finally {
       setLoading(false);
@@ -172,7 +173,17 @@ const RemiseList = () => {
           }}>
             Mes Primes
           </Title>
-          <Button type="default" onClick={() => navigate('/influenceur/remises/statistiques')} icon={<BarChartOutlined />}>Voir les statistiques</Button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button
+              icon={<DownloadOutlined />} 
+              onClick={() => exportToCsv('mes_primes.csv', remises)}
+              disabled={remises.length === 0}
+              style={{ minWidth: 44 }}
+            >
+              Exporter CSV
+            </Button>
+            {/* Suppression du bouton Voir les statistiques */}
+          </div>
         </div>
         {remises.length > 0 ? (
           <div style={{ overflowX: 'auto' }}>

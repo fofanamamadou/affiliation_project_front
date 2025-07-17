@@ -27,12 +27,12 @@ const RemiseStats = () => {
   return (
     <div style={{ padding: 24 }}>
       <Card>
-        <Title level={3} style={{ marginBottom: 24 }}>Statistiques des Remises</Title>
+        <Title level={3} style={{ marginBottom: 24 }}>Statistiques des Primes</Title>
         <Row gutter={24}>
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Total remises"
+                title="Total Primes"
                 value={stats?.total_remises || 0}
                 prefix={<FundOutlined />}
                 loading={loading}
@@ -42,7 +42,7 @@ const RemiseStats = () => {
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Remises payées"
+                title="Primes payées"
                 value={stats?.remises_payees || 0}
                 prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
                 loading={loading}
@@ -52,7 +52,7 @@ const RemiseStats = () => {
           <Col xs={24} sm={12} md={8}>
             <Card>
               <Statistic
-                title="Remises en attente"
+                title="Primes en attente"
                 value={stats?.remises_en_attente || 0}
                 prefix={<ClockCircleOutlined style={{ color: '#faad14' }} />}
                 loading={loading}

@@ -19,11 +19,13 @@ import {
   UserOutlined,
   FilterOutlined,
   TrophyOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  DownloadOutlined
 } from '@ant-design/icons';
 import { prospectService } from '../../services/prospectService';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { exportToCsv } from '../../utils/exportCsv';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -180,7 +182,16 @@ const ProspectList = () => {
       dataIndex: 'date_inscription',
       key: 'date_inscription',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
-    }
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Tooltip title="Voir le détail">
+          <Button type="text" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)} />
+        </Tooltip>
+      ),
+    },
   ];
 
   const handleViewDetails = (record) => {
@@ -204,7 +215,7 @@ const ProspectList = () => {
   return (
     <div className="partenaire-prospectlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
       <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        <div style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+        <div style={{ marginBottom: 'clamp(16px, 4vw, 24px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
           <Title level={3} style={{ 
             margin: 0, 
             marginBottom: 'clamp(12px, 3vw, 16px)', 
@@ -213,81 +224,89 @@ const ProspectList = () => {
           }}>
             Mes Prospects
           </Title>
-          {/* Statistiques */}
-          <Row gutter={[16, 16]} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
-            <Col xs={24} sm={8}>
-              <Card style={{ height: '100%', borderRadius: '8px' }}>
-                <Statistic
-                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Total Prospects</span>}
-                  value={totalProspects}
-                  prefix={<UserOutlined />}
-                  valueStyle={{ 
-                    color: '#1890ff', 
-                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
-                    fontWeight: 'bold'
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={8}>
-              <Card style={{ height: '100%', borderRadius: '8px' }}>
-                <Statistic
-                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Confirmés</span>}
-                  value={confirmedProspects}
-                  prefix={<CheckCircleOutlined />}
-                  valueStyle={{ 
-                    color: '#52c41a', 
-                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
-                    fontWeight: 'bold'
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={8}>
-              <Card style={{ height: '100%', borderRadius: '8px' }}>
-                <Statistic
-                  title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>En attente</span>}
-                  value={pendingProspects}
-                  prefix={<TrophyOutlined />}
-                  valueStyle={{ 
-                    color: '#faad14', 
-                    fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
-                    fontWeight: 'bold'
-                  }}
-                />
-              </Card>
-            </Col>
-          </Row>
-          {/* Filtres */}
-          <div style={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            marginBottom: 'clamp(12px, 3vw, 16px)', 
-            gap: 'clamp(8px, 2vw, 12px)'
-          }}>
-            <Select
-              showSearch
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-              }
-              value={filterStatus}
-              onChange={setFilterStatus}
-              style={{ 
-                minWidth: 'clamp(140px, 20vw, 200px)', 
-                marginBottom: 8,
-                fontSize: 'clamp(0.9rem, 2vw, 1rem)'
-              }}
-              placeholder="Filtrer par statut"
-            >
-              <Option value="all">Tous les statuts</Option>
-              <Option value="en_attente">En attente</Option>
-              <Option value="confirme">Confirmés</Option>
-              <Option value="rejeter">Rejetés</Option>
-            </Select>
-          </div>
+          <Button
+            icon={<DownloadOutlined />} 
+            onClick={() => exportToCsv('mes_prospects.csv', filteredProspects)}
+            disabled={filteredProspects.length === 0}
+            style={{ minWidth: 44 }}
+          >
+            Exporter CSV
+          </Button>
+        </div>
+        {/* Statistiques */}
+        <Row gutter={[16, 16]} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+          <Col xs={24} sm={8}>
+            <Card style={{ height: '100%', borderRadius: '8px' }}>
+              <Statistic
+                title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Total Prospects</span>}
+                value={totalProspects}
+                prefix={<UserOutlined />}
+                valueStyle={{ 
+                  color: '#1890ff', 
+                  fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                  fontWeight: 'bold'
+                }}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card style={{ height: '100%', borderRadius: '8px' }}>
+              <Statistic
+                title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Confirmés</span>}
+                value={confirmedProspects}
+                prefix={<CheckCircleOutlined />}
+                valueStyle={{ 
+                  color: '#52c41a', 
+                  fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                  fontWeight: 'bold'
+                }}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card style={{ height: '100%', borderRadius: '8px' }}>
+              <Statistic
+                title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>En attente</span>}
+                value={pendingProspects}
+                prefix={<TrophyOutlined />}
+                valueStyle={{ 
+                  color: '#faad14', 
+                  fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                  fontWeight: 'bold'
+                }}
+              />
+            </Card>
+          </Col>
+        </Row>
+        {/* Filtres */}
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(12px, 3vw, 16px)', 
+          gap: 'clamp(8px, 2vw, 12px)'
+        }}>
+          <Select
+            showSearch
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            value={filterStatus}
+            onChange={setFilterStatus}
+            style={{ 
+              minWidth: 'clamp(140px, 20vw, 200px)', 
+              marginBottom: 8,
+              fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+            }}
+            placeholder="Filtrer par statut"
+          >
+            <Option value="all">Tous les statuts</Option>
+            <Option value="en_attente">En attente</Option>
+            <Option value="confirme">Confirmés</Option>
+            <Option value="rejeter">Rejetés</Option>
+          </Select>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <Table

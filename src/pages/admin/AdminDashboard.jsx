@@ -96,13 +96,13 @@ const AdminDashboard = () => {
       color: '#13c2c2'
     },
     {
-      title: 'Remises Total',
+      title: 'Primes Total',
       value: stats.total_primes || 0,
       icon: <DollarOutlined />, 
       color: '#13c2c2'
     },
     {
-      title: 'Remises Payées',
+      title: 'Primes Payées',
       value: stats.primes_payees || 0,
       icon: <TrophyOutlined />, 
       color: '#389e0d'
@@ -160,7 +160,7 @@ const AdminDashboard = () => {
       render: (val) => <Tag color="#13c2c2">{val || 0}%</Tag>
     },
     {
-      title: 'Remises',
+      title: 'Primes',
       dataIndex: 'nb_remises',
       key: 'nb_remises',
       render: (val) => <Tag color="#13c2c2">{val}</Tag>
@@ -362,7 +362,7 @@ const AdminDashboard = () => {
               block
               style={{ marginBottom: 8 }}
             >
-              Gérer Remises
+              Gérer Primes
             </Button>
           </Col>
         </Row>

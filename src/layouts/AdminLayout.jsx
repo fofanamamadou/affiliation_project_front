@@ -31,8 +31,8 @@ const AdminLayout = () => {
     { key: '/admin/influenceurs', icon: <UserOutlined />, label: 'Partenaires' },
     { key: '/admin/prospects', icon: <TeamOutlined />, label: 'Prospects' },
     { key: '/admin/prospects-stats', icon: <BarChartOutlined />, label: 'Stats Prospects' },
-    { key: '/admin/remises', icon: <DollarOutlined />, label: 'Remises' },
-    { key: '/admin/remises-stats', icon: <BarChartOutlined />, label: 'Stats Remises' }
+    { key: '/admin/remises', icon: <DollarOutlined />, label: 'Primes' },
+    { key: '/admin/remises-stats', icon: <BarChartOutlined />, label: 'Stats Primes' }
   ];
 
   const handleLogout = async () => {
