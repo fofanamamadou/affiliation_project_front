@@ -345,7 +345,7 @@ const ProspectDetail = () => {
                 <Descriptions.Item label="Prime associée">
                   {prospect.remise_details ? (
                     <Tag color="green" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
-                      {prospect.remise_details.nom}
+                      {prospect.remise_details.montant} F CFA
                     </Tag>
                   ) : (
                     <Text type="secondary">Aucune prime</Text>

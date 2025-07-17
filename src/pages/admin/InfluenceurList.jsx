@@ -56,7 +56,7 @@ const InfluenceurList = () => {
         message.error(result.error);
       }
     } catch (error) {
-      message.error('Erreur lors du chargement des influenceurs');
+      message.error('Erreur lors du chargement des partenaires');
     } finally {
       setLoading(false);
     }
@@ -78,7 +78,7 @@ const InfluenceurList = () => {
     try {
       const result = await influenceurService.deleteInfluenceur(id);
       if (result.success) {
-        message.success('Influenceur supprimé avec succès');
+        message.success('Partenaire supprimé avec succès');
         loadInfluenceurs();
       } else {
         message.error(result.error);
@@ -106,7 +106,7 @@ const InfluenceurList = () => {
       }
 
       if (result.success) {
-        message.success(editingInfluenceur ? 'Influenceur mis à jour' : 'Influenceur créé');
+        message.success(editingInfluenceur ? 'Partenaire mis à jour' : 'Partenaire créé');
         setModalVisible(false);
         loadInfluenceurs();
       } else {
@@ -147,12 +147,6 @@ const InfluenceurList = () => {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
-    },
-    {
-      title: 'Rôle',
-      dataIndex: 'role',
-      key: 'role',
-      render: (role) => role.charAt(0).toUpperCase() + role.slice(1),
     },
     {
       title: 'Code Affiliation',
@@ -308,7 +302,25 @@ const InfluenceurList = () => {
             <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
               <Button
                 icon={<DownloadOutlined />} 
-                onClick={() => exportToCsv('influenceurs.csv', filteredInfluenceurs)}
+                onClick={() => {
+                  const columnsToExport = [
+                    { title: 'ID', dataIndex: 'id' },
+                    { title: 'Nom', dataIndex: 'nom' },
+                    { title: 'Téléphone', dataIndex: 'telephone' },
+                    { title: 'Email', dataIndex: 'email' },
+                    { title: 'Code Affiliation', dataIndex: 'code_affiliation' },
+                    { title: 'Statut', dataIndex: 'is_active', render: (isActive) => isActive ? 'Actif' : 'Inactif' },
+                    { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+                  ];
+                  const dataToExport = filteredInfluenceurs.map(row => {
+                    const obj = {};
+                    columnsToExport.forEach(col => {
+                      obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
+                    });
+                    return obj;
+                  });
+                  exportToCsv('partenaires.csv', dataToExport);
+                }}
                 disabled={filteredInfluenceurs.length === 0}
                 style={{ minWidth: 44 }}
               >

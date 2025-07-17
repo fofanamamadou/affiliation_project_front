@@ -143,7 +143,21 @@ const RemiseList = () => {
       key: 'description',
       render: (desc) => desc || '-',
     },
-    // Suppression de la colonne justificatif
+    {
+      title: 'Prospect(s) concerné(s)',
+      dataIndex: 'prospects',
+      key: 'prospects',
+      render: (prospects) =>
+        prospects && prospects.length > 0
+          ? prospects.map(p => p.nom).join(', ')
+          : '-',
+    },
+    {
+      title: 'Partenaire',
+      dataIndex: 'influenceur_details',
+      key: 'influenceur_details',
+      render: (inf) => inf ? inf.nom : '-',
+    },
   ];
 
  
@@ -176,7 +190,24 @@ const RemiseList = () => {
           <div style={{ display: 'flex', gap: 8 }}>
             <Button
               icon={<DownloadOutlined />} 
-              onClick={() => exportToCsv('mes_primes.csv', remises)}
+              onClick={() => {
+                const columnsToExport = [
+                  { title: 'Montant (F CFA)', dataIndex: 'montant', render: (val) => val ? `${val} F CFA` : '-' },
+                  { title: 'Statut', dataIndex: 'statut', render: getStatusText },
+                  { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+                  { title: 'Description', dataIndex: 'description', render: (desc) => desc || '-' },
+                  { title: 'Prospect(s) concerné(s)', dataIndex: 'prospects', render: (prospects) => prospects && prospects.length > 0 ? prospects.map(p => p.nom).join(', ') : '-' },
+                  { title: 'Partenaire', dataIndex: 'influenceur_details', render: (inf) => inf ? inf.nom : '-' },
+                ];
+                const dataToExport = remises.map(row => {
+                  const obj = {};
+                  columnsToExport.forEach(col => {
+                    obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
+                  });
+                  return obj;
+                });
+                exportToCsv('mes_primes.csv', dataToExport);
+              }}
               disabled={remises.length === 0}
               style={{ minWidth: 44 }}
             >

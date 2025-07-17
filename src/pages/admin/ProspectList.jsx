@@ -163,7 +163,7 @@ const ProspectList = () => {
       render: (text) => text || '-',
     },
     {
-      title: 'Influenceur',
+      title: 'Partenaire',
       key: 'influenceur',
       render: (text, record) => (
         record.influenceur_details ? (
@@ -247,7 +247,25 @@ const ProspectList = () => {
           <Space wrap size={[8, 8]}>
             <Button
               icon={<DownloadOutlined />} 
-              onClick={() => exportToCsv('prospects.csv', filteredProspects)}
+              onClick={() => {
+                const columnsToExport = [
+                  { title: 'ID', dataIndex: 'id' },
+                  { title: 'Nom', dataIndex: 'nom' },
+                  { title: 'Email', dataIndex: 'email' },
+                  { title: 'Téléphone', dataIndex: 'telephone' },
+                  { title: 'Partenaire', dataIndex: 'influenceur_details', render: (val) => val ? val.nom : '-' },
+                  { title: 'Statut', dataIndex: 'statut', render: getStatusText },
+                  { title: "Date d'inscription", dataIndex: 'date_inscription', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+                ];
+                const dataToExport = filteredProspects.map(row => {
+                  const obj = {};
+                  columnsToExport.forEach(col => {
+                    obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
+                  });
+                  return obj;
+                });
+                exportToCsv('prospects.csv', dataToExport);
+              }}
               disabled={filteredProspects.length === 0}
               style={{ minWidth: 44 }}
             >
@@ -285,9 +303,9 @@ const ProspectList = () => {
               value={filterInfluenceur}
               onChange={setFilterInfluenceur}
               style={{ minWidth: 'clamp(140px, 25vw, 200px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
-              placeholder="Filtrer par influenceur"
+              placeholder="Filtrer par partenaire"
             >
-              <Option value="all">Tous les influenceurs</Option>
+              <Option value="all">Tous les partenaires</Option>
               {influenceurs.map(inf => (
                 <Option key={inf.id} value={inf.id}>{inf.nom} ({inf.code_affiliation})</Option>
               ))}

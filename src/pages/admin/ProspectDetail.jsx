@@ -315,7 +315,7 @@ const ProspectDetail = () => {
           <Col xs={24} lg={8}>
             <Card title={<span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>Informations d'affiliation</span>}>
               <Descriptions column={1} bordered size="small">
-                <Descriptions.Item label="Influenceur">
+                <Descriptions.Item label="Partenaire">
                   {prospect.influenceur_details ? (
                     <Tag color="blue" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
                       {prospect.influenceur_details.nom}
@@ -334,7 +334,7 @@ const ProspectDetail = () => {
                 <Descriptions.Item label="Prime associée">
                   {prospect.remise_details ? (
                     <Tag color="green" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>
-                      {prospect.remise_details.nom}
+                      {prospect.remise_details.montant} F CFA
                     </Tag>
                   ) : (
                     <Text type="secondary">Aucune Prime</Text>

@@ -79,35 +79,6 @@ const ProspectList = () => {
     }
   };
 
-  const handleValidate = async (prospectId) => {
-    try {
-      const result = await prospectService.validateProspect(prospectId);
-      if (result.success) {
-        message.success('Prospect validé avec succès');
-        loadProspects();
-      } else {
-        message.error(result.error);
-      }
-    } catch (error) {
-      // console.error('Erreur lors de la validation:', error);
-      message.error('Erreur lors de la validation');
-    }
-  };
-
-  const handleReject = async (prospectId) => {
-    try {
-      const result = await prospectService.rejectProspect(prospectId);
-      if (result.success) {
-        message.success('Prospect rejeté avec succès');
-        loadProspects();
-      } else {
-        message.error(result.error);
-      }
-    } catch (error) {
-      // console.error('Erreur lors du rejet:', error);
-      message.error('Erreur lors du rejet');
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -182,21 +153,9 @@ const ProspectList = () => {
       dataIndex: 'date_inscription',
       key: 'date_inscription',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Tooltip title="Voir le détail">
-          <Button type="text" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)} />
-        </Tooltip>
-      ),
-    },
+    }
   ];
 
-  const handleViewDetails = (record) => {
-    navigate(`/influenceur/prospects/${record.id}`);
-  };
 
   if (authLoading || loading) {
     return (
@@ -226,7 +185,23 @@ const ProspectList = () => {
           </Title>
           <Button
             icon={<DownloadOutlined />} 
-            onClick={() => exportToCsv('mes_prospects.csv', filteredProspects)}
+            onClick={() => {
+              const columnsToExport = [
+                { title: 'Nom', dataIndex: 'nom' },
+                { title: 'Email', dataIndex: 'email' },
+                { title: 'Téléphone', dataIndex: 'telephone' },
+                { title: 'Statut', dataIndex: 'statut', render: getStatusText },
+                { title: "Date d'inscription", dataIndex: 'date_inscription', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+              ];
+              const dataToExport = filteredProspects.map(row => {
+                const obj = {};
+                columnsToExport.forEach(col => {
+                  obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
+                });
+                return obj;
+              });
+              exportToCsv('mes_prospects.csv', dataToExport);
+            }}
             disabled={filteredProspects.length === 0}
             style={{ minWidth: 44 }}
           >

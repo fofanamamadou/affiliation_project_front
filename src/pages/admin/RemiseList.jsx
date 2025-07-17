@@ -109,7 +109,7 @@ const RemiseList = () => {
 
   // Calcul pour un influenceur
   const handleCalcInflu = async () => {
-    if (!calcInfluId) return message.error('ID influenceur requis');
+    if (!calcInfluId) return message.error('ID partenaire requis');
     setCalcLoading(true);
     setCalcResult(null);
     const result = await remiseService.calculerRemiseInfluenceur(calcInfluId, calcMontant);
@@ -131,7 +131,7 @@ const RemiseList = () => {
       width: 60,
     },
     {
-      title: 'Influenceur',
+      title: 'Partenaire',
       key: 'influenceur',
       render: (text, record) => (
         record.influenceur_details ? (
@@ -162,6 +162,15 @@ const RemiseList = () => {
       dataIndex: 'date_creation',
       key: 'date_creation',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
+    },
+    {
+      title: 'Prospect(s) concerné(s)',
+      dataIndex: 'prospects',
+      key: 'prospects',
+      render: (prospects) =>
+        prospects && prospects.length > 0
+          ? prospects.map(p => p.nom).join(', ')
+          : '-',
     },
     // Suppression de la colonne justificatif
     {
@@ -196,7 +205,24 @@ const RemiseList = () => {
           <Space style={{ flexWrap: 'wrap', gap: 'clamp(8px, 2vw, 12px)' }}>
             <Button
               icon={<DownloadOutlined />} 
-              onClick={() => exportToCsv('remises.csv', remises)}
+              onClick={() => {
+                const columnsToExport = [
+                  { title: 'ID', dataIndex: 'id' },
+                  { title: 'Partenaire', dataIndex: 'influenceur_details', render: (inf) => inf ? inf.nom : '-' },
+                  { title: 'Montant (F CFA)', dataIndex: 'montant', render: (val) => val ? `${val} F CFA` : '-' },
+                  { title: 'Statut', dataIndex: 'statut', render: (statut) => statut === 'payee' ? 'Payée' : 'En attente' },
+                  { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+                  { title: 'Prospect(s) concerné(s)', dataIndex: 'prospects', render: (prospects) => prospects && prospects.length > 0 ? prospects.map(p => p.nom).join(', ') : '-' },
+                ];
+                const dataToExport = remises.map(row => {
+                  const obj = {};
+                  columnsToExport.forEach(col => {
+                    obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
+                  });
+                  return obj;
+                });
+                exportToCsv('primes.csv', dataToExport);
+              }}
               disabled={remises.length === 0}
               style={{ minWidth: 44 }}
             >
@@ -252,7 +278,7 @@ const RemiseList = () => {
         </Modal>
         {/* Modal calcul automatique */}
         <Modal
-          title="Calcul automatique des primes (tous les influenceurs)"
+          title="Calcul automatique des primes (tous les partenaires)"
           open={calcModal}
           onCancel={() => { setCalcModal(false); setCalcResult(null); }}
           onOk={handleCalcAuto}
@@ -275,7 +301,7 @@ const RemiseList = () => {
         </Modal>
         {/* Modal calcul influenceur */}
         <Modal
-          title="Calcul automatique pour un influenceur (prime)"
+          title="Calcul automatique pour un partenaire (prime)"
           open={calcInfluModal}
           onCancel={() => { setCalcInfluModal(false); setCalcResult(null); }}
           onOk={handleCalcInflu}
@@ -284,10 +310,10 @@ const RemiseList = () => {
           style={{ top: 24 }}
           bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
-          <p>Choisir un influenceur :</p>
+          <p>Choisir un partenaire :</p>
           <Select
             showSearch
-            placeholder="Sélectionner un influenceur"
+            placeholder="Sélectionner un partenaire"
             optionFilterProp="children"
             value={calcInfluId}
             onChange={setCalcInfluId}

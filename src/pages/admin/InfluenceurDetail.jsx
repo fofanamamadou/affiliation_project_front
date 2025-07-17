@@ -107,7 +107,7 @@ const InfluenceurDetail = () => {
     try {
       const result = await adminService.updateInfluenceur(id, values);
       if (result.success) {
-        message.success('Influenceur mis à jour avec succès');
+        message.success('Partenaire mis à jour avec succès');
         setEditModalVisible(false);
         loadInfluenceurData(); // Recharger les données
       } else {
@@ -124,7 +124,7 @@ const InfluenceurDetail = () => {
     try {
       const result = await adminService.deleteInfluenceur(id);
       if (result.success) {
-        message.success('Influenceur supprimé avec succès');
+        message.success('Partenaire supprimé avec succès');
         navigate('/admin/influenceurs');
       } else {
         message.error(result.error);
@@ -299,7 +299,7 @@ const InfluenceurDetail = () => {
     return (
       <div style={{ padding: '24px' }}>
         <ErrorAlert 
-          error="Influenceur non trouvé"
+          error="Partenaire non trouvé"
           onClose={() => navigate('/admin/influenceurs')}
         />
       </div>
@@ -401,7 +401,7 @@ const InfluenceurDetail = () => {
         </Row>
         <Divider />
         {/* Prospects */}
-        <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Prospects de l'influenceur</span>} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+        <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Prospects du partenaire</span>} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
           {prospects.length > 0 ? (
             <div style={{ overflowX: 'auto' }}>
               <Table
