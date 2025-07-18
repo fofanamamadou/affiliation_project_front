@@ -13,7 +13,8 @@ import {
   Tooltip,
   Upload,
   Select,
-  InputNumber
+  InputNumber,
+  Popconfirm
 } from 'antd';
 import {
   PlusOutlined,
@@ -23,7 +24,9 @@ import {
   UserOutlined,
   EyeOutlined,
   CalculatorOutlined,
-  DownloadOutlined
+  DownloadOutlined,
+  EditOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { remiseService } from '../../services/remiseService';
 import { influenceurService } from '../../services/influenceurService';
@@ -35,19 +38,19 @@ const { Option } = Select;
 const RemiseList = () => {
   const [remises, setRemises] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [payModal, setPayModal] = useState(false);
   const [selectedRemise, setSelectedRemise] = useState(null);
-  const [form] = Form.useForm();
   const [payForm] = Form.useForm();
   const [calcModal, setCalcModal] = useState(false);
-  const [calcInfluModal, setCalcInfluModal] = useState(false);
+  const [primeModal, setPrimeModal] = useState(false);
+  const [primeInfluId, setPrimeInfluId] = useState();
+  const [primeMontant, setPrimeMontant] = useState(25000);
+  const [primeLoading, setPrimeLoading] = useState(false);
   const [calcLoading, setCalcLoading] = useState(false);
   const [calcResult, setCalcResult] = useState(null);
-  const [calcInfluId, setCalcInfluId] = useState();
-  const [calcMontant, setCalcMontant] = useState(25000);
   const [influenceurs, setInfluenceurs] = useState([]);
-
+  const [filterInfluenceur, setFilterInfluenceur] = useState('all');
+  const [filterStatut, setFilterStatut] = useState('all');
 
   useEffect(() => {
     loadRemises();
@@ -72,8 +75,6 @@ const RemiseList = () => {
     }
   };
 
-  // Supprimer toute la logique et l'UI liée à la création de remise
-
   const handlePay = (remise) => {
     setSelectedRemise(remise);
     setPayModal(true);
@@ -96,7 +97,7 @@ const RemiseList = () => {
   const handleCalcAuto = async () => {
     setCalcLoading(true);
     setCalcResult(null);
-    const result = await remiseService.calculerRemisesAutomatiques(calcMontant);
+    const result = await remiseService.calculerRemisesAutomatiques();
     setCalcLoading(false);
     setCalcResult(result);
     if (result.success) {
@@ -107,16 +108,26 @@ const RemiseList = () => {
     }
   };
 
-  // Calcul pour un influenceur
-  const handleCalcInflu = async () => {
-    if (!calcInfluId) return message.error('ID partenaire requis');
-    setCalcLoading(true);
-    setCalcResult(null);
-    const result = await remiseService.calculerRemiseInfluenceur(calcInfluId, calcMontant);
-    setCalcLoading(false);
-    setCalcResult(result);
+  // Définir la prime d'un influenceur
+  const handlePrimeSubmit = async () => {
+    if (!primeInfluId) return message.error('Veuillez sélectionner un partenaire');
+    if (!primeMontant || primeMontant < 1) return message.error('Montant invalide');
+    setPrimeLoading(true);
+    const result = await influenceurService.definirPrimeInfluenceur(primeInfluId, primeMontant);
+    setPrimeLoading(false);
     if (result.success) {
-      message.success(result.data.detail || 'Prime calculée');
+      message.success('Prime modifiée avec succès');
+      setPrimeModal(false);
+      loadInfluenceurs();
+    } else {
+      message.error(result.error);
+    }
+  };
+
+  const handleDeleteRemise = async (remiseId) => {
+    const result = await remiseService.deleteRemise(remiseId);
+    if (result.success) {
+      message.success('Prime supprimée avec succès');
       loadRemises();
     } else {
       message.error(result.error);
@@ -172,7 +183,6 @@ const RemiseList = () => {
           ? prospects.map(p => p.nom).join(', ')
           : '-',
     },
-    // Suppression de la colonne justificatif
     {
       title: 'Actions',
       key: 'actions',
@@ -183,10 +193,26 @@ const RemiseList = () => {
               <Button type="primary" icon={<CheckCircleOutlined />} onClick={() => handlePay(record)} />
             </Tooltip>
           )}
+          <Tooltip title="Supprimer la prime">
+            <Popconfirm
+              title="Êtes-vous sûr de vouloir supprimer cette prime ?"
+              onConfirm={() => handleDeleteRemise(record.id)}
+              okText="Oui"
+              cancelText="Non"
+            >
+              <Button type="text" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </Tooltip>
         </Space>
       ),
     },
   ];
+
+  const filteredRemises = remises.filter(remise => {
+    const influenceurOk = filterInfluenceur === 'all' ? true : (remise.influenceur_details && remise.influenceur_details.id === filterInfluenceur);
+    const statutOk = filterStatut === 'all' ? true : remise.statut === filterStatut;
+    return influenceurOk && statutOk;
+  });
 
   return (
     <div className="admin-remiselist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
@@ -203,6 +229,33 @@ const RemiseList = () => {
             Gestion des Primes
           </Title>
           <Space style={{ flexWrap: 'wrap', gap: 'clamp(8px, 2vw, 12px)' }}>
+            <Select
+              showSearch
+              allowClear={false}
+              value={filterInfluenceur}
+              onChange={setFilterInfluenceur}
+              style={{ minWidth: 180, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+              placeholder="Filtrer par partenaire"
+              optionFilterProp="children"
+              filterOption={(input, option) => (option?.children ?? '').toLowerCase().includes(input.toLowerCase())}
+            >
+              <Option value="all">Tous les partenaires</Option>
+              {influenceurs.map(inf => (
+                <Option key={inf.id} value={inf.id}>{inf.nom} ({inf.code_affiliation})</Option>
+              ))}
+            </Select>
+            <Select
+              showSearch
+              allowClear={false}
+              value={filterStatut}
+              onChange={setFilterStatut}
+              style={{ minWidth: 150, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+              placeholder="Filtrer par statut"
+            >
+              <Option value="all">Tous les statuts</Option>
+              <Option value="en_attente">En attente</Option>
+              <Option value="payee">Payée</Option>
+            </Select>
             <Button
               icon={<DownloadOutlined />} 
               onClick={() => {
@@ -214,7 +267,7 @@ const RemiseList = () => {
                   { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
                   { title: 'Prospect(s) concerné(s)', dataIndex: 'prospects', render: (prospects) => prospects && prospects.length > 0 ? prospects.map(p => p.nom).join(', ') : '-' },
                 ];
-                const dataToExport = remises.map(row => {
+                const dataToExport = filteredRemises.map(row => {
                   const obj = {};
                   columnsToExport.forEach(col => {
                     obj[col.title] = col.render ? col.render(row[col.dataIndex], row) : row[col.dataIndex];
@@ -223,23 +276,25 @@ const RemiseList = () => {
                 });
                 exportToCsv('primes.csv', dataToExport);
               }}
-              disabled={remises.length === 0}
+              disabled={filteredRemises.length === 0}
               style={{ minWidth: 44 }}
             >
               Exporter CSV
             </Button>
+            {/*
             <Button icon={<CalculatorOutlined />} onClick={() => setCalcModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
-              Calculer automatiquement
+              Générer les primes
             </Button>
-            <Button icon={<CalculatorOutlined />} onClick={() => setCalcInfluModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
-              Calculer pour un partenaire
+            */}
+            <Button icon={<EditOutlined />} onClick={() => setPrimeModal(true)} style={{ minWidth: 'clamp(120px, 20vw, 180px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
+              Définir la prime d'un partenaire
             </Button>
           </Space>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <Table
             columns={columns}
-            dataSource={remises}
+            dataSource={filteredRemises}
             loading={loading}
             rowKey="id"
             scroll={{ x: 'max-content' }}
@@ -265,7 +320,6 @@ const RemiseList = () => {
           bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
           <Form form={payForm} layout="vertical" onFinish={handlePaySubmit}>
-            {/* Suppression du champ justificatif */}
             <Form.Item style={{ textAlign: 'right' }}>
               <Button onClick={() => setPayModal(false)} style={{ marginRight: 8 }}>
                 Annuler
@@ -278,7 +332,7 @@ const RemiseList = () => {
         </Modal>
         {/* Modal calcul automatique */}
         <Modal
-          title="Calcul automatique des primes (tous les partenaires)"
+          title="Génération des primes (tous les partenaires)"
           open={calcModal}
           onCancel={() => { setCalcModal(false); setCalcResult(null); }}
           onOk={handleCalcAuto}
@@ -287,8 +341,7 @@ const RemiseList = () => {
           style={{ top: 24 }}
           bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
-          <p>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
+          <p>Cette opération va générer les primes pour tous les prospects confirmés n'ayant pas encore de prime, en utilisant la prime définie pour chaque partenaire.</p>
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (
@@ -299,14 +352,14 @@ const RemiseList = () => {
             </div>
           )}
         </Modal>
-        {/* Modal calcul influenceur */}
+        {/* Modal définir la prime d'un influenceur */}
         <Modal
-          title="Calcul automatique pour un partenaire (prime)"
-          open={calcInfluModal}
-          onCancel={() => { setCalcInfluModal(false); setCalcResult(null); }}
-          onOk={handleCalcInflu}
-          confirmLoading={calcLoading}
-          width={window.innerWidth < 700 ? '95vw' : 600}
+          title="Définir la prime d'un partenaire"
+          open={primeModal}
+          onCancel={() => setPrimeModal(false)}
+          onOk={handlePrimeSubmit}
+          confirmLoading={primeLoading}
+          width={window.innerWidth < 700 ? '95vw' : 500}
           style={{ top: 24 }}
           bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
@@ -315,8 +368,8 @@ const RemiseList = () => {
             showSearch
             placeholder="Sélectionner un partenaire"
             optionFilterProp="children"
-            value={calcInfluId}
-            onChange={setCalcInfluId}
+            value={primeInfluId}
+            onChange={setPrimeInfluId}
             style={{ width: '100%', marginBottom: 16, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
             filterOption={(input, option) =>
               (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
@@ -328,17 +381,8 @@ const RemiseList = () => {
               </Option>
             ))}
           </Select>
-          <p style={{ marginTop: 16 }}>Montant par prospect confirmé :</p>
-          <InputNumber min={1} value={calcMontant} onChange={setCalcMontant} style={{ width: 120, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
-          {calcResult && (
-            <div style={{ marginTop: 16 }}>
-              {calcResult.success ? (
-                <Tag color="green">{calcResult.data.detail}</Tag>
-              ) : (
-                <Tag color="red">{calcResult.error}</Tag>
-              )}
-            </div>
-          )}
+          <p style={{ marginTop: 16 }}>Montant de la prime (F CFA) :</p>
+          <InputNumber min={1} value={primeMontant} onChange={setPrimeMontant} style={{ width: 180, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
         </Modal>
       </Card>
     </div>

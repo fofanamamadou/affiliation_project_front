@@ -99,7 +99,7 @@ const ProspectStats = () => {
           <Col xs={24} md={6}>
             <Card>
               <Statistic
-                title="Confirmés"
+                title="Inscrits"
                 value={stats.confirme}
                 prefix={<CheckCircleOutlined />}
                 valueStyle={{ color: '#52c41a' }}
@@ -135,7 +135,7 @@ const ProspectStats = () => {
                 />
                 <div style={{ marginTop: '16px' }}>
                   <Text type="secondary">
-                    {stats.confirme} confirmés sur {totalTraites} traités
+                    {stats.confirme} inscrits sur {totalTraites} traités
                   </Text>
                 </div>
               </div>

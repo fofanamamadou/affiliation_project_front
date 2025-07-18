@@ -83,9 +83,9 @@ const InfluenceurDashboard = () => {
           remisesEnAttente: data.remises_en_attente || 0,
           remisesPayees: data.remises_payees || 0,
           tauxConversion: data.taux_conversion || 0,
-          prospectsConfirmes: data.prospects_confirme || 0,
-          prospectsRejetes: data.prospects_rejeter || 0,
-          prospectsEnAttente: data.prospects_en_attente || 0
+          prospectsConfirmes: data.nb_prospects_confirmes || 0,
+          prospectsRejetes: data.nb_prospects_rejetes || 0,
+          prospectsEnAttente: data.nb_prospects_en_attente || 0,
         });
         setChartData(
           (data.evolution || []).map(item => ({
@@ -126,7 +126,7 @@ const InfluenceurDashboard = () => {
       color: '#1890ff',
     },
     {
-      title: 'Prospects confirmés',
+      title: 'Prospects inscrit',
       value: stats.prospectsConfirmes || 0,
       icon: <CheckCircleOutlined />,
       color: '#52c41a',
@@ -183,7 +183,7 @@ const InfluenceurDashboard = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
       case 'valide':
         return 'green';
       case 'en_attente':
@@ -199,9 +199,9 @@ const InfluenceurDashboard = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
       case 'valide':
-        return 'Confirmé';
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'rejeter':
@@ -350,7 +350,7 @@ const InfluenceurDashboard = () => {
                   />
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontWeight: 'bold', fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>
-                      {item.montant || 0} F CFA
+                      {item.montant_individuel !== undefined ? item.montant_individuel : 0} F CFA
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       <span style={{ fontSize: '12px', color: '#8c8c8c' }}>Statut prospect :</span>

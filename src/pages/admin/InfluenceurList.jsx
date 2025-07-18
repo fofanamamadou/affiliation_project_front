@@ -157,6 +157,12 @@ const InfluenceurList = () => {
       ),
     },
     {
+      title: 'Prime par prospect (F CFA)',
+      dataIndex: 'prime_par_prospect_cfa',
+      key: 'prime_par_prospect_cfa',
+      render: (val) => val ? val.toLocaleString() : '-',
+    },
+    {
       title: 'Statut',
       dataIndex: 'is_active',
       key: 'is_active',
@@ -206,11 +212,17 @@ const InfluenceurList = () => {
             </Tooltip>
           </Popconfirm>
           <Tooltip title={record.is_active ? "Désactiver le partenaire" : "Valider le partenaire"}>
-            <Button
-              type="text"
-              icon={record.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
-              onClick={() => handleToggleActive(record)}
-            />
+            <Popconfirm
+              title={record.is_active ? "Êtes-vous sûr de vouloir désactiver ce partenaire ?" : "Êtes-vous sûr de vouloir valider ce partenaire ?"}
+              onConfirm={() => handleToggleActive(record)}
+              okText="Oui"
+              cancelText="Non"
+            >
+              <Button
+                type="text"
+                icon={record.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
+              />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -309,6 +321,7 @@ const InfluenceurList = () => {
                     { title: 'Téléphone', dataIndex: 'telephone' },
                     { title: 'Email', dataIndex: 'email' },
                     { title: 'Code Affiliation', dataIndex: 'code_affiliation' },
+                    { title: 'Prime par prospect (F CFA)', dataIndex: 'prime_par_prospect_cfa', render: (val) => val ? val.toLocaleString() : '-' },
                     { title: 'Statut', dataIndex: 'is_active', render: (isActive) => isActive ? 'Actif' : 'Inactif' },
                     { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
                   ];

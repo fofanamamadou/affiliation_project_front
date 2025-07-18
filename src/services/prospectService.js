@@ -202,5 +202,18 @@ export const prospectService = {
         error: errorMessage
       };
     }
+  },
+
+  // Remettre un prospect en attente (admin)
+  async remettreEnAttenteProspect(prospectId) {
+    try {
+      const response = await axiosInstance.post(`/prospects/${prospectId}/remettre-en-attente/`);
+      return { success: true, data: response.data };
+    } catch (error) {
+      let errorMessage = 'Erreur lors de la remise en attente du prospect';
+      if (error.response?.data?.error) errorMessage = error.response.data.error;
+      else if (error.response?.data?.detail) errorMessage = error.response.data.detail;
+      return { success: false, error: errorMessage };
+    }
   }
 }; 

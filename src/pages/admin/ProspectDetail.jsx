@@ -12,7 +12,8 @@ import {
   Row,
   Col,
   Statistic,
-  Avatar
+  Avatar,
+  Popconfirm
 } from 'antd';
 import { 
   ArrowLeftOutlined, 
@@ -89,7 +90,7 @@ const ProspectDetail = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return 'green';
       case 'en_attente':
         return 'orange';
@@ -102,8 +103,8 @@ const ProspectDetail = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
-        return 'Confirmé';
+      case 'inscrit':
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'rejeter':
@@ -115,7 +116,7 @@ const ProspectDetail = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return <CheckCircleOutlined />;
       case 'en_attente':
         return <ClockCircleOutlined />;
@@ -220,18 +221,43 @@ const ProspectDetail = () => {
                 <Avatar size={64} icon={<UserOutlined />} />
                 <div>
                   <Title level={2} style={{ margin: 0, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 'bold' }}>{prospect.nom}</Title>
-                  <Tag 
-                    color={getStatusColor(prospect.statut)} 
-                    icon={getStatusIcon(prospect.statut)}
-                    style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', padding: 'clamp(2px, 1vw, 4px) clamp(8px, 2vw, 12px)' }}
-                  >
-                    {getStatusText(prospect.statut)}
-                  </Tag>
+                  {prospect.statut !== 'en_attente' ? (
+                    <Popconfirm
+                      title="Remettre ce prospect en attente ?"
+                      onConfirm={async () => {
+                        const result = await prospectService.remettreEnAttenteProspect(prospect.id);
+                        if (result.success) {
+                          message.success('Prospect remis en attente');
+                          loadProspect();
+                        } else {
+                          message.error(result.error);
+                        }
+                      }}
+                      okText="Oui"
+                      cancelText="Non"
+                    >
+                      <Tag 
+                        color={getStatusColor(prospect.statut)} 
+                        icon={getStatusIcon(prospect.statut)}
+                        style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', padding: 'clamp(2px, 1vw, 4px) clamp(8px, 2vw, 12px)', cursor: 'pointer' }}
+                      >
+                        {getStatusText(prospect.statut)}
+                      </Tag>
+                    </Popconfirm>
+                  ) : (
+                    <Tag 
+                      color={getStatusColor(prospect.statut)} 
+                      icon={getStatusIcon(prospect.statut)}
+                      style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', padding: 'clamp(2px, 1vw, 4px) clamp(8px, 2vw, 12px)' }}
+                    >
+                      {getStatusText(prospect.statut)}
+                    </Tag>
+                  )}
                 </div>
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(8px, 2vw, 12px)' }}>
-              {prospect.statut !== 'confirme' && prospect.statut !== 'rejeter' && (
+              {prospect.statut !== 'inscrit' && prospect.statut !== 'rejeter' && (
                 <Button 
                   type="primary" 
                   icon={<CheckCircleOutlined />}
@@ -241,15 +267,21 @@ const ProspectDetail = () => {
                   Valider le prospect
                 </Button>
               )}
-              {prospect.statut !== 'rejeter' && prospect.statut !== 'confirme' && (
-                <Button 
-                  danger
-                  icon={<CloseCircleOutlined />}
-                  onClick={handleReject}
-                  style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+              {prospect.statut !== 'rejeter' && prospect.statut !== 'inscrit' && (
+                <Popconfirm
+                  title="Êtes-vous sûr de vouloir rejeter ce prospect ?"
+                  onConfirm={handleReject}
+                  okText="Oui"
+                  cancelText="Non"
                 >
-                  Rejeter le prospect
-                </Button>
+                  <Button 
+                    danger
+                    icon={<CloseCircleOutlined />}
+                    style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+                  >
+                    Rejeter le prospect
+                  </Button>
+                </Popconfirm>
               )}
             </div>
           </div>

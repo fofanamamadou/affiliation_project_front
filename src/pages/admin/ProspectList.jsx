@@ -98,7 +98,7 @@ const ProspectList = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return 'green';
       case 'en_attente':
         return 'orange';
@@ -111,8 +111,8 @@ const ProspectList = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
-        return 'Confirmé';
+      case 'inscrit':
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'rejeter':
@@ -177,10 +177,31 @@ const ProspectList = () => {
       title: 'Statut',
       dataIndex: 'statut',
       key: 'statut',
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
+      render: (status, record) => (
+        status !== 'en_attente' ? (
+          <Popconfirm
+            title={`Remettre ce prospect en attente ?`}
+            onConfirm={async () => {
+              const result = await prospectService.remettreEnAttenteProspect(record.id);
+              if (result.success) {
+                message.success('Prospect remis en attente');
+                loadProspects();
+              } else {
+                message.error(result.error);
+              }
+            }}
+            okText="Oui"
+            cancelText="Non"
+          >
+            <Tag color={getStatusColor(status)} style={{ cursor: 'pointer' }}>
+              {getStatusText(status)}
+            </Tag>
+          </Popconfirm>
+        ) : (
+          <Tag color={getStatusColor(status)}>
+            {getStatusText(status)}
+          </Tag>
+        )
       ),
     },
     {
@@ -201,7 +222,7 @@ const ProspectList = () => {
               onClick={() => handleViewDetails(record)}
             />
           </Tooltip>
-          {record.statut !== 'confirme' && record.statut !== 'rejeter' && (
+          {record.statut !== 'inscrit' && record.statut !== 'rejeter' && (
             <Tooltip title="Valider">
               <Button 
                 type="text" 
@@ -211,14 +232,20 @@ const ProspectList = () => {
               />
             </Tooltip>
           )}
-          {record.statut !== 'rejeter' && record.statut !== 'confirme' && (
+          {record.statut !== 'rejeter' && record.statut !== 'inscrit' && (
             <Tooltip title="Rejeter">
-              <Button 
-                type="text" 
-                icon={<CloseCircleOutlined />} 
-                onClick={() => handleReject(record.id)}
-                style={{ color: '#ff4d4f' }}
-              />
+              <Popconfirm
+                title="Êtes-vous sûr de vouloir rejeter ce prospect ?"
+                onConfirm={() => handleReject(record.id)}
+                okText="Oui"
+                cancelText="Non"
+              >
+                <Button 
+                  type="text" 
+                  icon={<CloseCircleOutlined />} 
+                  style={{ color: '#ff4d4f' }}
+                />
+              </Popconfirm>
             </Tooltip>
           )}
         </Space>
@@ -291,7 +318,7 @@ const ProspectList = () => {
             >
               <Option value="all">Tous les statuts</Option>
               <Option value="en_attente">En attente</Option>
-              <Option value="confirme">Confirmés</Option>
+              <Option value="inscrit">Inscrits</Option>
               <Option value="rejeter">Rejetés</Option>
             </Select>
             <Select

@@ -11,7 +11,8 @@ import {
   Row,
   Col,
   Statistic,
-  Avatar
+  Avatar,
+  Popconfirm
 } from 'antd';
 import { 
   ArrowLeftOutlined, 
@@ -101,7 +102,7 @@ const ProspectDetail = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return 'green';
       case 'en_attente':
         return 'orange';
@@ -114,8 +115,8 @@ const ProspectDetail = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
-        return 'Confirmé';
+      case 'inscrit':
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'rejeter':
@@ -127,7 +128,7 @@ const ProspectDetail = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return <CheckCircleOutlined />;
       case 'en_attente':
         return <ClockCircleOutlined />;
@@ -379,6 +380,22 @@ const ProspectDetail = () => {
                 </Col>
               </Row>
             </Card>
+            {prospect.statut !== 'rejeter' && prospect.statut !== 'inscrit' && (
+              <Popconfirm
+                title="Êtes-vous sûr de vouloir rejeter ce prospect ?"
+                onConfirm={handleReject}
+                okText="Oui"
+                cancelText="Non"
+              >
+                <Button 
+                  danger
+                  icon={<CloseCircleOutlined />}
+                  style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+                >
+                  Rejeter le prospect
+                </Button>
+              </Popconfirm>
+            )}
           </Col>
         </Row>
       </Card>

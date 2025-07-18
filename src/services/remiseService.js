@@ -43,25 +43,12 @@ export const remiseService = {
   },
 
   // Calculer automatiquement les remises pour tous les influenceurs (admin)
-  async calculerRemisesAutomatiques(montantParProspect) {
+  async calculerRemisesAutomatiques() {
     try {
-      const response = await axiosInstance.post('/remises/calculer-automatiques/', { montant_par_prospect: montantParProspect });
+      const response = await axiosInstance.post('/remises/calculer-automatiques/');
       return { success: true, data: response.data };
     } catch (error) {
       let errorMessage = "Erreur lors du calcul automatique des remises";
-      if (error.response?.data?.error) errorMessage = error.response.data.error;
-      else if (error.response?.data?.detail) errorMessage = error.response.data.detail;
-      return { success: false, error: errorMessage };
-    }
-  },
-
-  // Calculer la remise d'un influenceur spécifique (admin)
-  async calculerRemiseInfluenceur(influenceurId, montantParProspect) {
-    try {
-      const response = await axiosInstance.post(`/remises/calculer-influenceur/${influenceurId}/`, { montant_par_prospect: montantParProspect });
-      return { success: true, data: response.data };
-    } catch (error) {
-      let errorMessage = "Erreur lors du calcul de la remise pour l'influenceur";
       if (error.response?.data?.error) errorMessage = error.response.data.error;
       else if (error.response?.data?.detail) errorMessage = error.response.data.detail;
       return { success: false, error: errorMessage };
@@ -88,6 +75,19 @@ export const remiseService = {
     } catch (error) {
       let errorMessage = "Impossible de récupérer les statistiques des remises de l'influenceur";
       if (error.response?.data?.error) errorMessage = error.response.data.error;
+      return { success: false, error: errorMessage };
+    }
+  },
+
+  // Supprimer une remise (admin)
+  async deleteRemise(remiseId) {
+    try {
+      await axiosInstance.delete(`/remises/${remiseId}/delete/`);
+      return { success: true };
+    } catch (error) {
+      let errorMessage = "Erreur lors de la suppression de la prime";
+      if (error.response?.data?.error) errorMessage = error.response.data.error;
+      else if (error.response?.data?.detail) errorMessage = error.response.data.detail;
       return { success: false, error: errorMessage };
     }
   }

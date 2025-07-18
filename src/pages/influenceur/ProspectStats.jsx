@@ -120,7 +120,7 @@ const ProspectStats = () => {
           <Col xs={24} md={6}>
             <Card>
               <Statistic
-                title="Confirmés"
+                title="Inscrits"
                 value={stats.confirme}
                 prefix={<CheckCircleOutlined />}
                 valueStyle={{ color: '#52c41a' }}
@@ -156,7 +156,7 @@ const ProspectStats = () => {
                 />
                 <div style={{ marginTop: '16px' }}>
                   <Text type="secondary">
-                    {stats.confirme} confirmés sur {totalTraites} traités
+                    {stats.inscrit} inscrits sur {totalTraites} traités
                   </Text>
                 </div>
               </div>
@@ -180,7 +180,7 @@ const ProspectStats = () => {
 
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span>Confirmés</span>
+                    <span>Inscrits</span>
                     <span>{stats.confirme} ({stats.total > 0 ? Math.round((stats.confirme / stats.total) * 100) : 0}%)</span>
                   </div>
                   <Progress 

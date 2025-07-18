@@ -129,5 +129,15 @@ export const influenceurService = {
     } catch (error) {
       return handleApiError(error, "Erreur lors de la désactivation de l'influenceur");
     }
+  },
+
+  // Définir la prime d'un influenceur (admin)
+  async definirPrimeInfluenceur(influenceurId, montant) {
+    try {
+      const response = await axiosInstance.patch(`/influenceurs/${influenceurId}/definir-prime/`, { prime_par_prospect_cfa: montant });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return handleApiError(error, "Erreur lors de la modification de la prime de l'influenceur");
+    }
   }
 }; 

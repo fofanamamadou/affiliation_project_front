@@ -160,7 +160,7 @@ const InfluenceurDetail = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return 'green';
       case 'en_attente':
         return 'orange';
@@ -173,8 +173,8 @@ const InfluenceurDetail = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
-        return 'Confirmé';
+      case 'inscrit':
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'refuse':
@@ -306,7 +306,7 @@ const InfluenceurDetail = () => {
     );
   }
 
-  const confirmedProspects = prospects.filter(p => p.statut === 'confirme').length;
+  const inscritsProspects = prospects.filter(p => p.statut === 'inscrit').length;
   const totalProspects = prospects.length;
   const totalRemises = remises.length;
   const totalGains = remises
@@ -326,11 +326,17 @@ const InfluenceurDetail = () => {
           </Button>
           <Space wrap size={[8, 8]}>
             <Tooltip title={influenceur.is_active ? "Désactiver le partenaire" : "Valider le partenaire"}>
-              <Button
-                type="text"
-                icon={influenceur.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
-                onClick={handleToggleActive}
-              />
+              <Popconfirm
+                title={influenceur.is_active ? "Êtes-vous sûr de vouloir désactiver ce partenaire ?" : "Êtes-vous sûr de vouloir valider ce partenaire ?"}
+                onConfirm={handleToggleActive}
+                okText="Oui"
+                cancelText="Non"
+              >
+                <Button
+                  type="text"
+                  icon={influenceur.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
+                />
+              </Popconfirm>
             </Tooltip>
             <Button icon={<EditOutlined />} onClick={handleEdit} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Modifier</Button>
             <Popconfirm
@@ -358,6 +364,9 @@ const InfluenceurDetail = () => {
                 <Descriptions.Item label="Code d'affiliation"><Tag color="blue" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.code_affiliation}</Tag></Descriptions.Item>
                 <Descriptions.Item label="Date d'inscription">{influenceur.date_creation ? new Date(influenceur.date_creation).toLocaleDateString('fr-FR') : 'Non disponible'}</Descriptions.Item>
                 <Descriptions.Item label="Statut"><Tag color={influenceur.is_active ? 'green' : 'red'} style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.is_active ? 'Actif' : 'Inactif'}</Tag></Descriptions.Item>
+                <Descriptions.Item label="Prime par prospect confirmé">
+                  {influenceur.prime_par_prospect_cfa ? influenceur.prime_par_prospect_cfa.toLocaleString() : '-'}
+                </Descriptions.Item>
               </Descriptions>
             </Card>
           </Col>
@@ -373,8 +382,8 @@ const InfluenceurDetail = () => {
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Confirmés</span>}
-                    value={confirmedProspects}
+                    title={<span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Inscrits</span>}
+                    value={inscritsProspects}
                     prefix={<CheckCircleOutlined />}
                     valueStyle={{ color: '#52c41a' }}
                   />

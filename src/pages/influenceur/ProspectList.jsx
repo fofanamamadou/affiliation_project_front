@@ -82,7 +82,7 @@ const ProspectList = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirme':
+      case 'inscrit':
         return 'green';
       case 'en_attente':
         return 'orange';
@@ -95,8 +95,8 @@ const ProspectList = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'confirme':
-        return 'Confirmé';
+      case 'inscrit':
+        return 'Inscrit';
       case 'en_attente':
         return 'En attente';
       case 'rejeter':
@@ -111,7 +111,7 @@ const ProspectList = () => {
     return prospect.statut === filterStatus;
   });
 
-  const confirmedProspects = prospects.filter(p => p.statut === 'confirme').length;
+  const inscritsProspects = prospects.filter(p => p.statut === 'inscrit').length;
   const pendingProspects = prospects.filter(p => p.statut === 'en_attente').length;
   const totalProspects = prospects.length;
 
@@ -227,8 +227,8 @@ const ProspectList = () => {
           <Col xs={24} sm={8}>
             <Card style={{ height: '100%', borderRadius: '8px' }}>
               <Statistic
-                title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Confirmés</span>}
-                value={confirmedProspects}
+                title={<span style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>Inscrits</span>}
+                value={inscritsProspects}
                 prefix={<CheckCircleOutlined />}
                 valueStyle={{ 
                   color: '#52c41a', 
@@ -279,7 +279,7 @@ const ProspectList = () => {
           >
             <Option value="all">Tous les statuts</Option>
             <Option value="en_attente">En attente</Option>
-            <Option value="confirme">Confirmés</Option>
+            <Option value="inscrit">Inscrits</Option>
             <Option value="rejeter">Rejetés</Option>
           </Select>
         </div>
