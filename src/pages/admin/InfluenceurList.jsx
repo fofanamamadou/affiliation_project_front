@@ -218,10 +218,10 @@ const InfluenceurList = () => {
               okText="Oui"
               cancelText="Non"
             >
-              <Button
-                type="text"
-                icon={record.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
-              />
+            <Button
+              type="text"
+              icon={record.is_active ? <StopOutlined style={{ color: '#ff4d4f' }} /> : <CheckCircleOutlined style={{ color: '#52c41a' }} />}
+            />
             </Popconfirm>
           </Tooltip>
         </Space>

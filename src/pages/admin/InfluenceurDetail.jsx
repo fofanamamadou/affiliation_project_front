@@ -241,10 +241,31 @@ const InfluenceurDetail = () => {
       title: 'Statut',
       dataIndex: 'statut',
       key: 'statut',
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
+      render: (status, record) => (
+        status !== 'en_attente' ? (
+          <Popconfirm
+            title="Remettre ce prospect en attente ?"
+            onConfirm={async () => {
+              const result = await prospectService.remettreEnAttenteProspect(record.id);
+              if (result.success) {
+                message.success('Prospect remis en attente');
+                loadInfluenceurData();
+              } else {
+                message.error(result.error);
+              }
+            }}
+            okText="Oui"
+            cancelText="Non"
+          >
+            <Tag color={getStatusColor(status)} style={{ cursor: 'pointer' }}>
+              {getStatusText(status)}
+            </Tag>
+          </Popconfirm>
+        ) : (
+          <Tag color={getStatusColor(status)}>
+            {getStatusText(status)}
+          </Tag>
+        )
       ),
     },
     {

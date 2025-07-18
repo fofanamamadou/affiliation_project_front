@@ -156,7 +156,7 @@ const ProspectStats = () => {
                 />
                 <div style={{ marginTop: '16px' }}>
                   <Text type="secondary">
-                    {stats.inscrit} inscrits sur {totalTraites} traités
+                    {stats.confirme} inscrits sur {totalTraites} traités
                   </Text>
                 </div>
               </div>
