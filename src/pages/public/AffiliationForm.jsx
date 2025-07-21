@@ -27,6 +27,8 @@ import { useParams } from 'react-router-dom';
 import { prospectService } from '../../services/prospectService';
 import logoUniversite from '../../logo_universite.ico';
 import backgroundImage from '../../background.jpg';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -45,7 +47,8 @@ const AffiliationForm = () => {
     setLoading(true);
     setError('');
     try {
-      const result = await prospectService.createProspectViaAffiliation(codeAffiliation, {
+      // Le numéro est déjà au format international
+      const data = {
         nom: values.nom,
         email: values.email,
         telephone: values.telephone,
@@ -55,7 +58,8 @@ const AffiliationForm = () => {
         serie_bac_autre: values.serie_bac_autre,
         filiere_souhaitee: values.filiere_souhaitee,
         filiere_autre: values.filiere_autre
-      });
+      };
+      const result = await prospectService.createProspectViaAffiliation(codeAffiliation, data);
       if (result.success) {
         setSuccess(true);
         message.success('Pré-inscription réussie !');
@@ -299,22 +303,30 @@ const AffiliationForm = () => {
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item
-                name="telephone"
-                label={
-                  <span>
-                    <PhoneOutlined style={{ marginRight: '8px' }} />
-                    Numéro de téléphone
-                  </span>
-                }
+                label={<span><PhoneOutlined style={{ marginRight: '8px' }} />Numéro de téléphone</span>}
                 rules={[
                   { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-                  { pattern: /^[0-9]{8}$/, message: 'Le numéro doit contenir exactement 8 chiffres' }
+                  { validator: (_, value) => {
+                      if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                        return Promise.reject('Le numéro doit contenir entre 8 et 15 chiffres');
+                      }
+                      return Promise.resolve();
+                    }
+                  }
                 ]}
               >
-                <Input 
-                  placeholder="Ex: 01234567" 
-                  maxLength={8}
-                  style={{ height: '48px', borderRadius: '8px' }}
+                <PhoneInput
+                  country={'ml'}
+                  onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+                  masks={{ml: '........'}}
+                  inputStyle={{ width: '100%', height: 48, borderRadius: 8 }}
+                  buttonStyle={{ borderRadius: 8 }}
+                  placeholder="Numéro de téléphone"
+                  inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+                  value={form.getFieldValue('telephone')}
+                  onChange={value => form.setFieldsValue({ telephone: value })}
+                  enableSearch
+                  disableDropdown={false}
                 />
               </Form.Item>
             </Col>

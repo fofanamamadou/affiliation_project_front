@@ -5,7 +5,8 @@ import {
   Button, 
   Card, 
   Typography, 
-  message
+  message,
+  Select
 } from 'antd';
 import { 
   UserOutlined, 
@@ -17,8 +18,11 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ErrorAlert from '../../components/ErrorAlert';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const Register = () => {
   const [form] = Form.useForm();
@@ -33,7 +37,7 @@ const Register = () => {
     setError('');
 
     try {
-      // Préparer les données selon le format attendu par le backend
+      // Le numéro est déjà au format international
       const userData = {
         nom: values.nom,
         email: values.email,
@@ -165,14 +169,27 @@ const Register = () => {
               label="Téléphone"
               rules={[
                 { required: true, message: 'Veuillez saisir votre téléphone' },
-                { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
+                { validator: (_, value) => {
+                    if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                      return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+                    }
+                    return Promise.resolve();
+                  }
+                }
               ]}
             >
-              <Input 
-                prefix={<PhoneOutlined style={{ color: '#1890ff' }} />} 
+              <PhoneInput
+                country={'ml'}
+                onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+                masks={{ml: '........'}}
+                inputStyle={{ width: '100%', height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)', borderRadius: 8 }}
+                buttonStyle={{ borderRadius: 8 }}
                 placeholder="Numéro de téléphone"
-                maxLength={15}
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+                value={form.getFieldValue('telephone')}
+                onChange={value => form.setFieldsValue({ telephone: value })}
+                enableSearch
+                disableDropdown={false}
               />
             </Form.Item>
             <Form.Item

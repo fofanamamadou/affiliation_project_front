@@ -28,6 +28,8 @@ import {
 import { influenceurService } from '../../services/influenceurService';
 import { useNavigate } from 'react-router-dom';
 import { exportToCsv } from '../../utils/exportCsv';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -93,16 +95,16 @@ const InfluenceurList = () => {
     setSubmitLoading(true);
     try {
       let result;
+      // Le numéro est déjà au format international
       if (editingInfluenceur) {
-        result = await influenceurService.updateInfluenceur(editingInfluenceur.id, { ...values, profession: values.profession });
+        result = await influenceurService.updateInfluenceur(editingInfluenceur.id, { ...values });
       } else {
-        // Filtrer les champs pour la création
         const data = {
           nom: values.nom,
           email: values.email,
           telephone: values.telephone,
           password: values.password,
-          profession: values.profession 
+          profession: values.profession
         };
         result = await influenceurService.createInfluenceur(data);
       }
@@ -413,15 +415,20 @@ const InfluenceurList = () => {
             >
               <Input placeholder="Nom du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
             </Form.Item>
-            <Form.Item
-              name="telephone"
-              label="Téléphone"
-              rules={[
-                { required: true, message: 'Le téléphone est requis' },
-                { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
-              ]}
-            >
-              <Input placeholder="Numéro de téléphone" maxLength={15} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
+            <Form.Item label="Téléphone" required style={{ marginBottom: 0 }}>
+              <PhoneInput
+                country={'ml'}
+                onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+                masks={{ml: '........'}}
+                inputStyle={{ width: '100%', fontSize: 'clamp(0.9rem, 2vw, 1rem)', borderRadius: 8 }}
+                buttonStyle={{ borderRadius: 8 }}
+                placeholder="Numéro de téléphone"
+                inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+                value={form.getFieldValue('telephone')}
+                onChange={value => form.setFieldsValue({ telephone: value })}
+                enableSearch
+                disableDropdown={false}
+              />
             </Form.Item>
             <Form.Item
               name="email"
