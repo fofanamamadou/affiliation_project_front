@@ -178,6 +178,24 @@ const InfluenceurLogin = () => {
                 style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
               />
             </Form.Item>
+            <div style={{ textAlign: 'right', marginBottom: 8 }}>
+              <Link
+                onClick={() => setForgotPasswordModalVisible(true)}
+                style={{
+                  color: '#1890ff',
+                  fontWeight: 600,
+                  fontSize: 'clamp(1rem, 2vw, 1.08rem)',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  transition: 'color 0.2s',
+                }}
+                onMouseOver={e => e.target.style.color = '#096dd9'}
+                onMouseOut={e => e.target.style.color = '#1890ff'}
+                tabIndex={0}
+              >
+                Mot de passe oublié ?
+              </Link>
+            </div>
             <Form.Item>
               <Button 
                 type="primary" 
@@ -185,7 +203,7 @@ const InfluenceurLogin = () => {
                 loading={loading}
                 style={{ 
                   width: '100%', 
-                  height: 48,
+                  height: 42,
                   background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
                   border: 'none',
                   borderRadius: 8,
@@ -197,11 +215,6 @@ const InfluenceurLogin = () => {
                 Se connecter
               </Button>
             </Form.Item>
-            <div style={{ textAlign: 'center' }}>
-              <Link onClick={() => setForgotPasswordModalVisible(true)}>
-                Mot de passe oublié ?
-              </Link>
-            </div>
           </Form>
           <Divider style={{ margin: '24px 0' }}>
             <Text type="secondary">ou</Text>

@@ -317,7 +317,7 @@ const InfluenceurList = () => {
                 placeholder="Rechercher par nom, email ou téléphone"
                 value={searchText}
                 onChange={e => setSearchText(e.target.value)}
-                style={{ minWidth: 'clamp(140px, 30vw, 300px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)', width: '100%' }}
+                style={{ width: 220, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               />
             </div>
             <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
@@ -363,7 +363,7 @@ const InfluenceurList = () => {
                 type="primary" 
                 icon={<PlusOutlined />}
                 onClick={handleCreate}
-                style={{ width: '100%', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+                style={{ width: 'auto', fontSize: 'clamp(0.9rem, 2vw, 1rem)', padding: '0 18px' }}
               >
                 Nouvel Partenaire
               </Button>

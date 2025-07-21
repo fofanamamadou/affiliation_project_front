@@ -68,6 +68,18 @@ const InfluenceurLayout = () => {
     navigate(key);
   };
 
+  // Fonction pour obtenir les initiales
+  const getInitials = () => {
+    if (user && user.nom) {
+      const names = user.nom.split(' ');
+      if (names.length > 1) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+      }
+      return user.nom.substring(0, 2).toUpperCase();
+    }
+    return 'P'; // Partenaire
+  };
+
   // Fonction pour obtenir le nom d'affichage
   const getDisplayName = () => {
     if (!user) return 'Partenaire';
@@ -152,11 +164,24 @@ const InfluenceurLayout = () => {
             </Button>
           </div>
           <Dropdown overlay={userMenuItems} trigger={['click']}>
-            <a onClick={e => e.preventDefault()} style={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar style={{ backgroundColor: '#1890ff' }} icon={<UserOutlined />} />
-              <Space style={{ marginLeft: 8 }}>
-                <Text style={{ color: 'white' }}>{user ? user.nom : 'Partenaire'}</Text>
-              </Space>
+            <a onClick={e => e.preventDefault()} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '8px' }}>
+              <Avatar 
+                style={{ 
+                  backgroundColor: '#1890ff',
+                  color: '#fff',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getInitials()}
+              </Avatar>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: 8 }}>
+                 <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
+                   {getDisplayName()}
+                 </Text>
+                 <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+                   Partenaire
+                 </Text>
+               </div>
             </a>
           </Dropdown>
         </Header>

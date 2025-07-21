@@ -170,7 +170,7 @@ export const influenceurService = {
   // Envoyer un mot de passe temporaire
   async forgotPasswordTemp(email) {
     try {
-      const response = await axiosInstance.post('/influenceurs/forgot-password-temp/', { email });
+      const response = await axiosInstance.post('/api/v1/forgot-password-temp/', { email });
       return {
         success: true,
         data: response.data
