@@ -63,7 +63,7 @@ const ProspectStats = () => {
   }
 
   const tauxConversion = stats.taux_conversion || 0;
-  const totalTraites = stats.confirme + stats.rejeter;
+  const totalTraites = stats.inscrit + stats.rejeter;
 
   return (
     <div style={{ padding: '24px' }}>
@@ -100,7 +100,7 @@ const ProspectStats = () => {
             <Card>
               <Statistic
                 title="Inscrits"
-                value={stats.confirme}
+                value={stats.inscrit}
                 prefix={<CheckCircleOutlined />}
                 valueStyle={{ color: '#52c41a' }}
               />
@@ -135,7 +135,7 @@ const ProspectStats = () => {
                 />
                 <div style={{ marginTop: '16px' }}>
                   <Text type="secondary">
-                    {stats.confirme} inscrits sur {totalTraites} traités
+                    {stats.inscrit} inscrits sur {totalTraites} traités
                   </Text>
                 </div>
               </div>
@@ -159,11 +159,11 @@ const ProspectStats = () => {
 
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span>Confirmés</span>
-                    <span>{stats.confirme} ({stats.total > 0 ? Math.round((stats.confirme / stats.total) * 100) : 0}%)</span>
+                    <span>Inscrits</span>
+                    <span>{stats.inscrit} ({stats.total > 0 ? Math.round((stats.inscrit / stats.total) * 100) : 0}%)</span>
                   </div>
                   <Progress 
-                    percent={stats.total > 0 ? (stats.confirme / stats.total) * 100 : 0} 
+                    percent={stats.total > 0 ? (stats.inscrit / stats.total) * 100 : 0} 
                     strokeColor="#52c41a" 
                     showInfo={false}
                   />

@@ -34,6 +34,7 @@ import RemiseList from './pages/admin/RemiseList';
 import RemiseStats from './pages/admin/RemiseStats';
 import InfluenceurRemiseList from './pages/influenceur/RemiseList';
 import InfluenceurRemiseStats from './pages/influenceur/RemiseStats';
+import AccountProfile from './pages/influenceur/AccountProfile';
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
               <Route path="prospects-stats" element={<InfluenceurProspectStats />} />
               <Route path="remises" element={<InfluenceurRemiseList />} />
               <Route path="remises/statistiques" element={<InfluenceurRemiseStats />} />
+              <Route path="compte" element={<AccountProfile />} />
             </Route>
           </Route>
 

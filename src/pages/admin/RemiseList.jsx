@@ -341,7 +341,7 @@ const RemiseList = () => {
           style={{ top: 24 }}
           bodyStyle={{ padding: 'clamp(12px, 3vw, 24px)' }}
         >
-          <p>Cette opération va générer les primes pour tous les prospects confirmés n'ayant pas encore de prime, en utilisant la prime définie pour chaque partenaire.</p>
+          <p>Cette opération va générer les primes pour tous les prospects inscrits n'ayant pas encore de prime, en utilisant la prime définie pour chaque partenaire.</p>
           {calcResult && (
             <div style={{ marginTop: 16 }}>
               {calcResult.success ? (

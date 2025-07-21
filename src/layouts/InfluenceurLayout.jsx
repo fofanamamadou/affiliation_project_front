@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu, Avatar, Dropdown, Space, Typography } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Space, Typography, Button, message } from 'antd';
 import { 
   UserOutlined, 
   DashboardOutlined, 
@@ -7,7 +7,8 @@ import {
   DollarOutlined, 
   SettingOutlined,
   LogoutOutlined,
-  BarChartOutlined
+  BarChartOutlined,
+  ShareAltOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -49,17 +50,19 @@ const InfluenceurLayout = () => {
     },
   ];
 
-  const userMenuItems = [
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Déconnexion',
-      onClick: async () => {
+  const userMenuItems = (
+    <Menu>
+      <Menu.Item key="profile" icon={<UserOutlined />} onClick={() => navigate('/influenceur/compte')}>
+        Mon Compte
+      </Menu.Item>
+      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={async () => {
         await logout();
         navigate('/login-choice');
-      }
-    },
-  ];
+      }}>
+        Déconnexion
+      </Menu.Item>
+    </Menu>
+  );
 
   const handleMenuClick = ({ key }) => {
     navigate(key);
@@ -81,20 +84,20 @@ const InfluenceurLayout = () => {
     return 'Partenaire';
   };
 
-  // Fonction pour obtenir les initiales
-  const getInitials = () => {
-    if (!user) return 'I';
-    
-    if (user.nom) {
-      return user.nom.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
+  // Fonction pour partager le lien d'affiliation
+  const handleShareLink = () => {
+    if (user && user.code_affiliation) {
+      const link = `${window.location.origin}/affiliation/${user.code_affiliation}`;
+      navigator.clipboard.writeText(link).then(() => {
+        message.success('Lien copié dans le presse-papiers !');
+      }).catch(() => {
+        message.error('Erreur lors de la copie du lien');
+      });
+    } else {
+      message.error('Code d\'affiliation non disponible');
     }
-    
-    if (user.email) {
-      return user.email.charAt(0).toUpperCase();
-    }
-    
-    return 'I';
   };
+
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -127,35 +130,34 @@ const InfluenceurLayout = () => {
           justifyContent: 'space-between',
           borderBottom: '1px solid #f0f0f0'
         }}>
-          <div>
-            <Text strong>Espace Partenaire</Text>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Text strong style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)' }}>Espace Partenaire</Text>
+            <Button
+              type="primary"
+              icon={<ShareAltOutlined />}
+              size="middle"
+              style={{
+                marginLeft: 8,
+                fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
+                fontWeight: 500,
+                borderRadius: 6,
+                padding: '0 12px',
+                display: 'flex',
+                alignItems: 'center',
+                height: 36
+              }}
+              onClick={handleShareLink}
+            >
+              Partager mon lien
+            </Button>
           </div>
-          <Dropdown
-            menu={{
-              items: userMenuItems,
-            }}
-            placement="bottomRight"
-            arrow
-          >
-            <Space style={{ cursor: 'pointer', padding: '8px' }}>
-              <Avatar 
-                style={{ 
-                  backgroundColor: '#52c41a',
-                  color: '#fff',
-                  fontWeight: 'bold'
-                }}
-              >
-                {getInitials()}
-              </Avatar>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
-                  {getDisplayName()}
-                </Text>
-                <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
-                  Partenaire
-                </Text>
-              </div>
-            </Space>
+          <Dropdown overlay={userMenuItems} trigger={['click']}>
+            <a onClick={e => e.preventDefault()} style={{ display: 'flex', alignItems: 'center' }}>
+              <Avatar style={{ backgroundColor: '#1890ff' }} icon={<UserOutlined />} />
+              <Space style={{ marginLeft: 8 }}>
+                <Text style={{ color: 'white' }}>{user ? user.nom : 'Partenaire'}</Text>
+              </Space>
+            </a>
           </Dropdown>
         </Header>
         <Content style={{ margin: '24px', background: '#f5f5f5', padding: '24px', borderRadius: '8px' }}>

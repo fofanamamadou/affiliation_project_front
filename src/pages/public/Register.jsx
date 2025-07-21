@@ -38,7 +38,8 @@ const Register = () => {
         nom: values.nom,
         email: values.email,
         password: values.password,
-        telephone: values.telephone
+        telephone: values.telephone,
+        profession: values.profession // Ajouté
       };
 
       const result = await register(userData);
@@ -171,6 +172,16 @@ const Register = () => {
                 prefix={<PhoneOutlined style={{ color: '#1890ff' }} />} 
                 placeholder="Numéro de téléphone"
                 maxLength={15}
+                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="profession"
+              label="Profession (optionnel)"
+              rules={[]}
+            >
+              <Input 
+                placeholder="Votre profession (facultatif)"
                 style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
               />
             </Form.Item>

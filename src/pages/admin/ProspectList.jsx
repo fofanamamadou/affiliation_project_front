@@ -223,7 +223,7 @@ const ProspectList = () => {
             />
           </Tooltip>
           {record.statut !== 'inscrit' && record.statut !== 'rejeter' && (
-            <Tooltip title="Valider">
+            <Tooltip title="Valider l'inscription">
               <Button 
                 type="text" 
                 icon={<CheckCircleOutlined />} 

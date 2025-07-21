@@ -6,7 +6,8 @@ import {
   Card, 
   Typography, 
   message,
-  Divider
+  Divider,
+  Modal
 } from 'antd';
 import { 
   LockOutlined, 
@@ -18,13 +19,17 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ErrorAlert from '../../components/ErrorAlert';
+import { influenceurService } from '../../services/influenceurService';
 
-const { Title, Text } = Typography;
+const { Title, Text, Link } = Typography;
 
 const InfluenceurLogin = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [forgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const [forgotPasswordForm] = Form.useForm();
   
   const { influenceurLogin, isAuthenticated, userType } = useAuth();
   const navigate = useNavigate();
@@ -64,6 +69,24 @@ const InfluenceurLogin = () => {
     // Effacer l'erreur quand l'utilisateur modifie le formulaire
     if (error) {
       setError('');
+    }
+  };
+
+  const handleForgotPassword = async (values) => {
+    setForgotPasswordLoading(true);
+    try {
+      const result = await influenceurService.forgotPasswordTemp(values.email);
+      if (result.success) {
+        message.success(result.data.message || 'Si cet email existe, un mot de passe temporaire a été envoyé.');
+        setForgotPasswordModalVisible(false);
+        forgotPasswordForm.resetFields();
+      } else {
+        message.error(result.error || 'Une erreur est survenue.');
+      }
+    } catch (error) {
+      message.error('Une erreur est survenue.');
+    } finally {
+      setForgotPasswordLoading(false);
     }
   };
 
@@ -174,6 +197,11 @@ const InfluenceurLogin = () => {
                 Se connecter
               </Button>
             </Form.Item>
+            <div style={{ textAlign: 'center' }}>
+              <Link onClick={() => setForgotPasswordModalVisible(true)}>
+                Mot de passe oublié ?
+              </Link>
+            </div>
           </Form>
           <Divider style={{ margin: '24px 0' }}>
             <Text type="secondary">ou</Text>
@@ -182,7 +210,7 @@ const InfluenceurLogin = () => {
             <Text type="secondary" style={{ fontSize: 'clamp(0.95rem, 2vw, 1.1rem)' }}>
               Pas encore de compte ?{' '}
               <a href="/register" style={{ color: '#1890ff', fontWeight: 500 }}>
-                S'inscrire
+                Créer un compte partenaire
               </a>
             </Text>
           </div>
@@ -206,6 +234,29 @@ const InfluenceurLogin = () => {
       }}>
         © {new Date().getFullYear()} - Développé par <b>Mamadou FOFANA</b> (Étudiant à ISPATEC) | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22193528994" target="_blank" rel="noopener noreferrer">93528994</a>
       </footer>
+
+      <Modal
+        title="Mot de passe oublié"
+        open={forgotPasswordModalVisible}
+        onCancel={() => setForgotPasswordModalVisible(false)}
+        footer={null}
+      >
+        <Form form={forgotPasswordForm} onFinish={handleForgotPassword} layout="vertical">
+          <p>Veuillez saisir votre adresse email pour recevoir un mot de passe temporaire.</p>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: 'Veuillez saisir votre email' }, { type: 'email', message: 'Email invalide' }]}
+          >
+            <Input placeholder="votre@email.com" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={forgotPasswordLoading}>
+              Envoyer
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };

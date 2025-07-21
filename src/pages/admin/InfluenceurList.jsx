@@ -41,6 +41,7 @@ const InfluenceurList = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
     loadInfluenceurs();
@@ -93,14 +94,15 @@ const InfluenceurList = () => {
     try {
       let result;
       if (editingInfluenceur) {
-        result = await influenceurService.updateInfluenceur(editingInfluenceur.id, values);
+        result = await influenceurService.updateInfluenceur(editingInfluenceur.id, { ...values, profession: values.profession });
       } else {
         // Filtrer les champs pour la création
         const data = {
           nom: values.nom,
           email: values.email,
           telephone: values.telephone,
-          password: values.password
+          password: values.password,
+          profession: values.profession 
         };
         result = await influenceurService.createInfluenceur(data);
       }
@@ -177,6 +179,12 @@ const InfluenceurList = () => {
       dataIndex: 'date_creation',
       key: 'date_creation',
       render: (date) => new Date(date).toLocaleDateString('fr-FR'),
+    },
+    {
+      title: 'Profession',
+      dataIndex: 'profession',
+      key: 'profession',
+      render: (text) => text || '-',
     },
     {
       title: 'Actions',
@@ -273,11 +281,12 @@ const InfluenceurList = () => {
 
   const filteredInfluenceurs = influenceurs.filter((influ) => {
     const search = searchText.toLowerCase();
-    return (
+    const match =
       influ.nom?.toLowerCase().includes(search) ||
       influ.email?.toLowerCase().includes(search) ||
-      influ.telephone?.toLowerCase().includes(search)
-    );
+      influ.telephone?.toLowerCase().includes(search);
+    const statusOk = filterStatus === 'all' ? true : (filterStatus === 'actif' ? influ.is_active : !influ.is_active);
+    return match && statusOk;
   });
 
   return (
@@ -312,6 +321,16 @@ const InfluenceurList = () => {
               />
             </div>
             <div style={{ minWidth: 'clamp(120px, 20vw, 180px)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <Select
+                value={filterStatus}
+                onChange={setFilterStatus}
+                style={{ minWidth: 120, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+                placeholder="Filtrer par statut"
+              >
+                <Option value="all">Tous</Option>
+                <Option value="actif">Actif</Option>
+                <Option value="inactif">Inactif</Option>
+              </Select>
               <Button
                 icon={<DownloadOutlined />} 
                 onClick={() => {
@@ -324,6 +343,7 @@ const InfluenceurList = () => {
                     { title: 'Prime par prospect (F CFA)', dataIndex: 'prime_par_prospect_cfa', render: (val) => val ? val.toLocaleString() : '-' },
                     { title: 'Statut', dataIndex: 'is_active', render: (isActive) => isActive ? 'Actif' : 'Inactif' },
                     { title: 'Date de création', dataIndex: 'date_creation', render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-' },
+                    { title: 'Profession', dataIndex: 'profession' },
                   ];
                   const dataToExport = filteredInfluenceurs.map(row => {
                     const obj = {};
@@ -425,6 +445,13 @@ const InfluenceurList = () => {
                 <Input.Password placeholder="Mot de passe" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
               </Form.Item>
             )}
+            <Form.Item
+              name="profession"
+              label="Profession (optionnel)"
+              rules={[]}
+            >
+              <Input placeholder="Profession du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
+            </Form.Item>
             <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
               <Space>
                 <Button onClick={() => setModalVisible(false)}>

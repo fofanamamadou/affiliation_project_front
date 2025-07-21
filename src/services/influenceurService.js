@@ -139,5 +139,44 @@ export const influenceurService = {
     } catch (error) {
       return handleApiError(error, "Erreur lors de la modification de la prime de l'influenceur");
     }
+  },
+
+  // Mettre à jour le profil d'un influenceur (par l'influenceur lui-même)
+  async updateInfluenceurProfile(influenceurId, profileData) {
+    try {
+      const response = await axiosInstance.patch(`/influenceurs/${influenceurId}/`, profileData);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return handleApiError(error, 'Erreur lors de la mise à jour du profil');
+    }
+  },
+
+  // Changer le mot de passe de l'utilisateur connecté
+  async changePassword(passwordData) {
+    try {
+      const response = await axiosInstance.post('/auth/change-password/', passwordData);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return handleApiError(error, 'Erreur lors du changement de mot de passe');
+    }
+  },
+
+  // Envoyer un mot de passe temporaire
+  async forgotPasswordTemp(email) {
+    try {
+      const response = await axiosInstance.post('/influenceurs/forgot-password-temp/', { email });
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return handleApiError(error, 'Erreur lors de la demande de mot de passe');
+    }
   }
 }; 

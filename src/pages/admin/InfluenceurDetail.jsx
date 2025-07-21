@@ -34,7 +34,9 @@ import {
   ArrowLeftOutlined,
   EyeOutlined,
   CheckCircleOutlined,
-  StopOutlined
+  StopOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons';
 import { adminService } from '../../services/adminService';
 import { influenceurService } from '../../services/influenceurService';
@@ -97,7 +99,8 @@ const InfluenceurDetail = () => {
     form.setFieldsValue({
       nom: influenceur.nom,
       email: influenceur.email,
-      telephone: influenceur.telephone
+      telephone: influenceur.telephone,
+      profession: influenceur.profession // Ajouté
     });
     setEditModalVisible(true);
   };
@@ -155,6 +158,40 @@ const InfluenceurDetail = () => {
       loadInfluenceurData();
     } catch (error) {
       message.error('Erreur lors du changement de statut');
+    }
+  };
+
+  const handleRejectProspect = async (prospectId) => {
+    const result = await prospectService.rejectProspect(prospectId);
+    if (result.success) {
+      message.success('Prospect rejeté avec succès');
+      loadInfluenceurData();
+    } else {
+      message.error(result.error);
+    }
+  };
+
+  const handleRemettreEnAttente = async (prospectId) => {
+    const result = await prospectService.remettreEnAttenteProspect(prospectId);
+    if (result.success) {
+      message.success('Prospect remis en attente');
+      loadInfluenceurData();
+    } else {
+      message.error(result.error);
+    }
+  };
+
+  const handleVoirDetail = (prospectId) => {
+    navigate(`/admin/prospects/${prospectId}`);
+  };
+
+  const handleValidateProspect = async (prospectId) => {
+    const result = await prospectService.validateProspect(prospectId);
+    if (result.success) {
+      message.success("Inscription validée avec succès");
+      loadInfluenceurData();
+    } else {
+      message.error(result.error);
     }
   };
 
@@ -274,6 +311,47 @@ const InfluenceurDetail = () => {
       key: 'date_inscription',
       render: (date) => date ? new Date(date).toLocaleDateString('fr-FR') : '-',
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <Tooltip title="Voir le détail">
+            <Button
+              icon={<EyeOutlined />}
+              type="text"
+              onClick={() => handleVoirDetail(record.id)}
+            />
+          </Tooltip>
+          {record.statut !== 'inscrit' && record.statut !== 'rejeter' && (
+            <Tooltip title="Valider l'inscription">
+              <Button
+                type="text"
+                icon={<CheckCircleOutlined />}
+                onClick={() => handleValidateProspect(record.id)}
+                style={{ color: '#52c41a' }}
+              />
+            </Tooltip>
+          )}
+          {record.statut !== 'rejeter' && record.statut !== 'inscrit' && (
+            <Tooltip title="Rejeter l'inscription">
+              <Popconfirm
+                title="Êtes-vous sûr de vouloir rejeter cette inscription ?"
+                onConfirm={() => handleRejectProspect(record.id)}
+                okText="Oui"
+                cancelText="Non"
+              >
+                <Button
+                  type="text"
+                  icon={<CloseCircleOutlined />}
+                  style={{ color: '#ff4d4f' }}
+                />
+              </Popconfirm>
+            </Tooltip>
+          )}
+        </Space>
+      ),
+    },
   ];
 
   const remisesColumns = [
@@ -382,10 +460,11 @@ const InfluenceurDetail = () => {
                 <Descriptions.Item label="Nom complet">{influenceur.nom}</Descriptions.Item>
                 <Descriptions.Item label="Email">{influenceur.email}</Descriptions.Item>
                 <Descriptions.Item label="Téléphone">{influenceur.telephone || 'Non renseigné'}</Descriptions.Item>
+                <Descriptions.Item label="Profession">{influenceur.profession || 'Non renseignée'}</Descriptions.Item>
                 <Descriptions.Item label="Code d'affiliation"><Tag color="blue" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.code_affiliation}</Tag></Descriptions.Item>
                 <Descriptions.Item label="Date d'inscription">{influenceur.date_creation ? new Date(influenceur.date_creation).toLocaleDateString('fr-FR') : 'Non disponible'}</Descriptions.Item>
                 <Descriptions.Item label="Statut"><Tag color={influenceur.is_active ? 'green' : 'red'} style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{influenceur.is_active ? 'Actif' : 'Inactif'}</Tag></Descriptions.Item>
-                <Descriptions.Item label="Prime par prospect confirmé">
+                <Descriptions.Item label="Prime par prospect inscrit">
                   {influenceur.prime_par_prospect_cfa ? influenceur.prime_par_prospect_cfa.toLocaleString() : '-'}
                 </Descriptions.Item>
               </Descriptions>
@@ -529,6 +608,13 @@ const InfluenceurDetail = () => {
             ]}
           >
             <Input placeholder="Numéro de téléphone" maxLength={15} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
+          </Form.Item>
+          <Form.Item
+            name="profession"
+            label="Profession (optionnel)"
+            rules={[]}
+          >
+            <Input placeholder="Profession du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
           </Form.Item>
           <Form.Item>
             <Space>

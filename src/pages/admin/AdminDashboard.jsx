@@ -77,7 +77,7 @@ const AdminDashboard = () => {
       color: '#faad14'
     },
     {
-      title: 'Prospects Confirmés',
+      title: 'Prospects Inscrits',
       value: stats.prospects_confirmes || 0,
       icon: <CheckCircleOutlined />, 
       color: '#52c41a'
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
 
   // Données pour le graphique en camembert des prospects
   const prospectPieData = [
-    { name: 'Confirmés', value: stats.prospects_confirmes || 0, color: '#52c41a' },
+    { name: 'Inscrits', value: stats.prospects_confirmes || 0, color: '#52c41a' },
     { name: 'En Attente', value: stats.prospects_en_attente || 0, color: '#faad14' },
     { name: 'Rejetés', value: stats.prospects_rejetes || 0, color: '#ff4d4f' }
   ].filter(item => item.value > 0);
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
       render: (val) => <Tag color="#1890ff">{val}</Tag>
     },
     {
-      title: 'Confirmés',
+      title: 'Inscrits',
       dataIndex: 'nb_prospects_confirmes',
       key: 'nb_prospects_confirmes',
       render: (val) => <Tag color="#52c41a">{val || 0}</Tag>
@@ -241,7 +241,7 @@ const AdminDashboard = () => {
             <div style={{ padding: '20px 0' }}>
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span>Confirmés</span>
+                  <span>Inscrits</span>
                   <span>{stats.prospects_confirmes || 0} ({stats.total_prospects > 0 ? Math.round(((stats.prospects_confirmes || 0) / stats.total_prospects) * 100) : 0}%)</span>
                 </div>
                 <Progress 

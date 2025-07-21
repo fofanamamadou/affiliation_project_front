@@ -264,7 +264,7 @@ const ProspectDetail = () => {
                   onClick={handleValidate}
                   style={{ backgroundColor: '#52c41a', borderColor: '#52c41a', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
                 >
-                  Valider le prospect
+                  Valider l'inscription
                 </Button>
               )}
               {prospect.statut !== 'rejeter' && prospect.statut !== 'inscrit' && (
@@ -279,7 +279,7 @@ const ProspectDetail = () => {
                     icon={<CloseCircleOutlined />}
                     style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
                   >
-                    Rejeter le prospect
+                    Rejeter l'inscription
                   </Button>
                 </Popconfirm>
               )}
