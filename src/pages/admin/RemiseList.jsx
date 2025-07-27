@@ -236,8 +236,12 @@ const RemiseList = () => {
               onChange={setFilterInfluenceur}
               style={{ minWidth: 180, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par partenaire"
-              optionFilterProp="children"
-              filterOption={(input, option) => (option?.children ?? '').toLowerCase().includes(input.toLowerCase())}
+              filterOption={(input, option) => {
+                if (!option || !option.children) return false;
+                const text = typeof option.children === 'string' ? option.children : '';
+                return text.toLowerCase().includes(input.toLowerCase());
+              }}
+              notFoundContent="Aucun partenaire trouvé"
             >
               <Option value="all">Tous les partenaires</Option>
               {influenceurs.map(inf => (
@@ -291,7 +295,7 @@ const RemiseList = () => {
             </Button>
           </Space>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           <Table
             columns={columns}
             dataSource={filteredRemises}
@@ -302,7 +306,8 @@ const RemiseList = () => {
               pageSize: 10,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
+              showTotal: (total, range) => 
+                `${range[0]}-${range[1]} sur ${total} primes`,
               size: 'default',
               responsive: true
             }}
@@ -356,7 +361,11 @@ const RemiseList = () => {
         <Modal
           title="Définir la prime d'un partenaire"
           open={primeModal}
-          onCancel={() => setPrimeModal(false)}
+          onCancel={() => {
+            setPrimeModal(false);
+            setPrimeInfluId(undefined);
+            setPrimeMontant(25000);
+          }}
           onOk={handlePrimeSubmit}
           confirmLoading={primeLoading}
           width={window.innerWidth < 700 ? '95vw' : 500}
@@ -367,13 +376,15 @@ const RemiseList = () => {
           <Select
             showSearch
             placeholder="Sélectionner un partenaire"
-            optionFilterProp="children"
             value={primeInfluId}
             onChange={setPrimeInfluId}
             style={{ width: '100%', marginBottom: 16, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
-            filterOption={(input, option) =>
-              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-            }
+            filterOption={(input, option) => {
+              if (!option || !option.children) return false;
+              const text = typeof option.children === 'string' ? option.children : '';
+              return text.toLowerCase().includes(input.toLowerCase());
+            }}
+            notFoundContent="Aucun partenaire trouvé"
           >
             {influenceurs.map(inf => (
               <Option key={inf.id} value={inf.id}>
@@ -382,7 +393,12 @@ const RemiseList = () => {
             ))}
           </Select>
           <p style={{ marginTop: 16 }}>Montant de la prime (F CFA) :</p>
-          <InputNumber min={1} value={primeMontant} onChange={setPrimeMontant} style={{ width: 180, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} /> F CFA
+          <InputNumber 
+            min={1} 
+            value={primeMontant} 
+            onChange={setPrimeMontant} 
+            style={{ width: 180, fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} 
+          /> F CFA
         </Modal>
       </Card>
     </div>

@@ -264,10 +264,6 @@ const ProspectList = () => {
         }}>
           <Select
             showSearch
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-            }
             value={filterStatus}
             onChange={setFilterStatus}
             style={{ 
@@ -276,6 +272,12 @@ const ProspectList = () => {
               fontSize: 'clamp(0.9rem, 2vw, 1rem)'
             }}
             placeholder="Filtrer par statut"
+            filterOption={(input, option) => {
+              if (!option || !option.children) return false;
+              const text = typeof option.children === 'string' ? option.children : '';
+              return text.toLowerCase().includes(input.toLowerCase());
+            }}
+            notFoundContent="Aucun statut trouvé"
           >
             <Option value="all">Tous les statuts</Option>
             <Option value="en_attente">En attente</Option>
@@ -283,7 +285,7 @@ const ProspectList = () => {
             <Option value="rejeter">Rejetés</Option>
           </Select>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           <Table
             columns={columns}
             dataSource={filteredProspects}
@@ -299,9 +301,7 @@ const ProspectList = () => {
               size: 'default',
               responsive: true
             }}
-            style={{
-              fontSize: 'clamp(0.85rem, 2vw, 1rem)'
-            }}
+            style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
           />
         </div>
       </Card>

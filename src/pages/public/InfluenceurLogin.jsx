@@ -245,7 +245,8 @@ const InfluenceurLogin = () => {
         background: 'transparent',
         marginTop: 0
       }}>
-        © {new Date().getFullYear()} - Développé par <b>Mamadou FOFANA</b> (Étudiant à ISPATEC) | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22193528994" target="_blank" rel="noopener noreferrer">93528994</a>
+        <span className="footer-long">© {new Date().getFullYear()} - Développé par <b>Mamadou FOFANA</b> (Étudiant à ISPATEC) | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22393528994" target="_blank" rel="noopener noreferrer">93528994</a></span>
+        <span className="footer-short">© {new Date().getFullYear()} - Mamadou FOFANA</span>
       </footer>
 
       <Modal

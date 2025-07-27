@@ -303,6 +303,7 @@ const AffiliationForm = () => {
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item
+                name="telephone"
                 label={<span><PhoneOutlined style={{ marginRight: '8px' }} />Numéro de téléphone</span>}
                 rules={[
                   { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
@@ -323,8 +324,6 @@ const AffiliationForm = () => {
                   buttonStyle={{ borderRadius: 8 }}
                   placeholder="Numéro de téléphone"
                   inputProps={{ name: 'telephone', required: true, autoFocus: false }}
-                  value={form.getFieldValue('telephone')}
-                  onChange={value => form.setFieldsValue({ telephone: value })}
                   enableSearch
                   disableDropdown={false}
                 />
@@ -367,13 +366,15 @@ const AffiliationForm = () => {
               >
                 <Select
                   showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-                  }
                   placeholder="Sélectionnez votre niveau"
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setNiveauEtude(value)}
+                  filterOption={(input, option) => {
+                    if (!option || !option.children) return false;
+                    const text = typeof option.children === 'string' ? option.children : '';
+                    return text.toLowerCase().includes(input.toLowerCase());
+                  }}
+                  notFoundContent="Aucun niveau trouvé"
                 >
                   {niveauEtudeOptions.map(option => (
                     <Option key={option.value} value={option.value}>
@@ -413,13 +414,15 @@ const AffiliationForm = () => {
                 >
                   <Select
                     showSearch
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-                    }
                     placeholder="Sélectionnez votre série"
                     style={{ height: '48px', borderRadius: '8px' }}
                     onChange={(value) => setSerieBac(value)}
+                    filterOption={(input, option) => {
+                      if (!option || !option.children) return false;
+                      const text = typeof option.children === 'string' ? option.children : '';
+                      return text.toLowerCase().includes(input.toLowerCase());
+                    }}
+                    notFoundContent="Aucune série trouvée"
                   >
                     {serieBacOptions.map(option => (
                       <Option key={option.value} value={option.value}>
@@ -464,13 +467,15 @@ const AffiliationForm = () => {
               >
                 <Select
                   showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-                  }
                   placeholder="Sélectionnez votre filière"
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setFiliereSouhaitee(value)}
+                  filterOption={(input, option) => {
+                    if (!option || !option.children) return false;
+                    const text = typeof option.children === 'string' ? option.children : '';
+                    return text.toLowerCase().includes(input.toLowerCase());
+                  }}
+                  notFoundContent="Aucune filière trouvée"
                 >
                   {filiereOptions.map(option => (
                     <Option key={option.value} value={option.value}>

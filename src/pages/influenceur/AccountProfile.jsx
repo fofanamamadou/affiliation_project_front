@@ -4,6 +4,8 @@ import { UserOutlined, LockOutlined, EditOutlined, SaveOutlined, KeyOutlined } f
 import { useAuth } from '../../context/AuthContext';
 import { influenceurService } from '../../services/influenceurService';
 import ErrorAlert from '../../components/ErrorAlert';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const { Title } = Typography;
 
@@ -41,7 +43,11 @@ const AccountProfile = () => {
       const result = await influenceurService.updateInfluenceurProfile(user.id, dataToUpdate);
       if (result.success) {
         message.success('Profil mis à jour avec succès');
-        await refreshUserData(); // Met à jour les données dans le contexte
+        try {
+          await refreshUserData(); // Met à jour les données dans le contexte
+        } catch (refreshError) {
+          message.warning("Profil mis à jour, mais une erreur est survenue lors du rafraîchissement des données.");
+        }
       } else {
         setProfileError(result.error || 'Erreur lors de la mise à jour');
       }
@@ -92,8 +98,27 @@ const AccountProfile = () => {
               <Form.Item name="email" label="Email (non modifiable)">
                 <Input prefix={<UserOutlined />} disabled />
               </Form.Item>
-              <Form.Item name="telephone" label="Téléphone" rules={[{ required: true, message: 'Le téléphone est requis' }]}>
-                <Input prefix={<UserOutlined />} placeholder="Votre numéro de téléphone" />
+              <Form.Item name="telephone" label="Téléphone" rules={[
+                { required: true, message: 'Le téléphone est requis' },
+                { validator: (_, value) => {
+                    if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                      return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+                    }
+                    return Promise.resolve();
+                  }
+                }
+              ]}>
+                <PhoneInput
+                  country={'ml'}
+                  onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+                  masks={{ml: '........'}}
+                  inputStyle={{ width: '100%', fontSize: 'clamp(1rem, 2vw, 1.1rem)', borderRadius: 8 }}
+                  buttonStyle={{ borderRadius: 8 }}
+                  placeholder="Votre numéro de téléphone"
+                  inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+                  enableSearch
+                  disableDropdown={false}
+                />
               </Form.Item>
               <Form.Item name="profession" label="Profession (optionnel)">
                 <Input prefix={<UserOutlined />} placeholder="Votre profession" />

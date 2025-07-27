@@ -244,12 +244,12 @@ const InfluenceurDashboard = () => {
     <div className="partenaire-dashboard-responsive" style={{ padding: '4vw 2vw', minHeight: '100vh', background: '#f5f5f5' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', fontWeight: 'bold', margin: 0 }}>Dashboard Partenaire</h1>
-        <p style={{ color: '#8c8c8c', margin: '8px 0 0 0', fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>Suivez vos performances et vos gains</p>
+        <p className="mobile-hide" style={{ color: '#8c8c8c', margin: '8px 0 0 0', fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>Suivez vos performances et vos gains</p>
       </div>
       {/* Stats Cards */}
       <Row gutter={[16, 16]}>
         {statsCards.map((card, index) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ minWidth: 0 }}>
+          <Col xs={24} sm={12} md={8} lg={6} key={index}>
             <Card style={{ height: '100%' }}>
               <Statistic
                 title={<span style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>{card.title}</span>}
@@ -264,8 +264,8 @@ const InfluenceurDashboard = () => {
       {/* Charts Row */}
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
         <Col xs={24} lg={16}>
-          <Card title="Évolution des prospects et primes">
-            <div style={{ height: '300px', minWidth: 0 }}>
+          <Card title={<span style={{ fontSize: 'clamp(1.05rem, 2vw, 1.15rem)' }}>Évolution des prospects et primes</span>}>
+            <div style={{ height: '300px', width: '100%' }}>
               {chartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartData}>
@@ -292,8 +292,8 @@ const InfluenceurDashboard = () => {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Répartition des primes">
-            <div style={{ height: '300px', minWidth: 0 }}>
+          <Card title={<span style={{ fontSize: 'clamp(1.05rem, 2vw, 1.15rem)' }}>Répartition des primes</span>}>
+            <div style={{ height: '300px', width: '100%' }}>
               {pieData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -336,7 +336,7 @@ const InfluenceurDashboard = () => {
             Partager mon lien
           </Button>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           {recentProspects.length > 0 ? (
             <List
               itemLayout="horizontal"

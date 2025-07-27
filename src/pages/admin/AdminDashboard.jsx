@@ -182,7 +182,7 @@ const AdminDashboard = () => {
       {/* Statistiques globales */}
       <Row gutter={[16, 16]}>
         {statCards.map((card, idx) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={card.title} style={{ minWidth: 0 }}>
+          <Col xs={24} sm={12} md={8} lg={6} key={card.title}>
             <Card style={{ height: '100%', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
               <Statistic
                 title={<span style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>{card.title}</span>}
@@ -200,7 +200,7 @@ const AdminDashboard = () => {
       <Row gutter={[16, 16]} style={{ marginTop: 'clamp(16px, 4vw, 24px)' }}>
         <Col xs={24} lg={12}>
           <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Répartition des Prospects</span>} style={{ borderRadius: '12px' }}>
-            <div style={{ height: 300 }}>
+            <div style={{ height: 300, width: '100%' }}>
               {prospectPieData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -237,7 +237,7 @@ const AdminDashboard = () => {
         </Col>
         
         <Col xs={24} lg={12}>
-          <Card title="Statistiques Détaillées">
+          <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Statistiques Détaillées</span>}>
             <div style={{ padding: '20px 0' }}>
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -291,30 +291,32 @@ const AdminDashboard = () => {
       {/* Evolution des prospects */}
       {stats.evolution_prospects && (
         <Card style={{ marginTop: 32 }}>
-          <Title level={4} style={{ marginBottom: 16 }}>Évolution des inscriptions prospects (7 derniers jours)</Title>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={stats.evolution_prospects} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#1890ff" strokeWidth={3} dot={{ r: 5 }} />
-            </LineChart>
-          </ResponsiveContainer>
+          <Title level={4} style={{ marginBottom: 16, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)' }}>Évolution des inscriptions prospects (7 derniers jours)</Title>
+          <div style={{ width: '100%' }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={stats.evolution_prospects} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Line type="monotone" dataKey="count" stroke="#1890ff" strokeWidth={3} dot={{ r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </Card>
       )}
 
       {/* Top influenceurs */}
       {stats.top_influenceurs && (
         <Card style={{ marginTop: 32 }}>
-          <Title level={4} style={{ marginBottom: 16 }}>Top Partenaires</Title>
-          <div style={{ overflowX: 'auto' }}>
+          <Title level={4} style={{ marginBottom: 16, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)' }}>Top Partenaires</Title>
+          <div style={{ width: '100%' }}>
             <Table
               columns={columns}
               dataSource={stats.top_influenceurs}
               rowKey={(row) => row.id}
               pagination={false}
-              scroll={{ x: 'max-content' }} // Ajout scroll horizontal mobile
+              scroll={{ x: 'max-content' }}
             />
           </div>
         </Card>
@@ -322,7 +324,7 @@ const AdminDashboard = () => {
 
       {/* Actions rapides */}
       <Card style={{ marginTop: 32 }}>
-        <Title level={4} style={{ marginBottom: 16 }}>Actions Rapides</Title>
+        <Title level={4} style={{ marginBottom: 16, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)' }}>Actions Rapides</Title>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={6}>
             <Button 

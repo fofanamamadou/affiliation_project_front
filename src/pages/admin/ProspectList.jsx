@@ -307,14 +307,16 @@ const ProspectList = () => {
             />
             <Select
               showSearch
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-              }
               value={filterStatus}
               onChange={setFilterStatus}
               style={{ minWidth: 'clamp(120px, 20vw, 150px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par statut"
+              filterOption={(input, option) => {
+                if (!option || !option.children) return false;
+                const text = typeof option.children === 'string' ? option.children : '';
+                return text.toLowerCase().includes(input.toLowerCase());
+              }}
+              notFoundContent="Aucun statut trouvé"
             >
               <Option value="all">Tous les statuts</Option>
               <Option value="en_attente">En attente</Option>
@@ -323,14 +325,16 @@ const ProspectList = () => {
             </Select>
             <Select
               showSearch
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-              }
               value={filterInfluenceur}
               onChange={setFilterInfluenceur}
               style={{ minWidth: 'clamp(140px, 25vw, 200px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par partenaire"
+              filterOption={(input, option) => {
+                if (!option || !option.children) return false;
+                const text = typeof option.children === 'string' ? option.children : '';
+                return text.toLowerCase().includes(input.toLowerCase());
+              }}
+              notFoundContent="Aucun partenaire trouvé"
             >
               <Option value="all">Tous les partenaires</Option>
               {influenceurs.map(inf => (
@@ -339,12 +343,13 @@ const ProspectList = () => {
             </Select>
           </Space>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           <Table
             columns={columns}
             dataSource={filteredProspects}
             loading={loading}
             rowKey="id"
+            scroll={{ x: 'max-content' }}
             pagination={{
               pageSize: 10,
               showSizeChanger: true,

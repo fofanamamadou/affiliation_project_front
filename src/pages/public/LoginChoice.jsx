@@ -197,7 +197,7 @@ const LoginChoice = () => {
         background: 'transparent',
         marginTop: 0
       }}>
-        © {yearDisplay} - Développé par <b>Mamadou FOFANA</b> (Étudiant à ISPATEC) | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22193528994" target="_blank" rel="noopener noreferrer">93528994</a>
+        © {yearDisplay} - Développé par <b>Mamadou FOFANA</b> (Étudiant à ISPATEC) | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22393528994" target="_blank" rel="noopener noreferrer">93528994</a>
       </footer>
     </>
   );

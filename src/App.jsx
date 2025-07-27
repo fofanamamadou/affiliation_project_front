@@ -35,6 +35,7 @@ import RemiseStats from './pages/admin/RemiseStats';
 import InfluenceurRemiseList from './pages/influenceur/RemiseList';
 import InfluenceurRemiseStats from './pages/influenceur/RemiseStats';
 import AccountProfile from './pages/influenceur/AccountProfile';
+import AdminList from './pages/admin/AdminList';
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="influenceurs" element={<InfluenceurList />} />
               <Route path="influenceurs/:id" element={<InfluenceurDetail />} />
+              <Route path="admins" element={<AdminList />} />
               <Route path="prospects" element={<ProspectList />} />
               <Route path="prospects/:id" element={<ProspectDetail />} />
               <Route path="prospects-stats" element={<ProspectStats />} />

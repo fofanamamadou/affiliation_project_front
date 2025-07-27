@@ -43,6 +43,8 @@ import { influenceurService } from '../../services/influenceurService';
 import { prospectService } from '../../services/prospectService';
 import { remiseService } from '../../services/remiseService';
 import ErrorAlert from '../../components/ErrorAlert';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const { Title, Text } = Typography;
 
@@ -512,7 +514,7 @@ const InfluenceurDetail = () => {
         {/* Prospects */}
         <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Prospects du partenaire</span>} style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
           {prospects.length > 0 ? (
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ width: '100%' }}>
               <Table
                 columns={prospectsColumns}
                 dataSource={prospects}
@@ -539,7 +541,7 @@ const InfluenceurDetail = () => {
         {/* Remises */}
         <Card title={<span style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>Primes du partenaire</span>}>
           {remises.length > 0 ? (
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ width: '100%' }}>
               <Table
                 columns={remisesColumns}
                 dataSource={remises}
@@ -604,10 +606,26 @@ const InfluenceurDetail = () => {
             label="Téléphone"
             rules={[
               { required: true, message: 'Le téléphone est requis' },
-              { pattern: /^\d{8,15}$/, message: 'Le téléphone doit contenir entre 8 et 15 chiffres' }
+              { validator: (_, value) => {
+                  if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                    return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+                  }
+                  return Promise.resolve();
+                }
+              }
             ]}
           >
-            <Input placeholder="Numéro de téléphone" maxLength={15} style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
+            <PhoneInput
+              country={'ml'}
+              onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+              masks={{ml: '........'}}
+              inputStyle={{ width: '100%', fontSize: 'clamp(0.9rem, 2vw, 1rem)', borderRadius: 8 }}
+              buttonStyle={{ borderRadius: 8 }}
+              placeholder="Numéro de téléphone"
+              inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+              enableSearch
+              disableDropdown={false}
+            />
           </Form.Item>
           <Form.Item
             name="profession"

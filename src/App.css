@@ -236,3 +236,13 @@
     font-size: 0.95em;
   }
 }
+
+@media (max-width: 600px) {
+  .footer-long { display: none !important; }
+  .footer-short { display: inline !important; }
+  .mobile-hide { display: none !important; }
+}
+@media (min-width: 601px) {
+  .footer-long { display: inline !important; }
+  .footer-short { display: none !important; }
+}

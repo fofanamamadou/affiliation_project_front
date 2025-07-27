@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Card, 
-  Typography, 
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
   message,
   Select
 } from 'antd';
-import { 
-  UserOutlined, 
-  MailOutlined, 
+import {
+  UserOutlined,
+  MailOutlined,
   LockOutlined,
   UserAddOutlined,
   PhoneOutlined
@@ -28,7 +28,7 @@ const Register = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -47,15 +47,15 @@ const Register = () => {
       };
 
       const result = await register(userData);
-      
+
       if (result.success) {
-        message.success('Inscription réussie !');
+        message.success("Votre compte a bien été créé. Un administrateur doit valider votre inscription avant que vous puissiez vous connecter.");
         navigate('/influenceur/login');
       } else {
         setError(result.error);
         // Ne pas réinitialiser le formulaire en cas d'erreur
       }
-      
+
     } catch (error) {
       // console.error('Register error:', error);
       setError('Une erreur est survenue. Veuillez réessayer.');
@@ -78,38 +78,39 @@ const Register = () => {
 
   return (
     <>
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         padding: '4vw 2vw',
       }}>
-        <Card 
-          style={{ 
-            width: '100%', 
-            maxWidth: 450,
+        <Card
+          style={{
+            width: '100%',
+            maxWidth: 520,
             minWidth: 0,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+            borderRadius: '16px',
             border: 'none',
             margin: '0 auto',
+            background: 'rgba(255,255,255,0.98)',
           }}
-          bodyStyle={{ padding: '24px 8px' }}
+          bodyStyle={{ padding: '32px 16px 16px 16px' }}
         >
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ 
-              width: 64, 
-              height: 64, 
-              background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)', 
-              borderRadius: '50%', 
-              display: 'flex', 
-              alignItems: 'center', 
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{
+              width: 64,
+              height: 64,
+              background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 20px',
-              boxShadow: '0 4px 16px rgba(24, 144, 255, 0.3)'
+              margin: '0 auto 18px',
+              boxShadow: '0 4px 16px rgba(24, 144, 255, 0.18)'
             }}>
               <UserAddOutlined style={{ fontSize: 28, color: 'white' }} />
             </div>
@@ -120,7 +121,7 @@ const Register = () => {
               Rejoignez notre plateforme d'affiliation
             </Text>
           </div>
-          <ErrorAlert 
+          <ErrorAlert
             error={error}
             onClose={() => setError('')}
             title="Erreur d'inscription"
@@ -135,124 +136,147 @@ const Register = () => {
             preserve={true}
             style={{ width: '100%' }}
           >
-            <Form.Item
-              name="nom"
-              label="Nom complet"
-              rules={[
-                { required: true, message: 'Veuillez saisir votre nom' },
-                { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
-              ]}
-            >
-              <Input 
-                prefix={<UserOutlined style={{ color: '#1890ff' }} />} 
-                placeholder="Votre nom complet"
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: 'Veuillez saisir votre email' },
-                { type: 'email', message: 'Email invalide' }
-              ]}
-            >
-              <Input 
-                prefix={<MailOutlined style={{ color: '#1890ff' }} />} 
-                placeholder="votre@email.com"
-                autoComplete="email"
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="telephone"
-              label="Téléphone"
-              rules={[
-                { required: true, message: 'Veuillez saisir votre téléphone' },
-                { validator: (_, value) => {
-                    if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
-                      return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 16,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+              <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+                <Form.Item
+                  name="nom"
+                  label="Nom complet"
+                  rules={[
+                    { required: true, message: 'Veuillez saisir votre nom' },
+                    { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
+                  ]}
+                  hasFeedback
+                >
+                  <Input
+                    prefix={<UserOutlined style={{ color: '#1890ff' }} />}
+                    placeholder="Votre nom complet"
+                    style={{ height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                    autoComplete="name"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="email"
+                  label="Email"
+                  rules={[
+                    { required: true, message: 'Veuillez saisir votre email' },
+                    { type: 'email', message: 'Email invalide' }
+                  ]}
+                  hasFeedback
+                >
+                  <Input
+                    prefix={<MailOutlined style={{ color: '#1890ff' }} />}
+                    placeholder="votre@email.com"
+                    autoComplete="email"
+                    style={{ height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="telephone"
+                  label="Téléphone"
+                  rules={[
+                    { required: true, message: 'Veuillez saisir votre téléphone' },
+                    {
+                      validator: (_, value) => {
+                        if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                          return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+                        }
+                        return Promise.resolve();
+                      }
                     }
-                    return Promise.resolve();
-                  }
-                }
-              ]}
-            >
-              <PhoneInput
-                country={'ml'}
-                onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
-                masks={{ml: '........'}}
-                inputStyle={{ width: '100%', height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)', borderRadius: 8 }}
-                buttonStyle={{ borderRadius: 8 }}
-                placeholder="Numéro de téléphone"
-                inputProps={{ name: 'telephone', required: true, autoFocus: false }}
-                value={form.getFieldValue('telephone')}
-                onChange={value => form.setFieldsValue({ telephone: value })}
-                enableSearch
-                disableDropdown={false}
-              />
-            </Form.Item>
-            <Form.Item
-              name="profession"
-              label="Profession (optionnel)"
-              rules={[]}
-            >
-              <Input 
-                placeholder="Votre profession (facultatif)"
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label="Mot de passe"
-              rules={[
-                { required: true, message: 'Veuillez saisir votre mot de passe' },
-                { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
-              ]}
-            >
-              <Input.Password 
-                prefix={<LockOutlined style={{ color: '#1890ff' }} />} 
-                placeholder="Votre mot de passe"
-                autoComplete="new-password"
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="confirmPassword"
-              label="Confirmer le mot de passe"
-              dependencies={['password']}
-              rules={[
-                { required: true, message: 'Veuillez confirmer votre mot de passe' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password 
-                prefix={<LockOutlined style={{ color: '#1890ff' }} />} 
-                placeholder="Confirmez votre mot de passe"
-                autoComplete="new-password"
-                style={{ height: 48, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button 
-                type="primary" 
-                htmlType="submit" 
+                  ]}
+                  hasFeedback
+                >
+                  <PhoneInput
+                    country={'ml'}
+                    onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
+                    masks={{ ml: '........' }}
+                    inputStyle={{ width: '100%', height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)', borderRadius: 8 }}
+                    buttonStyle={{ borderRadius: 8 }}
+                    placeholder="Numéro de téléphone"
+                    inputProps={{ name: 'telephone', required: true, autoFocus: false }}
+                    value={form.getFieldValue('telephone')}
+                    onChange={value => form.setFieldsValue({ telephone: value })}
+                    enableSearch
+                    disableDropdown={false}
+                  />
+                </Form.Item>
+              </div>
+              <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+                <Form.Item
+                  name="profession"
+                  label="Profession (optionnel)"
+                  rules={[]}
+                >
+                  <Input
+                    placeholder="Votre profession (facultatif)"
+                    style={{ height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  label="Mot de passe"
+                  rules={[
+                    { required: true, message: 'Veuillez saisir votre mot de passe' },
+                    { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password
+                    prefix={<LockOutlined style={{ color: '#1890ff' }} />}
+                    placeholder="Votre mot de passe"
+                    autoComplete="new-password"
+                    style={{ height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="confirmPassword"
+                  label="Confirmer le mot de passe"
+                  dependencies={['password']}
+                  rules={[
+                    { required: true, message: 'Veuillez confirmer votre mot de passe' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
+                      },
+                    }),
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password
+                    prefix={<LockOutlined style={{ color: '#1890ff' }} />}
+                    placeholder="Confirmez votre mot de passe"
+                    autoComplete="new-password"
+                    style={{ height: 44, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
                 loading={loading}
-                style={{ 
-                  width: '100%', 
+                style={{
+                  width: '100%',
                   height: 48,
                   background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
                   border: 'none',
                   borderRadius: 8,
                   fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                  fontWeight: 500
+                  fontWeight: 500,
+                  position: 'sticky',
+                  bottom: 0,
+                  zIndex: 2,
+                  boxShadow: '0 2px 8px rgba(24,144,255,0.08)'
                 }}
                 icon={<UserAddOutlined />}
               >
@@ -278,7 +302,8 @@ const Register = () => {
         background: 'transparent',
         marginTop: 0
       }}>
-        © {yearDisplay} - Développé par <b>Mamadou FOFANA</b> | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22193528994" target="_blank" rel="noopener noreferrer">93528994</a>
+        <span className="footer-long">© {yearDisplay} - Développé par <b>Mamadou FOFANA</b> | Contact : <a href="mailto:madoufof94@gmail.com">madoufof94@gmail.com</a> | WhatsApp : <a href="https://wa.me/22393528994" target="_blank" rel="noopener noreferrer">93528994</a></span>
+        <span className="footer-short">© {yearDisplay} - Mamadou FOFANA</span>
       </footer>
     </>
   );

@@ -44,15 +44,23 @@ export const AuthProvider = ({ children }) => {
       
       if (result.success) {
         const userData = result.data;
-        setUserType(userData.user_type);
-        setPermissions(userData.permissions || []);
-        
         if (userData.user_type === 'superuser') {
+          setUserType('superuser');
+          setPermissions({
+            is_admin: true,
+            is_moderateur: false,
+            peut_creer_influenceurs: true,
+            peut_valider_prospects: true,
+            peut_payer_remises: true,
+            peut_voir_statistiques: true,
+            peut_gerer_systeme: true
+          });
           setUser(userData.user);
         } else {
+          setUserType(userData.user_type);
+          setPermissions(userData.permissions || []);
           setUser(userData.influenceur);
         }
-        
         setIsAuthenticated(true);
       } else {
         // Token invalide, nettoyer le localStorage
@@ -76,9 +84,23 @@ export const AuthProvider = ({ children }) => {
       const result = await authService.login(credentials);
       
       if (result.success) {
-        setUser(result.user);
-        setUserType(result.user_type);
-        setPermissions(result.permissions || []);
+        if (result.user_type === 'superuser') {
+          setUser(result.user);
+          setUserType('superuser');
+          setPermissions({
+            is_admin: true,
+            is_moderateur: false,
+            peut_creer_influenceurs: true,
+            peut_valider_prospects: true,
+            peut_payer_remises: true,
+            peut_voir_statistiques: true,
+            peut_gerer_systeme: true
+          });
+        } else {
+          setUser(result.user);
+          setUserType(result.user_type);
+          setPermissions(result.permissions || []);
+        }
         setIsAuthenticated(true);
         message.success('Connexion réussie !');
         return { success: true };
@@ -102,9 +124,23 @@ export const AuthProvider = ({ children }) => {
       const result = await authService.adminLogin(credentials);
       
       if (result.success) {
-        setUser(result.user);
-        setUserType(result.user_type);
-        setPermissions(result.permissions || []);
+        if (result.user_type === 'superuser') {
+          setUser(result.user);
+          setUserType('superuser');
+          setPermissions({
+            is_admin: true,
+            is_moderateur: false,
+            peut_creer_influenceurs: true,
+            peut_valider_prospects: true,
+            peut_payer_remises: true,
+            peut_voir_statistiques: true,
+            peut_gerer_systeme: true
+          });
+        } else {
+          setUser(result.user);
+          setUserType(result.user_type);
+          setPermissions(result.permissions || []);
+        }
         setIsAuthenticated(true);
         return { success: true };
       } else {
@@ -125,9 +161,23 @@ export const AuthProvider = ({ children }) => {
       const result = await authService.influenceurLogin(credentials);
       
       if (result.success) {
-        setUser(result.user);
-        setUserType(result.user_type);
-        setPermissions(result.permissions || []);
+        if (result.user_type === 'superuser') {
+          setUser(result.user);
+          setUserType('superuser');
+          setPermissions({
+            is_admin: true,
+            is_moderateur: false,
+            peut_creer_influenceurs: true,
+            peut_valider_prospects: true,
+            peut_payer_remises: true,
+            peut_voir_statistiques: true,
+            peut_gerer_systeme: true
+          });
+        } else {
+          setUser(result.user);
+          setUserType(result.user_type);
+          setPermissions(result.permissions || []);
+        }
         setIsAuthenticated(true);
         return { success: true };
       } else {
@@ -148,10 +198,7 @@ export const AuthProvider = ({ children }) => {
       const result = await authService.register(userData);
       
       if (result.success) {
-        setUser(result.user);
-        setUserType(result.user_type);
-        setPermissions(result.permissions || []);
-        setIsAuthenticated(true);
+        // Ne pas connecter automatiquement l'utilisateur après inscription
         message.success('Inscription réussie !');
         return { success: true };
       } else {

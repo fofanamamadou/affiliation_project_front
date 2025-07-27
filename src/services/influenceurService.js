@@ -170,13 +170,43 @@ export const influenceurService = {
   // Envoyer un mot de passe temporaire
   async forgotPasswordTemp(email) {
     try {
-      const response = await axiosInstance.post('/api/v1/forgot-password-temp/', { email });
+      const response = await axiosInstance.post('/forgot-password-temp/', { email });
       return {
         success: true,
         data: response.data
       };
     } catch (error) {
       return handleApiError(error, 'Erreur lors de la demande de mot de passe');
+    }
+  },
+
+  // Récupérer tous les admins secondaires
+  async getAllAdmins() {
+    try {
+      const response = await axiosInstance.get('/influenceurs/admins/');
+      return { success: true, data: response.data };
+    } catch (error) {
+      return handleApiError(error, 'Impossible de récupérer la liste des admins');
+    }
+  },
+
+  // Créer un admin secondaire
+  async createAdmin(adminData) {
+    try {
+      const response = await axiosInstance.post('/influenceurs/create-admin/', adminData);
+      return { success: true, data: response.data };
+    } catch (error) {
+      return handleApiError(error, 'Erreur lors de la création de l\'admin');
+    }
+  },
+
+  // Supprimer un admin secondaire (supposons endpoint /influenceurs/admins/:id/)
+  async deleteAdmin(id) {
+    try {
+      const response = await axiosInstance.delete(`/influenceurs/admins/${id}/`);
+      return { success: true, data: response.data };
+    } catch (error) {
+      return handleApiError(error, 'Erreur lors de la suppression de l\'admin');
     }
   }
 }; 

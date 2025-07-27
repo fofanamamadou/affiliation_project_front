@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu, Avatar, Dropdown, Space, Typography, Button, message } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Space, Typography, Button, message, Drawer } from 'antd';
 import { 
   UserOutlined, 
   DashboardOutlined, 
@@ -8,7 +8,9 @@ import {
   SettingOutlined,
   LogoutOutlined,
   BarChartOutlined,
-  ShareAltOutlined
+  ShareAltOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -21,6 +23,10 @@ const InfluenceurLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuth();
+
+  const [drawerVisible, setDrawerVisible] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
+  const isMobile = window.innerWidth <= 600;
 
   const menuItems = [
     {
@@ -113,35 +119,60 @@ const InfluenceurLayout = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        breakpoint="lg"
-        collapsedWidth="0"
-        style={{
-          background: '#fff',
-          borderRight: '1px solid #f0f0f0',
-        }}
-      >
-        <div style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
-          <img src={logoUniversite} alt="Logo ISPATEC" style={{ width: 40, height: 40, marginRight: 8, borderRadius: 8 }} />
-          <h2 style={{ margin: 0, color: '#1890ff', display: 'inline-block', verticalAlign: 'middle' }}>Affiliation</h2>
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-          style={{ borderRight: 0 }}
-        />
-      </Sider>
+      {isMobile ? (
+        <Drawer
+          title={<span style={{ color: '#1890ff', fontWeight: 'bold' }}>Espace Partenaire</span>}
+          placement="left"
+          onClose={() => setDrawerVisible(false)}
+          open={drawerVisible}
+          bodyStyle={{ padding: 0 }}
+        >
+          <Menu
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            onClick={({ key }) => { handleMenuClick({ key }); setDrawerVisible(false); }}
+            style={{ borderRight: 0 }}
+          />
+        </Drawer>
+      ) : (
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          theme="light"
+          breakpoint="lg"
+          collapsedWidth="0"
+          style={{ background: '#fff', borderRight: '1px solid #f0f0f0' }}
+        >
+          <div style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
+            <img src={logoUniversite} alt="Logo ISPATEC" style={{ width: 40, height: 40, marginRight: 8, borderRadius: 8 }} />
+            <h2 style={{ margin: 0, color: '#1890ff', display: 'inline-block', verticalAlign: 'middle' }}>Affiliation</h2>
+          </div>
+          <Menu
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            onClick={handleMenuClick}
+            style={{ borderRight: 0 }}
+          />
+        </Sider>
+      )}
       <Layout>
-        <Header style={{ 
-          background: '#fff', 
-          padding: '0 24px', 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Header style={{
+          background: '#fff',
+          padding: '0 24px',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
           borderBottom: '1px solid #f0f0f0'
         }}>
+          <Button
+            type="text"
+            icon={isMobile ? <MenuUnfoldOutlined /> : (collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />)}
+            onClick={() => isMobile ? setDrawerVisible(true) : setCollapsed(!collapsed)}
+            style={{ fontSize: '16px', width: 64, height: 64 }}
+          />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Text strong style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)' }}>Espace Partenaire</Text>
             <Button

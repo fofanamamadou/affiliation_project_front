@@ -217,9 +217,9 @@ const RemiseList = () => {
           </div>
         </div>
         {remises.length > 0 ? (
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ width: '100%' }}>
             <Table
-              columns={columns.map(col => col.title === 'Remise' || col.title === 'Remises' ? { ...col, title: 'Prime' } : col)}
+              columns={columns}
               dataSource={remises}
               loading={loading}
               rowKey="id"
@@ -228,13 +228,12 @@ const RemiseList = () => {
                 pageSize: 10,
                 showSizeChanger: true,
                 showQuickJumper: true,
-                showTotal: (total, range) => `${range[0]}-${range[1]} sur ${total} primes`,
+                showTotal: (total, range) => 
+                  `${range[0]}-${range[1]} sur ${total} primes`,
                 size: 'default',
                 responsive: true
               }}
-              style={{
-                fontSize: 'clamp(0.85rem, 2vw, 1rem)'
-              }}
+              style={{ fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}
             />
           </div>
         ) : (

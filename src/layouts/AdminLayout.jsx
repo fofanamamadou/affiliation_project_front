@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Button, Avatar, Badge, Dropdown, Space, Typography } from 'antd';
+import { Layout, Menu, Button, Avatar, Badge, Dropdown, Space, Typography, Drawer } from 'antd';
 import { 
   HomeOutlined, 
   UserOutlined, 
@@ -22,13 +22,18 @@ const { Text } = Typography;
 
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const location = useLocation();
-  const { logout, user } = useAuth();
+  const { logout, user, userType } = useAuth();
   const navigate = useNavigate();
 
-  const navigation = [
+  const isMobile = window.innerWidth <= 600;
+
+  const menuItems = [
     { key: '/admin', icon: <HomeOutlined />, label: 'Dashboard' },
     { key: '/admin/influenceurs', icon: <UserOutlined />, label: 'Partenaires' },
+    // Ajout du menu pour la gestion des admins secondaires (superadmin uniquement)
+    ...(userType === 'superuser' ? [{ key: '/admin/admins', icon: <UserOutlined />, label: 'Admins secondaires' }] : []),
     { key: '/admin/prospects', icon: <TeamOutlined />, label: 'Prospects' },
     { key: '/admin/prospects-stats', icon: <BarChartOutlined />, label: 'Stats Prospects' },
     { key: '/admin/remises', icon: <DollarOutlined />, label: 'Primes' },
@@ -82,59 +87,80 @@ const AdminLayout = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
-        <div style={{ 
-          height: '64px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          borderBottom: '1px solid #f0f0f0'
-        }}>
-          <h1 style={{ 
-            color: '#1890ff', 
-            fontSize: collapsed ? '16px' : '20px',
-            fontWeight: 'bold',
-            margin: 0
+      {isMobile ? (
+        <Drawer
+          title={<span style={{ color: '#1890ff', fontWeight: 'bold' }}>Admin Panel</span>}
+          placement="left"
+          onClose={() => setDrawerVisible(false)}
+          open={drawerVisible}
+          bodyStyle={{ padding: 0 }}
+        >
+          <Menu
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems.map(item => ({
+              key: item.key,
+              icon: item.icon,
+              label: <Link to={item.key}>{item.label}</Link>
+            }))}
+            style={{ borderRight: 0 }}
+            onClick={() => setDrawerVisible(false)}
+          />
+        </Drawer>
+      ) : (
+        <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
+          <div style={{
+            height: '64px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottom: '1px solid #f0f0f0'
           }}>
-            {collapsed ? 'AP' : 'Admin Panel'}
-          </h1>
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={navigation.map(item => ({
-            key: item.key,
-            icon: item.icon,
-            label: <Link to={item.key}>{item.label}</Link>
-          }))}
-          style={{ borderRight: 0 }}
-        />
-      </Sider>
+            <h1 style={{
+              color: '#1890ff',
+              fontSize: collapsed ? '16px' : '20px',
+              fontWeight: 'bold',
+              margin: 0
+            }}>
+              {collapsed ? 'AP' : 'Admin Panel'}
+            </h1>
+          </div>
+          <Menu
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems.map(item => ({
+              key: item.key,
+              icon: item.icon,
+              label: <Link to={item.key}>{item.label}</Link>
+            }))}
+            style={{ borderRight: 0 }}
+          />
+        </Sider>
+      )}
       <Layout>
-        <Header style={{ 
-          padding: '0 24px', 
-          background: '#fff', 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Header style={{
+          padding: '0 24px',
+          background: '#fff',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
           borderBottom: '1px solid #f0f0f0'
         }}>
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
+            icon={isMobile ? <MenuUnfoldOutlined /> : (collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />)}
+            onClick={() => isMobile ? setDrawerVisible(true) : setCollapsed(!collapsed)}
             style={{ fontSize: '16px', width: 64, height: 64 }}
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            
             <Dropdown
               menu={{ items: userMenuItems }}
               placement="bottomRight"
               arrow
             >
               <Space style={{ cursor: 'pointer', padding: '8px' }}>
-                <Avatar 
-                  style={{ 
+                <Avatar
+                  style={{
                     backgroundColor: '#1890ff',
                     color: '#fff',
                     fontWeight: 'bold'
@@ -154,10 +180,10 @@ const AdminLayout = () => {
             </Dropdown>
           </div>
         </Header>
-        <Content style={{ 
-          margin: '24px', 
-          padding: '24px', 
-          background: '#fff', 
+        <Content style={{
+          margin: '24px',
+          padding: '24px',
+          background: '#fff',
           borderRadius: '8px',
           minHeight: '280px'
         }}>

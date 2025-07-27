@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router-dom';
 import { exportToCsv } from '../../utils/exportCsv';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { useAuth } from '../../context/AuthContext';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -44,6 +45,7 @@ const InfluenceurList = () => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState('all');
+  const { userType } = useAuth();
 
   useEffect(() => {
     loadInfluenceurs();
@@ -291,6 +293,10 @@ const InfluenceurList = () => {
     return match && statusOk;
   });
 
+  if (userType !== 'superuser') {
+    return <Card><Title level={4}>Accès réservé au superadmin</Title></Card>;
+  }
+
   return (
     <div className="admin-influenceurlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>
       <Card style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
@@ -367,12 +373,12 @@ const InfluenceurList = () => {
                 onClick={handleCreate}
                 style={{ width: 'auto', fontSize: 'clamp(0.9rem, 2vw, 1rem)', padding: '0 18px' }}
               >
-                Nouvel Partenaire
+                Nouveau Partenaire
               </Button>
             </div>
           </div>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           <Table
             columns={columns}
             dataSource={filteredInfluenceurs}
@@ -415,7 +421,20 @@ const InfluenceurList = () => {
             >
               <Input placeholder="Nom du partenaire" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }} />
             </Form.Item>
-            <Form.Item label="Téléphone" required style={{ marginBottom: 0 }}>
+            <Form.Item
+              name="telephone"
+              label="Téléphone"
+              rules={[
+                { required: true, message: 'Le téléphone est requis' },
+                { validator: (_, value) => {
+                    if (!value || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15) {
+                      return Promise.reject('Le téléphone doit contenir entre 8 et 15 chiffres');
+                    }
+                    return Promise.resolve();
+                  }
+                }
+              ]}
+            >
               <PhoneInput
                 country={'ml'}
                 onlyCountries={['ml', 'ci', 'bf', 'sn', 'mr', 'ne', 'tg', 'bj', 'cm', 'ng', 'fr', 'us', 'gb']}
@@ -424,8 +443,6 @@ const InfluenceurList = () => {
                 buttonStyle={{ borderRadius: 8 }}
                 placeholder="Numéro de téléphone"
                 inputProps={{ name: 'telephone', required: true, autoFocus: false }}
-                value={form.getFieldValue('telephone')}
-                onChange={value => form.setFieldsValue({ telephone: value })}
                 enableSearch
                 disableDropdown={false}
               />
