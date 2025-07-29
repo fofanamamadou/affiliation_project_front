@@ -12,7 +12,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import logoUniversite from '../logo_universite.ico';
@@ -32,12 +33,12 @@ const AdminLayout = () => {
   const menuItems = [
     { key: '/admin', icon: <HomeOutlined />, label: 'Dashboard' },
     { key: '/admin/influenceurs', icon: <UserOutlined />, label: 'Partenaires' },
-    // Ajout du menu pour la gestion des admins secondaires (superadmin uniquement)
-    ...(userType === 'superuser' ? [{ key: '/admin/admins', icon: <UserOutlined />, label: 'Admins secondaires' }] : []),
     { key: '/admin/prospects', icon: <TeamOutlined />, label: 'Prospects' },
     { key: '/admin/prospects-stats', icon: <BarChartOutlined />, label: 'Stats Prospects' },
     { key: '/admin/remises', icon: <DollarOutlined />, label: 'Primes' },
-    { key: '/admin/remises-stats', icon: <BarChartOutlined />, label: 'Stats Primes' }
+    { key: '/admin/remises-stats', icon: <BarChartOutlined />, label: 'Stats Primes' },
+    // Ajout du menu pour la gestion des admins secondaires (superadmin uniquement) EN DERNIER
+    ...(userType === 'superuser' ? [{ key: '/admin/admins', icon: <SafetyCertificateOutlined />, label: 'Admins secondaires' }] : [])
   ];
 
   const handleLogout = async () => {
@@ -172,7 +173,7 @@ const AdminLayout = () => {
                   <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
                     {getDisplayName()}
                   </Text>
-                  <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+                  <Text className="mobile-hide" type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
                     Administrateur
                   </Text>
                 </div>

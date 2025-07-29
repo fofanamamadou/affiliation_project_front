@@ -183,30 +183,30 @@ export const influenceurService = {
   // Récupérer tous les admins secondaires
   async getAllAdmins() {
     try {
-      const response = await axiosInstance.get('/influenceurs/admins/');
+      const response = await axiosInstance.get('/admin/secondary/');
       return { success: true, data: response.data };
     } catch (error) {
-      return handleApiError(error, 'Impossible de récupérer la liste des admins');
+      return handleApiError(error, 'Impossible de récupérer la liste des admins secondaires');
     }
   },
 
   // Créer un admin secondaire
   async createAdmin(adminData) {
     try {
-      const response = await axiosInstance.post('/influenceurs/create-admin/', adminData);
+      const response = await axiosInstance.post('/admin/secondary/create/', adminData);
       return { success: true, data: response.data };
     } catch (error) {
-      return handleApiError(error, 'Erreur lors de la création de l\'admin');
+      return handleApiError(error, "Erreur lors de la création de l'admin secondaire");
     }
   },
 
   // Supprimer un admin secondaire (supposons endpoint /influenceurs/admins/:id/)
   async deleteAdmin(id) {
     try {
-      const response = await axiosInstance.delete(`/influenceurs/admins/${id}/`);
+      const response = await axiosInstance.delete(`/admin/secondary/${id}/delete/`);
       return { success: true, data: response.data };
     } catch (error) {
-      return handleApiError(error, 'Erreur lors de la suppression de l\'admin');
+      return handleApiError(error, "Erreur lors de la suppression de l'admin secondaire");
     }
   }
 }; 

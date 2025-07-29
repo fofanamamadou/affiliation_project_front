@@ -312,16 +312,22 @@ const ProspectList = () => {
               style={{ minWidth: 'clamp(120px, 20vw, 150px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par statut"
               filterOption={(input, option) => {
-                if (!option || !option.children) return false;
-                const text = typeof option.children === 'string' ? option.children : '';
-                return text.toLowerCase().includes(input.toLowerCase());
+                const text = option.label || '';
+                return text
+                  .toLowerCase()
+                  .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                  .includes(
+                    input
+                      .toLowerCase()
+                      .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                  );
               }}
               notFoundContent="Aucun statut trouvé"
             >
-              <Option value="all">Tous les statuts</Option>
-              <Option value="en_attente">En attente</Option>
-              <Option value="inscrit">Inscrits</Option>
-              <Option value="rejeter">Rejetés</Option>
+              <Option value="all" label="Tous les statuts">Tous les statuts</Option>
+              <Option value="en_attente" label="En attente">En attente</Option>
+              <Option value="inscrit" label="Inscrits">Inscrits</Option>
+              <Option value="rejeter" label="Rejetés">Rejetés</Option>
             </Select>
             <Select
               showSearch
@@ -330,15 +336,23 @@ const ProspectList = () => {
               style={{ minWidth: 'clamp(140px, 25vw, 200px)', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
               placeholder="Filtrer par partenaire"
               filterOption={(input, option) => {
-                if (!option || !option.children) return false;
-                const text = typeof option.children === 'string' ? option.children : '';
-                return text.toLowerCase().includes(input.toLowerCase());
+                const text = option.label || '';
+                return text
+                  .toLowerCase()
+                  .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                  .includes(
+                    input
+                      .toLowerCase()
+                      .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                  );
               }}
               notFoundContent="Aucun partenaire trouvé"
             >
-              <Option value="all">Tous les partenaires</Option>
+              <Option value="all" label="Tous les partenaires">Tous les partenaires</Option>
               {influenceurs.map(inf => (
-                <Option key={inf.id} value={inf.id}>{inf.nom} ({inf.code_affiliation})</Option>
+                <Option key={inf.id} value={inf.id} label={`${inf.nom} (${inf.code_affiliation})`}>
+                  {inf.nom} ({inf.code_affiliation})
+                </Option>
               ))}
             </Select>
           </Space>

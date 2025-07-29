@@ -45,7 +45,6 @@ const InfluenceurList = () => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState('all');
-  const { userType } = useAuth();
 
   useEffect(() => {
     loadInfluenceurs();
@@ -292,10 +291,6 @@ const InfluenceurList = () => {
     const statusOk = filterStatus === 'all' ? true : (filterStatus === 'actif' ? influ.is_active : !influ.is_active);
     return match && statusOk;
   });
-
-  if (userType !== 'superuser') {
-    return <Card><Title level={4}>Accès réservé au superadmin</Title></Card>;
-  }
 
   return (
     <div className="admin-influenceurlist-responsive" style={{ padding: 'clamp(12px, 3vw, 24px)', minHeight: '100vh', background: '#f5f5f5' }}>

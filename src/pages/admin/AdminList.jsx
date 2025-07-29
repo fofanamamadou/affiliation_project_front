@@ -47,7 +47,12 @@ const AdminList = () => {
   const handleSubmit = async (values) => {
     setSubmitLoading(true);
     try {
-      const result = await influenceurService.createAdmin(values);
+      const result = await influenceurService.createAdmin({
+        email: values.email,
+        password: values.password,
+        first_name: values.nom,    
+        last_name: '',               
+      });      
       if (result.success) {
         message.success('Admin créé avec succès');
         setModalVisible(false);
@@ -93,7 +98,11 @@ const AdminList = () => {
   };
 
   const columns = [
-    { title: 'Nom', dataIndex: 'nom', key: 'nom' },
+    { 
+      title: 'Nom', 
+      key: 'nom', 
+      render: (_, record) => `${record.first_name || ''} ${record.last_name || ''}` 
+    },    
     { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Actions', key: 'actions', render: (_, record) => (
       <Popconfirm title={`Supprimer l'admin "${record.nom}" ?`} onConfirm={() => handlePopConfirm(record.id, record.nom)} okText="Oui" cancelText="Non">
@@ -102,8 +111,8 @@ const AdminList = () => {
     ) },
   ];
 
-  if (userType !== 'superuser') {
-    return <Card><Title level={4}>Accès réservé au superadmin</Title></Card>;
+  if (userType !== 'admin' && userType !== 'superuser') {
+    return <Card><Title level={4}>Accès réservé à l'administration</Title></Card>;
   }
 
   return (
@@ -117,15 +126,38 @@ const AdminList = () => {
         title="Créer un nouvel admin"
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        onOk={() => form.submit()}
+        footer={null}
         confirmLoading={submitLoading}
         okText="Créer"
         cancelText="Annuler"
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="nom" label="Nom" rules={[{ required: true, message: 'Veuillez entrer le nom' }]}> <Input /> </Form.Item>
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide' }]}> <Input /> </Form.Item>
-          <Form.Item name="password" label="Mot de passe" rules={[{ required: true, message: 'Veuillez entrer un mot de passe' }]}> <Input.Password /> </Form.Item>
+          <Form.Item name="nom" label="Nom complet" rules={[
+            { required: true, message: 'Le nom est requis' },
+            { min: 2, message: 'Le nom doit contenir au moins 2 caractères' }
+          ]}>
+            <Input placeholder="Nom de l'admin" />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[
+            { required: true, message: 'L\'email est requis' },
+            { type: 'email', message: 'Email invalide' }
+          ]}>
+            <Input placeholder="email@exemple.com" />
+          </Form.Item>
+          <Form.Item name="password" label="Mot de passe" rules={[
+            { required: true, message: 'Le mot de passe est requis' },
+            { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
+          ]}>
+            <Input.Password placeholder="Mot de passe" />
+          </Form.Item>
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
+            <Button onClick={() => setModalVisible(false)} style={{ marginRight: 8 }}>
+              Annuler
+            </Button>
+            <Button type="primary" htmlType="submit" loading={submitLoading}>
+              Créer
+            </Button>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal

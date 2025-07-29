@@ -31,7 +31,7 @@ const AdminLogin = () => {
 
   // Redirection automatique si déjà connecté
   useEffect(() => {
-    if (isAuthenticated && userType === 'admin') {
+    if (isAuthenticated && (userType === 'admin' || userType === 'superuser')) {
       navigate('/admin', { replace: true });
     }
   }, [isAuthenticated, userType, navigate]);

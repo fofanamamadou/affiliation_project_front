@@ -21,6 +21,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState(null);
   const [permissions, setPermissions] = useState([]);
+  const [isStaff, setIsStaff] = useState(false);
+  const [isSuperuser, setIsSuperuser] = useState(false);
 
   // Vérification initiale de l'authentification
   useEffect(() => {
@@ -46,6 +48,8 @@ export const AuthProvider = ({ children }) => {
         const userData = result.data;
         if (userData.user_type === 'superuser') {
           setUserType('superuser');
+          setIsSuperuser(true);
+          setIsStaff(true);
           setPermissions({
             is_admin: true,
             is_moderateur: false,
@@ -56,10 +60,24 @@ export const AuthProvider = ({ children }) => {
             peut_gerer_systeme: true
           });
           setUser(userData.user);
-        } else {
-          setUserType(userData.user_type);
+        } else if (userData.user_type === 'admin') {
+          setUserType('admin');
+          setIsSuperuser(false);
+          setIsStaff(true);
+          setPermissions(userData.permissions || []);
+          setUser(userData.user);
+        } else if (userData.user_type === 'influenceur') {
+          setUserType('influenceur');
+          setIsSuperuser(false);
+          setIsStaff(false);
           setPermissions(userData.permissions || []);
           setUser(userData.influenceur);
+        } else {
+          setUserType(userData.user_type);
+          setIsSuperuser(!!userData.user?.is_superuser);
+          setIsStaff(!!userData.user?.is_staff);
+          setPermissions(userData.permissions || []);
+          setUser(userData.user || userData.influenceur);
         }
         setIsAuthenticated(true);
       } else {
@@ -87,6 +105,8 @@ export const AuthProvider = ({ children }) => {
         if (result.user_type === 'superuser') {
           setUser(result.user);
           setUserType('superuser');
+          setIsSuperuser(true);
+          setIsStaff(true);
           setPermissions({
             is_admin: true,
             is_moderateur: false,
@@ -96,9 +116,23 @@ export const AuthProvider = ({ children }) => {
             peut_voir_statistiques: true,
             peut_gerer_systeme: true
           });
+        } else if (result.user_type === 'admin') {
+          setUser(result.user);
+          setUserType('admin');
+          setIsSuperuser(false);
+          setIsStaff(true);
+          setPermissions(result.permissions || []);
+        } else if (result.user_type === 'influenceur') {
+          setUser(result.user);
+          setUserType('influenceur');
+          setIsSuperuser(false);
+          setIsStaff(false);
+          setPermissions(result.permissions || []);
         } else {
           setUser(result.user);
           setUserType(result.user_type);
+          setIsSuperuser(!!result.user?.is_superuser);
+          setIsStaff(!!result.user?.is_staff);
           setPermissions(result.permissions || []);
         }
         setIsAuthenticated(true);
@@ -127,6 +161,8 @@ export const AuthProvider = ({ children }) => {
         if (result.user_type === 'superuser') {
           setUser(result.user);
           setUserType('superuser');
+          setIsSuperuser(true);
+          setIsStaff(true);
           setPermissions({
             is_admin: true,
             is_moderateur: false,
@@ -136,9 +172,23 @@ export const AuthProvider = ({ children }) => {
             peut_voir_statistiques: true,
             peut_gerer_systeme: true
           });
+        } else if (result.user_type === 'admin') {
+          setUser(result.user);
+          setUserType('admin');
+          setIsSuperuser(false);
+          setIsStaff(true);
+          setPermissions(result.permissions || []);
+        } else if (result.user_type === 'influenceur') {
+          setUser(result.user);
+          setUserType('influenceur');
+          setIsSuperuser(false);
+          setIsStaff(false);
+          setPermissions(result.permissions || []);
         } else {
           setUser(result.user);
           setUserType(result.user_type);
+          setIsSuperuser(!!result.user?.is_superuser);
+          setIsStaff(!!result.user?.is_staff);
           setPermissions(result.permissions || []);
         }
         setIsAuthenticated(true);
@@ -164,6 +214,8 @@ export const AuthProvider = ({ children }) => {
         if (result.user_type === 'superuser') {
           setUser(result.user);
           setUserType('superuser');
+          setIsSuperuser(true);
+          setIsStaff(true);
           setPermissions({
             is_admin: true,
             is_moderateur: false,
@@ -173,9 +225,23 @@ export const AuthProvider = ({ children }) => {
             peut_voir_statistiques: true,
             peut_gerer_systeme: true
           });
+        } else if (result.user_type === 'admin') {
+          setUser(result.user);
+          setUserType('admin');
+          setIsSuperuser(false);
+          setIsStaff(true);
+          setPermissions(result.permissions || []);
+        } else if (result.user_type === 'influenceur') {
+          setUser(result.user);
+          setUserType('influenceur');
+          setIsSuperuser(false);
+          setIsStaff(false);
+          setPermissions(result.permissions || []);
         } else {
           setUser(result.user);
           setUserType(result.user_type);
+          setIsSuperuser(!!result.user?.is_superuser);
+          setIsStaff(!!result.user?.is_staff);
           setPermissions(result.permissions || []);
         }
         setIsAuthenticated(true);
@@ -263,7 +329,7 @@ export const AuthProvider = ({ children }) => {
 
   // Vérifier si l'utilisateur est admin
   const isAdmin = () => {
-    return userType === 'admin' || userType === 'superuser';
+    return isStaff;
   };
 
   // Vérifier si l'utilisateur est influenceur
@@ -287,7 +353,9 @@ export const AuthProvider = ({ children }) => {
     hasPermission,
     isAdmin,
     isInfluenceur,
-    checkAuthStatus
+    checkAuthStatus,
+    isStaff,
+    isSuperuser
   };
 
   return (

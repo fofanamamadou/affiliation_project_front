@@ -209,7 +209,7 @@ const InfluenceurLayout = () => {
                  <Text strong style={{ fontSize: '14px', lineHeight: '1.2' }}>
                    {getDisplayName()}
                  </Text>
-                 <Text type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+                 <Text className="mobile-hide" type="secondary" style={{ fontSize: '12px', lineHeight: '1.2' }}>
                    Partenaire
                  </Text>
                </div>

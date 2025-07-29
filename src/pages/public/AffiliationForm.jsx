@@ -370,14 +370,20 @@ const AffiliationForm = () => {
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setNiveauEtude(value)}
                   filterOption={(input, option) => {
-                    if (!option || !option.children) return false;
-                    const text = typeof option.children === 'string' ? option.children : '';
-                    return text.toLowerCase().includes(input.toLowerCase());
+                    const text = option.label || '';
+                    return text
+                      .toLowerCase()
+                      .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                      .includes(
+                        input
+                          .toLowerCase()
+                          .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                      );
                   }}
                   notFoundContent="Aucun niveau trouvé"
                 >
                   {niveauEtudeOptions.map(option => (
-                    <Option key={option.value} value={option.value}>
+                    <Option key={option.value} value={option.value} label={option.label}>
                       {option.label}
                     </Option>
                   ))}
@@ -418,14 +424,20 @@ const AffiliationForm = () => {
                     style={{ height: '48px', borderRadius: '8px' }}
                     onChange={(value) => setSerieBac(value)}
                     filterOption={(input, option) => {
-                      if (!option || !option.children) return false;
-                      const text = typeof option.children === 'string' ? option.children : '';
-                      return text.toLowerCase().includes(input.toLowerCase());
+                      const text = option.label || '';
+                      return text
+                        .toLowerCase()
+                        .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                        .includes(
+                          input
+                            .toLowerCase()
+                            .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                        );
                     }}
                     notFoundContent="Aucune série trouvée"
                   >
                     {serieBacOptions.map(option => (
-                      <Option key={option.value} value={option.value}>
+                      <Option key={option.value} value={option.value} label={option.label}>
                         {option.label}
                       </Option>
                     ))}
@@ -471,14 +483,20 @@ const AffiliationForm = () => {
                   style={{ height: '48px', borderRadius: '8px' }}
                   onChange={(value) => setFiliereSouhaitee(value)}
                   filterOption={(input, option) => {
-                    if (!option || !option.children) return false;
-                    const text = typeof option.children === 'string' ? option.children : '';
-                    return text.toLowerCase().includes(input.toLowerCase());
+                    const text = option.label || '';
+                    return text
+                      .toLowerCase()
+                      .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                      .includes(
+                        input
+                          .toLowerCase()
+                          .normalize('NFD').replace(/\u0300-\u036f/g, '')
+                      );
                   }}
                   notFoundContent="Aucune filière trouvée"
                 >
                   {filiereOptions.map(option => (
-                    <Option key={option.value} value={option.value}>
+                    <Option key={option.value} value={option.value} label={option.label}>
                       {option.label}
                     </Option>
                   ))}

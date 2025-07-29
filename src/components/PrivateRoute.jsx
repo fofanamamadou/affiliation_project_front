@@ -3,8 +3,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Spin } from 'antd';
 
-const PrivateRoute = ({ userType }) => {
-  const { user, loading, isAuthenticated, userType: currentUserType } = useAuth();
+const PrivateRoute = ({ adminOnly, superadminOnly, influenceurOnly }) => {
+  const { loading, isAuthenticated, isStaff, isSuperuser, userType } = useAuth();
 
   // Afficher un loader pendant la vérification de l'authentification
   if (loading) {
@@ -25,21 +25,32 @@ const PrivateRoute = ({ userType }) => {
     return <Navigate to="/login-choice" replace />;
   }
 
-  // Vérifier le type d'utilisateur si spécifié
-  if (userType) {
-    if (userType === 'admin' && (currentUserType === 'admin' || currentUserType === 'superuser')) {
-      return <Outlet />;
-    } else if (userType === 'influenceur' && currentUserType === 'influenceur') {
-      return <Outlet />;
+  // Accès réservé superadmin
+  if (superadminOnly && !isSuperuser) {
+    if (isStaff) {
+      return <Navigate to="/admin" replace />;
+    } else if (userType === 'influenceur') {
+      return <Navigate to="/influenceur" replace />;
     } else {
-      // Rediriger vers l'espace approprié selon le type d'utilisateur
-      if (currentUserType === 'admin' || currentUserType === 'superuser') {
-        return <Navigate to="/admin" replace />;
-      } else if (currentUserType === 'influenceur') {
-        return <Navigate to="/influenceur" replace />;
-      } else {
-        return <Navigate to="/login-choice" replace />;
-      }
+      return <Navigate to="/login-choice" replace />;
+    }
+  }
+
+  // Accès réservé admin (is_staff)
+  if (adminOnly && !isStaff) {
+    if (userType === 'influenceur') {
+      return <Navigate to="/influenceur" replace />;
+    } else {
+      return <Navigate to="/login-choice" replace />;
+    }
+  }
+
+  // Accès réservé influenceur
+  if (influenceurOnly && userType !== 'influenceur') {
+    if (isStaff) {
+      return <Navigate to="/admin" replace />;
+    } else {
+      return <Navigate to="/login-choice" replace />;
     }
   }
 
