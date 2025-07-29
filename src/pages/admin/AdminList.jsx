@@ -18,10 +18,13 @@ const AdminList = () => {
   const { userType } = useAuth();
 
   useEffect(() => {
-    if (userType === 'superuser') {
-      loadAdmins();
+    if (userType) {
+      if (userType === 'superuser') {
+        loadAdmins();
+      }
     }
   }, [userType]);
+  
 
   const loadAdmins = async () => {
     setLoading(true);
@@ -101,11 +104,11 @@ const AdminList = () => {
     { 
       title: 'Nom', 
       key: 'nom', 
-      render: (_, record) => `${record.first_name || ''} ${record.last_name || ''}` 
+      render: (_, record) => record.first_name || ''
     },    
     { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Actions', key: 'actions', render: (_, record) => (
-      <Popconfirm title={`Supprimer l'admin "${record.nom}" ?`} onConfirm={() => handlePopConfirm(record.id, `${record.first_name || ''} ${record.last_name || ''}`)} okText="Oui" cancelText="Non">
+      <Popconfirm title={`Supprimer l'admin "${record.first_name || ''} " ?`} onConfirm={() => handlePopConfirm(record.id, record.first_name || '')} okText="Oui" cancelText="Non">
         <Button danger icon={<DeleteOutlined />} loading={deletingId === record.id} />
       </Popconfirm>
     ) },
