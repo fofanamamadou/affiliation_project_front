@@ -105,7 +105,7 @@ const AdminList = () => {
     },    
     { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Actions', key: 'actions', render: (_, record) => (
-      <Popconfirm title={`Supprimer l'admin "${record.nom}" ?`} onConfirm={() => handlePopConfirm(record.id, record.nom)} okText="Oui" cancelText="Non">
+      <Popconfirm title={`Supprimer l'admin "${record.nom}" ?`} onConfirm={() => handlePopConfirm(record.id, `${record.first_name || ''} ${record.last_name || ''}`)} okText="Oui" cancelText="Non">
         <Button danger icon={<DeleteOutlined />} loading={deletingId === record.id} />
       </Popconfirm>
     ) },
